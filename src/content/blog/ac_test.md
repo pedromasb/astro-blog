@@ -1,6 +1,6 @@
 ---
 author: Pedro Mas
-pubDatetime: 2024-09-25T02:25:14+0000
+pubDatetime: 2024-09-25T02:25:50
 title: Autoencoder Hyperparameter Tuning
 slug: ac-hyperparameter
 featured: false
