@@ -1,11 +1,11 @@
 import type { Site, SocialObjects } from "./types";
 
 export const SITE: Site = {
-  website: "https://astro-paper.pages.dev/", // replace this with your deployed domain
+  website: "https://pmb-research.vercel.app/", // replace this with your deployed domain
   author: "Pedro Mas",
   profile: "https://pedromasb.github.io/",
   desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
-  title: "PedroMB.dev",
+  title: "Mas-Buitrago, P.",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,
