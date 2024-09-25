@@ -18,7 +18,7 @@ In this work, published in Astronomy & Astrophysics, we develop an innovative de
 
 ![image](@assets/images/lbol_teff_thick.png)
 
-*Analysis of the stellar parameters derived with our methodology. The dots are colour-coded according to the estimated metallicity. The size of the dots is proportional to the estimated projected rotational velocity. Triangles represent stars identified as Hα active, and empty stars depict members of the thick disc Galactic population.*
+*Hertzsprung-Russell diagram of the stellar parameters derived with our methodology. The dots are colour-coded according to the estimated metallicity. The size of the dots is proportional to the estimated projected rotational velocity. Triangles represent stars identified as Hα active, and empty stars depict members of the thick disc Galactic population.*
 
 ### Abstract
 >>
