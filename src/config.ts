@@ -112,9 +112,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "GitLab",
-    href: "https://github.com/satnaing/astro-paper",
+    href: "https://pedromasb.github.io/",
     linkTitle: `${SITE.title} on GitLab`,
-    active: false,
+    active: true,
   },
   {
     name: "Reddit",
