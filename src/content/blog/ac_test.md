@@ -20,6 +20,5 @@ First, the encoder finds an efficient compressed representation of the input dat
 
 ![something](@assets/images/ac_results.png)
 
-You can download the tutorial from Github [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://github.com/pedromasb/tutorials/blob/main/notebooks/gridsearch_autoencoder.ipynb) or follow it on Google Colab:
+You can download the tutorial from Github [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://github.com/pedromasb/tutorials/blob/main/notebooks/gridsearch_autoencoder.ipynb) or follow it on Google Colab [![Google Colab Badge](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1gKjQbwJ7HUwHbZMESLgyIP2kA-Me9wB1?usp=sharing)
 
-![something](@assets/grid_search_gist.html)
