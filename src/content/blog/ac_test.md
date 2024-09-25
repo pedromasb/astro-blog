@@ -3,7 +3,7 @@ author: Pedro Mas
 pubDatetime: 2024-09-25T02:25:50
 title: Using Grid Search For Autoencoder Hyperparameter Tuning
 slug: ac-tuning
-featured: false
+featured: true
 ogImage: ""
 tags:
   - Data
