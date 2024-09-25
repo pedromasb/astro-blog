@@ -22,4 +22,4 @@ First, the encoder finds an efficient compressed representation of the input dat
 
 You can download the tutorial from Github [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://github.com/pedromasb/tutorials/blob/main/notebooks/gridsearch_autoencoder.ipynb) or follow it on Google Colab:
 
-{{< grid_search_gist >}}
+![something](@assets/grid_search_gist.html)
