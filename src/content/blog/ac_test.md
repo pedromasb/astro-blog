@@ -7,7 +7,7 @@ featured: false
 ogImage: ""
 tags:
   - Data
-description: AstroPaper with the enhancements of Astro v2. Type-safe markdown contents, bug fixes and better dev experience etc.
+description: "This is a test for posting new content."
 ---
 
 Finding the optimal combination of hyperparameters can be a tedious task when building a deep learning model. In this context, the grid search tuning technique is one of the most useful for hyperparameter optimization, and is accessible through the ``GridSearchCV`` class ([documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html)) of the ``scikit-learn`` package. Thanks to this technique, the user can evaluate the model for each hyperparameter combination throughout the desired parameter space.
