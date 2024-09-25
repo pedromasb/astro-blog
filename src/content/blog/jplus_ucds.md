@@ -17,7 +17,7 @@ In this work, published in Astronomy & Astrophysics, we use data from the J-PLUS
 
 &nbsp;
 
-![image](@assets/images/lbol_teff_thick.png)
+![image](@assets/images/dist_teff_ext.png)
 
 *Distance vs. effective temperature diagram for previously reported (blue) and new (yellow) candidate UCDs with good parallax
 conditions. The vertical dashed line indicates the lower limit of effective temperature for M-type dwarfs (2359 K) according to Pecaut & Mamajek (2013).*
