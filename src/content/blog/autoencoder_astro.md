@@ -1,0 +1,32 @@
+---
+title: Using Grid Search For Autoencoder Hyperparameter Tuning
+author: Pedro Mas
+date: '2023-05-16'
+slug: []
+categories: []
+tags:
+  - Data
+featured_image: /images/grid_search/backg.jpg
+description: 'A brief tutorial on the use of the grid search tuning technique for the hyperparameter optimization of a deep sparse autoencoder.'
+---
+
+Finding the optimal combination of hyperparameters can be a tedious task when building a deep learning model. In this context, the grid search tuning technique is one of the most useful for hyperparameter optimization, and is accessible through the ``GridSearchCV`` class ([documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html)) of the ``scikit-learn`` package. Thanks to this technique, the user can evaluate the model for each hyperparameter combination throughout the desired parameter space.
+
+In this brief tutorial we will build a deep autoencoder to reconstruct the images provided by the well known [MNIST](http://yann.lecun.com/exdb/mnist/) database of handwritten digits, which is available through the ``tensorflow.keras.datasets`` module. Autoencoders are a specific type of neural networks that consist of 2 components: the encoder and the decoder.
+
+![something](@assets/images/autoencoder.jpg)
+
+First, the encoder finds an efficient compressed representation of the input data, and then the decoder uses this lower-dimensional representation to reconstruct the information. You can find a detailed explanation of autoencoders [here](https://towardsdatascience.com/applied-deep-learning-part-3-autoencoders-1c083af4d798). Using the grid search tuning technique, we will build an autoencoder and use the optimal combination of hyperparameters to reconstruct the original images and explore the compressed representations found by the encoder. 
+
+![something](@assets/images/results.jpg)
+
+You can download the tutorial from Github [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://github.com/pedromasb/tutorials/blob/main/notebooks/gridsearch_autoencoder.ipynb) or follow it on Google Colab:
+
+{{< grid_search_gist >}}
+
+&nbsp;
+
+Song of the post: *Sofa King*, by **Royel Otis**
+
+{{< sofa_king >}}
+
