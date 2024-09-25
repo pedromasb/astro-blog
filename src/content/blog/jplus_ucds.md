@@ -1,7 +1,7 @@
 ---
 author: Pedro Mas 
 pubDatetime: 2022-10-19T00:00:00
-title: J-PLUS: Discovery and characterisation of ultracool dwarfs using Virtual Observatory tools II. Second data release and machine learning methodology
+title: J-PLUS. Discovery and characterisation of ultracool dwarfs using Virtual Observatory tools II. Second data release and machine learning methodology
 slug: jplus-ucds
 featured: true
 draft: false
