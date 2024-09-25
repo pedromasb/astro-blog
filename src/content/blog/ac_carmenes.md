@@ -9,7 +9,7 @@ tags:
   - Astro
   - Deep Learning
   - Low-mass
-description: Journal Article.
+description: Journal Article in Astronomy & Astrophysics
 ---
 
 In this work, published in Astronomy & Astrophysics, we develop an innovative deep transfer learning methodology to determine stellar parameters in M dwarfs from synthetic spectra. Using of deep autoencoder neural networks, combined with a fine-tuning transfer learning approach, we project the data into a new low-dimensional feature space in which no significant differences are observed between the synthetic and the real data, solving the main limitations of previous works.
