@@ -1,13 +1,13 @@
 ---
 author: Pedro Mas
-pubDatetime: 2024-09-25T02:02:36+0000
-title: Using Grid Search For Autoencoder Hyperparameter Tuning
-slug: ac-test-v1
+pubDatetime: 2023-01-30T15:57:52.737Z
+title: Autoencoder Hyperparameter Tuning
+slug: ac-hyperparameter
 featured: false
-ogImage: ""
+ogImage: https://user-images.githubusercontent.com/53733092/215771435-25408246-2309-4f8b-a781-1f3d93bdf0ec.png
 tags:
-  - Data
-description: "This is a test for posting new content."
+  - release
+description: This is a test for posting new content.
 ---
 
-Finding the optimal combination of hyperparameters can be a tedious task when building a deep learning model. In this context, the grid search tuning technique is one of the most useful for hyperparameter optimization, and is accessible through the ``GridSearchCV`` class 
+Astro 2.0 has been released with some cool features, breaking changes, DX improvements, better error overlay and so on. AstroPaper takes advantage of those cool features, especially Content Collections API.
