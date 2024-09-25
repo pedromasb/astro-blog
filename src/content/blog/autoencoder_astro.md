@@ -18,7 +18,7 @@ In this brief tutorial we will build a deep autoencoder to reconstruct the image
 
 First, the encoder finds an efficient compressed representation of the input data, and then the decoder uses this lower-dimensional representation to reconstruct the information. You can find a detailed explanation of autoencoders [here](https://towardsdatascience.com/applied-deep-learning-part-3-autoencoders-1c083af4d798). Using the grid search tuning technique, we will build an autoencoder and use the optimal combination of hyperparameters to reconstruct the original images and explore the compressed representations found by the encoder. 
 
-![something](@assets/images/results.jpg)
+![something](@assets/images/ac_results.jpg)
 
 You can download the tutorial from Github [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://github.com/pedromasb/tutorials/blob/main/notebooks/gridsearch_autoencoder.ipynb) or follow it on Google Colab.
 
