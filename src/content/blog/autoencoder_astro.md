@@ -14,11 +14,11 @@ Finding the optimal combination of hyperparameters can be a tedious task when bu
 
 In this brief tutorial we will build a deep autoencoder to reconstruct the images provided by the well known [MNIST](http://yann.lecun.com/exdb/mnist/) database of handwritten digits, which is available through the ``tensorflow.keras.datasets`` module. Autoencoders are a specific type of neural networks that consist of 2 components: the encoder and the decoder.
 
-![something](@assets/images/autoencoder.jpg)
+![something](@assets/images/autoencoder.png)
 
 First, the encoder finds an efficient compressed representation of the input data, and then the decoder uses this lower-dimensional representation to reconstruct the information. You can find a detailed explanation of autoencoders [here](https://towardsdatascience.com/applied-deep-learning-part-3-autoencoders-1c083af4d798). Using the grid search tuning technique, we will build an autoencoder and use the optimal combination of hyperparameters to reconstruct the original images and explore the compressed representations found by the encoder. 
 
-![something](@assets/images/ac_results.jpg)
+![something](@assets/images/ac_results.png)
 
 You can download the tutorial from Github [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://github.com/pedromasb/tutorials/blob/main/notebooks/gridsearch_autoencoder.ipynb) or follow it on Google Colab.
 
