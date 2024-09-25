@@ -6,7 +6,7 @@ export const SITE: Site = {
   profile: "https://pedromasb.github.io/",
   desc: "A repository for research by Mas-Buitrago, P.",
   title: "Mas-Buitrago, P.",
-  ogImage: "pmb-og.png",
+  ogImage: "pmb-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,
   postPerPage: 3,
