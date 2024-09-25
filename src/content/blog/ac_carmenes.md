@@ -14,8 +14,11 @@ description: Journal Article.
 
 In this work, published in Astronomy & Astrophysics, we develop an innovative deep transfer learning methodology to determine stellar parameters in M dwarfs from synthetic spectra. Using of deep autoencoder neural networks, combined with a fine-tuning transfer learning approach, we project the data into a new low-dimensional feature space in which no significant differences are observed between the synthetic and the real data, solving the main limitations of previous works.
 
+&nbsp;
+
 ![image](@assets/images/lbol_teff_thick.png)
 
+*Analysis of the stellar parameters derived with our methodology. The dots are colour-coded according to the estimated metallicity. The size of the dots is proportional to the estimated projected rotational velocity. Triangles represent stars identified as Hα active, and empty stars depict members of the thick disc Galactic population.*
 
 ### Abstract
 >>
