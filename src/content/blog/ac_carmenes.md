@@ -32,4 +32,4 @@ Results. We performed an extensive analysis of our estimated stellar parameters,
 >>
 Conclusions. We consolidated a DTL-based methodology to determine stellar parameters in M dwarfs from synthetic spectra, with no need for high-quality measurements involved in the knowledge transfer. These results suggest the great potential of DTL to mitigate the differences in feature distributions between the observations and the PHOENIX-ACES spectra.
 
-[![paper](https://zenodo.org/badge/DOI/10.1051/0004-6361/202243895.svg)](https://doi.org/10.1051/0004-6361/202449865)
+[![paper](https://zenodo.org/badge/DOI/10.1051/0004-6361/202449865.svg)](https://doi.org/10.1051/0004-6361/202449865)
