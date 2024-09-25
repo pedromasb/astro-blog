@@ -1,13 +1,13 @@
 ---
-title: Using Grid Search For Autoencoder Hyperparameter Tuning
 author: Pedro Mas
-date: '2023-05-16'
-slug: []
-categories: []
+pubDatetime: 2024-09-25T02:02:36+0000
+title: Using Grid Search For Autoencoder Hyperparameter Tuning
+slug: autoencoder
+featured: false
+ogImage: ""
 tags:
   - Data
-featured_image: /images/grid_search/backg.jpg
-description: 'A brief tutorial on the use of the grid search tuning technique for the hyperparameter optimization of a deep sparse autoencoder.'
+description: AstroPaper with the enhancements of Astro v2. Type-safe markdown contents, bug fixes and better dev experience etc.
 ---
 
 Finding the optimal combination of hyperparameters can be a tedious task when building a deep learning model. In this context, the grid search tuning technique is one of the most useful for hyperparameter optimization, and is accessible through the ``GridSearchCV`` class ([documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html)) of the ``scikit-learn`` package. Thanks to this technique, the user can evaluate the model for each hyperparameter combination throughout the desired parameter space.
