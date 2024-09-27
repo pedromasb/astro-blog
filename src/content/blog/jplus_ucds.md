@@ -1,7 +1,7 @@
 ---
 author: Pedro Mas 
 pubDatetime: 2022-10-19T00:00:00
-title: J-PLUS. Discovery and characterisation of ultracool dwarfs using Virtual Observatory tools II. Second data release and machine learning methodology
+title: "J-PLUS: Discovery and characterisation of ultracool dwarfs using Virtual Observatory tools II. Second data release and machine learning methodology"
 slug: jplus-ucds
 featured: true
 draft: false
@@ -10,7 +10,7 @@ tags:
   - Virtual Observatory
   - Machine Learning
   - Low-mass
-description: Journal Article in Astronomy & Astrophysics
+description: Lead author of a journal article published in Astronomy & Astrophysics
 ---
 
 In this work, published in Astronomy & Astrophysics, we use data from the J-PLUS archive to consolidate a search methodology for ultracool dwarfs in large multi-filter photometric surveys, which will be key for the identification of ultracool dwarfs in upcoming surveys such as J-PAS and Euclid. We also develop a Python algorithm capable of detecting excess in the J-PLUS filters corresponding to the Halpha and CaII H and K emission lines, revealing the potential of multi-filter photometric surveys to detect flaring M dwarfs.
