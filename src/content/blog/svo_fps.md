@@ -12,7 +12,7 @@ tags:
 description: Contributing author of a journal article published in Astronomy & Astrophysics
 ---
 
-In this work, published in Astronomy & Astrophysics, we use data from the J-PLUS archive to consolidate a search methodology for ultracool dwarfs in large multi-filter photometric surveys, which will be key for the identification of ultracool dwarfs in upcoming surveys such as J-PAS and Euclid. We also develop a Python algorithm capable of detecting excess in the J-PLUS filters corresponding to the Halpha and CaII H and K emission lines, revealing the potential of multi-filter photometric surveys to detect flaring M dwarfs.
+In this work, published in Astronomy & Astrophysics, we present the power of the [Spanish Virtual Observatory](https://svo.cab.inta-csic.es/main/index.php) Filter Profile Service and associated photometric tools, and demonstrate their power to segregate FGK dwarf and giant stars using narrow-band photometry. Using machine-learning techniques such as the Gaussian mixture model and the support vector machine algorithms, we defined several criteria based on J-PAS colours to discriminate between dwarf and giant stars, selecting the five most promising colour-colour diagrams for this task and defining a criteria to maximise the separation.
 
 &nbsp;
 
