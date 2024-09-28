@@ -148,6 +148,12 @@ export const SOCIALS: SocialObjects = [
   },
   /* others */
   {
+    name: "Personal",
+    href: "https://pedromasb.github.io/",
+    linkTitle: `${SITE.title} visit Personal blog`,
+    active: true,
+  },
+  {
     name: "ESA",
     href: "https://pedromasb.github.io/",
     linkTitle: `${SITE.title} visit ESA Faculty`,
