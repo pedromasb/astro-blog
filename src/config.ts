@@ -146,4 +146,11 @@ export const SOCIALS: SocialObjects = [
     linkTitle: `${SITE.title} on Mastodon`,
     active: false,
   },
+  /* others */
+  {
+    name: "ESA",
+    href: "https://pedromasb.github.io/",
+    linkTitle: `${SITE.title} visit ESA Faculty`,
+    active: true,
+  },
 ];
