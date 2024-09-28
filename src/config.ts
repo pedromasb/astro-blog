@@ -114,7 +114,7 @@ export const SOCIALS: SocialObjects = [
     name: "GitLab",
     href: "https://pedromasb.github.io/",
     linkTitle: `${SITE.title} on GitLab`,
-    active: true,
+    active: false,
   },
   {
     name: "Reddit",
@@ -150,13 +150,13 @@ export const SOCIALS: SocialObjects = [
   {
     name: "Personal",
     href: "https://pedromasb.github.io/",
-    linkTitle: `${SITE.title} visit Personal blog`,
+    linkTitle: `Visit Personal blog`,
     active: true,
   },
   {
     name: "ESA",
     href: "https://pedromasb.github.io/",
-    linkTitle: `${SITE.title} visit ESA Faculty`,
+    linkTitle: `Visit ESA Faculty profile`,
     active: true,
   },
 ];
