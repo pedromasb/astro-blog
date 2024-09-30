@@ -12,7 +12,6 @@ html[data-theme="light"] {
   --color-card-muted: 239, 216, 176;
   --color-border: 220, 152, 145;
 } */
-/* 150, 135, 138; */
 
 @layer base {
   :root,
