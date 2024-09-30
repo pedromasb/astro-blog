@@ -20,8 +20,8 @@ html[data-theme="light"] {
     --color-fill: 238, 234, 235;
     --color-text-base: 102, 74, 79;
     --color-accent: 74, 56, 59;
-    --color-card: 74, 56, 59;
-    --color-card-muted: 150, 135, 138;
+    --color-card: 150, 135, 138;
+    --color-card-muted: 74, 56, 59;
     --color-border: 27, 75, 67;
   }
   html[data-theme="dark"] {
