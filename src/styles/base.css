@@ -17,7 +17,7 @@ html[data-theme="light"] {
   :root,
   html[data-theme="light"] {
     --color-fill: 243, 238, 230;
-    --color-text-base: 102, 74, 79;
+    --color-text-base: 110, 91, 52;
     --color-accent: 74, 56, 59;
     --color-card: 150, 135, 138;
     --color-card-muted: 74, 56, 59;
