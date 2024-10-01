@@ -89,7 +89,7 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "ESA",
-    href: "https://pedromasb.github.io/",
+    href: "https://www.cosmos.esa.int/web/personal-profiles/pedro-mas-buitrago",
     linkTitle: `Visit ESA Faculty profile`,
     active: true,
   },
