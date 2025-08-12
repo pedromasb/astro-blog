@@ -1,5 +1,12 @@
 ---
-author: Pedro Mas 
+authors:
+  - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
+journal: "A&A"
+volume: "666"
+isPaper: true
+doi: "10.1051/0004-6361/202243895"
+arxiv: "arXiv:2208.09377"
+
 pubDatetime: 2022-10-19T00:00:00
 title: "J-PLUS: Discovery and characterisation of ultracool dwarfs using Virtual Observatory tools II. Second data release and machine learning methodology"
 slug: jplus-ucds

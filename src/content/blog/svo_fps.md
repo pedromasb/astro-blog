@@ -1,5 +1,12 @@
 ---
-author: Pedro Mas 
+authors:
+  - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
+journal: "A&A"
+volume: "689"
+isPaper: true
+doi: "10.1051/0004-6361/202449998"
+arxiv: "arXiv:2406.03310"
+
 pubDatetime: 2024-09-06T00:00:00
 title: "Photometric segregation of dwarf and giant FGK stars using the SVO Filter Profile Service and photometric tools"
 slug: svo-fps
