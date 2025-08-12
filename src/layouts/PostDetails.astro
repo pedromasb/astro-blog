@@ -115,7 +115,9 @@ const nextPost =
     <article id="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
       
-      <CitationBox {...paperMeta} bibtexOverride={bibtex} />
+      {isPaper && (
+        <CitationBox {...paperMeta} bibtexOverride={bibtex} />
+      )}
       
     </article>
 
