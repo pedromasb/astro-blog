@@ -22,6 +22,19 @@ const blog = defineCollection({
         .optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),
+      isPaper: z.boolean().default(false),
+      authors: z
+        .array(z.object({
+          name: z.string(),
+          orcid: z.string().optional(),
+        }))
+        .optional(),
+      doi: z.string().optional(),
+      arxiv: z.string().optional(),
+      journal: z.string().optional(),
+      volume: z.union([z.string(), z.number()]).optional(),
+      pages: z.string().optional(),
+      bibtex: z.string().optional(),
     }),
 });
 
