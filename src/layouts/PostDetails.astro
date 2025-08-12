@@ -86,10 +86,10 @@ const nextPost =
   currentPostIndex !== allPosts.length ? allPosts[currentPostIndex + 1] : null;
 ---
 
-<Layout {...layoutProps}>
+<div data-debug="postdetails-ok" />
+<meta slot="head" name="x-debug" content="from-postdetails" />
 
-  <div data-debug="postdetails-ok" />
-  <meta slot="head" name="x-debug" content="from-postdetails" />
+<Layout {...layoutProps}>
 
   <Header />
 
