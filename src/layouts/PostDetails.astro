@@ -88,9 +88,14 @@ const nextPost =
 
 <Layout {...layoutProps}>
 
+  <div data-debug="postdetails-ok" />
+  <meta slot="head" name="x-debug" content="from-postdetails" />
+
   <Header />
 
   <ScholarlyArticleJsonLd {...paperMeta} />
+
+  
 
   <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
     <button
