@@ -20,8 +20,8 @@ const bib = bibtexOverride ?? toBibTeX({
 });
 
 ---
-<section class="mt-2 border-gray-600 dark:border-gray-100 rounded-md border p-4">
-  <h3 class="text-base font-semibold">Cite this work</h3>
+<section class="mt-5 border-gray-600 dark:border-gray-100 rounded-md border p-4">
+  <h3 class="text-base m-1 p-1 font-semibold">Cite this work</h3>
   <div class="text-sm mt-1 text-gray-500 dark:text-gray-300">
     {authors?.map((a:any)=>a.name).join(", ")} ({year}). <em>{title}</em>{journal ? `. ${journal}` : ""}{volume ? `, ${volume}` : ""}{pages ? `:${pages}` : ""}{doi ? `. doi:${doi}` : ""}{arxiv ? `. arXiv:${arxiv}` : ""}.
   </div>

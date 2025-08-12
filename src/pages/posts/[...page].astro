@@ -4,6 +4,7 @@ import Posts from "@layouts/Posts.astro";
 import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 
+
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
   return paginate(posts, { pageSize: SITE.postPerPage });
@@ -11,5 +12,9 @@ export const getStaticPaths = (async ({ paginate }) => {
 
 const { page } = Astro.props;
 ---
+
+<p class="mt-2 text-sm">
+  Looking for publications? See the <a class="underline" href="/papers">Papers page</a>.
+</p>
 
 <Posts {page} />

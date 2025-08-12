@@ -1,0 +1,67 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import { getCollection } from "astro:content";
+import { SITE } from "@config";
+
+function yearOf(d?: Date | null) {
+  return d ? new Date(d).getFullYear() : undefined;
+}
+
+const all = await getCollection("blog", ({ data }) => data.isPaper === true && !data.draft);
+const papers = all
+  .map(p => ({
+    ...p,
+    year: yearOf(p.data.pubDatetime) ?? yearOf(p.data.modDatetime) ?? 9999,
+  }))
+  .sort((a, b) => (b.year - a.year) || (b.data.pubDatetime?.getTime() ?? 0) - (a.data.pubDatetime?.getTime() ?? 0));
+
+const byYear = papers.reduce((acc, p) => {
+  acc[p.year] = acc[p.year] || [];
+  acc[p.year].push(p);
+  return acc;
+}, {} as Record<number, typeof papers>);
+---
+
+<Layout title={`Papers | ${SITE.title}`} description="Publications and preprints">
+  <Header activeNav="posts" />
+
+  <main class="mx-auto w-full max-w-3xl px-4 pb-12">
+    <h1 class="text-3xl font-semibold text-skin-accent">Publications</h1>
+    <p class="mt-2 opacity-80">Peer‑reviewed papers and preprints from my research. Click a title for the full post.</p>
+
+    {Object.keys(byYear).sort((a,b) => Number(b) - Number(a)).map((y) => (
+      <section class="mt-8">
+        <h2 class="text-2xl font-semibold">{y}</h2>
+        <ul class="mt-4 space-y-5">
+          {byYear[Number(y)].map(({ data, slug }) => (
+            <li class="border-l-2 pl-3">
+              <div class="text-base">
+                <a href={`/posts/${slug}/`} class="font-medium hover:underline">{data.title}</a>
+              </div>
+              <div class="text-sm mt-0.5">
+                {data.authors?.map((a:any)=>a.name).join(", ")}
+                {data.pubDatetime && ` (${new Date(data.pubDatetime).getFullYear()})`}.
+                {data.journal && <> <em>{data.journal}</em></>}
+                {data.volume && <> <span>{data.volume}</span></>}
+                {data.pages && <>:{data.pages}</>}
+              </div>
+              <div class="mt-1 flex flex-wrap gap-2 text-xs">
+                {data.doi && (
+                  <a class="rounded border px-2 py-0.5 hover:opacity-80" target="_blank" rel="noopener" href={`https://doi.org/${data.doi}`}>DOI</a>
+                )}
+                {data.arxiv && (
+                  <a class="rounded border px-2 py-0.5 hover:opacity-80" target="_blank" rel="noopener" href={`https://arxiv.org/abs/${data.arxiv}`}>arXiv</a>
+                )}
+                <a class="rounded border px-2 py-0.5 hover:opacity-80" href={`/posts/${slug}/#article`}>Full post</a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+
+  <Footer />
+</Layout>
