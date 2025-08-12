@@ -21,7 +21,7 @@ html[data-theme="light"] {
     --color-accent: 44, 36, 21;
     --color-card: 203, 184, 147;
     --color-card-muted: 88, 72, 42;
-    --color-border: 201, 188, 167;
+    --color-border: 77, 63, 36;
   }
   html[data-theme="dark"] {
     --color-fill: 33, 39, 55;
@@ -78,7 +78,9 @@ html[data-theme="light"] {
   .prose h2#table-of-contents + p {
     @apply hidden;
   }
-
+  .papers-list .paper-entry {
+  border-left-color: rgb(201, 188, 167);
+  }
   /* ===== scrollbar ===== */
   html {
     overflow-y: scroll;
