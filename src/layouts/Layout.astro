@@ -118,9 +118,6 @@ const structuredData = {
     />
 
     <meta name="theme-color" content="" />
-    
-    <!-- Allow pages to inject extra head tags -->
-    <slot name="head" />
 
     {
       // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,
@@ -136,6 +133,9 @@ const structuredData = {
 
     <ViewTransitions />
 
+    <!-- Allow pages to inject extra head tags -->
+    <slot name="head" />
+    
     <script is:inline src="/toggle-theme.js" async></script>
   </head>
   <body>
