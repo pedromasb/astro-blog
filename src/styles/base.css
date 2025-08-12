@@ -78,9 +78,6 @@ html[data-theme="light"] {
   .prose h2#table-of-contents + p {
     @apply hidden;
   }
-  .papers-list .paper-entry {
-  border-left-color: rgb(201, 188, 167);
-  }
   /* ===== scrollbar ===== */
   html {
     overflow-y: scroll;
