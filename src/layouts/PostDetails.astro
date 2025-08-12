@@ -1,4 +1,7 @@
 ---
+import ScholarlyArticleJsonLd from "../components/ScholarlyArticleJsonLd.astro";
+import CitationBox from "../components/CitationBox.astro";
+
 import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
@@ -25,7 +28,30 @@ const {
   pubDatetime,
   modDatetime,
   tags,
+
+  isPaper,
+  authors,     // e.g., [{ name: "Pedro M. B.", orcid: "0000-0002-..." }, ...]
+  doi,
+  arxiv,
+  journal,
+  volume,
+  pages,
+  bibtex,      // optional override string
 } = post.data;
+
+const paperMeta = {
+  title,
+  description,
+  pubDate: pubDatetime,
+  updatedDate: modDatetime ?? undefined,
+  authors,
+  doi,
+  arxiv,
+  journal,
+  volume,
+  pages,
+  url: canonicalURL ?? undefined,
+};
 
 const { Content } = await post.render();
 
@@ -61,6 +87,10 @@ const nextPost =
 ---
 
 <Layout {...layoutProps}>
+  {isPaper && (
+    <ScholarlyArticleJsonLd slot="head" {...paperMeta} />
+  )}
+
   <Header />
 
   <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
@@ -85,6 +115,11 @@ const nextPost =
     />
     <article id="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
+      
+      {isPaper && (
+        <CitationBox {...paperMeta} bibtexOverride={bibtex} />
+      )}
+      
     </article>
 
     <ul class="my-8">

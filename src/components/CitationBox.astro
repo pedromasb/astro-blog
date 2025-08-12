@@ -1,0 +1,46 @@
+---
+import { toBibTeX } from "../utils/cite";
+const {
+  title,
+  pubDate,
+  authors = [],
+  journal,
+  volume,
+  pages,
+  doi,
+  arxiv,
+  url,
+  bibtexOverride, // optional: put full BibTeX here to bypass generator
+} = Astro.props;
+
+const year = pubDate ? new Date(pubDate).getFullYear() : undefined;
+
+const bib = bibtexOverride ?? toBibTeX({
+  title, authors, year, journal, volume, pages, doi, arxiv, url
+});
+
+function downloadBib() {
+  const blob = new Blob([bib], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (title || "citation").replace(/\s+/g,'_') + ".bib";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+---
+<section class="mt-8 rounded-md border p-4">
+  <h3 class="text-base font-semibold">Cite this work</h3>
+  <div class="text-sm opacity-80 mt-1">
+    {authors?.map((a:any)=>a.name).join(", ")} ({year}). <em>{title}</em>{journal ? `. ${journal}` : ""}{volume ? ` ${volume}` : ""}{pages ? `:${pages}` : ""}{doi ? `. doi:${doi}` : ""}{arxiv ? `. arXiv:${arxiv}` : ""}.
+  </div>
+  <div class="mt-3 flex gap-2">
+    <button class="rounded bg-primary px-3 py-1 text-white" on:click={downloadBib}>Download BibTeX</button>
+    {doi && <a class="rounded border px-3 py-1" href={`https://doi.org/${doi}`} rel="noopener" target="_blank">DOI</a>}
+    {arxiv && <a class="rounded border px-3 py-1" href={`https://arxiv.org/abs/${arxiv}`} rel="noopener" target="_blank">arXiv</a>}
+  </div>
+  <details class="mt-3">
+    <summary class="cursor-pointer select-none text-sm underline">Show BibTeX</summary>
+    <pre class="mt-2 overflow-auto text-xs"><code>{bib}</code></pre>
+  </details>
+</section>
