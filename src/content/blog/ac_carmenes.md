@@ -1,7 +1,7 @@
 ---
 authors:
   - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
-journal: "A&A"
+journal: "Astronomy & AstrophysicsA"
 volume: "687"
 
 pubDatetime: 2024-07-15T00:00:00
@@ -38,5 +38,6 @@ Methods. Using autoencoder architectures, we projected synthetic PHOENIX-ACES sp
 Results. We performed an extensive analysis of our estimated stellar parameters, ranging from 3050 to 4300 K, 4.7 to 5.1 dex, and −0.53 to 0.25 dex for Teff, log 𝑔, and [Fe/H], respectively. Our results are broadly consistent with those of recent studies using CARMENES data, with a systematic deviation in our Teff scale towards hotter values for estimations above 3750 K. Furthermore, our methodology mitigates the deviations in metallicity found in previous DL techniques due to the synthetic gap.
 >>
 Conclusions. We consolidated a DTL-based methodology to determine stellar parameters in M dwarfs from synthetic spectra, with no need for high-quality measurements involved in the knowledge transfer. These results suggest the great potential of DTL to mitigate the differences in feature distributions between the observations and the PHOENIX-ACES spectra.
+
 
 [![paper](https://zenodo.org/badge/DOI/10.1051/0004-6361/202449865.svg)](https://doi.org/10.1051/0004-6361/202449865)
