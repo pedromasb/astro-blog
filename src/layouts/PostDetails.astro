@@ -86,16 +86,11 @@ const nextPost =
   currentPostIndex !== allPosts.length ? allPosts[currentPostIndex + 1] : null;
 ---
 
-<div data-debug="postdetails-ok" />
-<meta slot="head" name="x-debug" content="from-postdetails" />
-
 <Layout {...layoutProps}>
 
   <Header />
 
-  <ScholarlyArticleJsonLd {...paperMeta} />
-
-  
+  <ScholarlyArticleJsonLd slot="head" {...paperMeta} />
 
   <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
     <button
