@@ -118,6 +118,9 @@ const structuredData = {
     />
 
     <meta name="theme-color" content="" />
+    
+    <!-- Allow pages to inject extra head tags -->
+    <slot name="head" />
 
     {
       // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,

@@ -1,6 +1,13 @@
 ---
-author: Pedro Mas 	
+authors:
+  - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
+journal: "A&A"
+volume: "687"
+
 pubDatetime: 2024-07-15T00:00:00
+isPaper: true
+doi: "10.1051/0004-6361/202449865"
+arxiv: "2405.08703"
 title: Using autoencoders and deep transfer learning to determine the stellar parameters of 286 CARMENES M dwarfs
 slug: autoencoder-carmenes
 featured: true

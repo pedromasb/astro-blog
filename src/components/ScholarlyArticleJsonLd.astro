@@ -1,0 +1,48 @@
+---
+/**
+ * Renders JSON-LD for papers/posts using frontmatter.
+ * Expected frontmatter (any missing fields are skipped safely):
+ *  - title, description, pubDate, updatedDate, authors (array of { name, orcid? }),
+ *  - doi?, url?, arxiv?, journal?, volume?, pages?
+ */
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  authors = [],
+  doi,
+  url,
+  arxiv,
+  journal,
+  volume,
+  pages,
+} = Astro.props;
+
+const data = {
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  headline: title,
+  name: title,
+  description,
+  datePublished: pubDate ? new Date(pubDate).toISOString() : undefined,
+  dateModified: updatedDate ? new Date(updatedDate).toISOString() : undefined,
+  author: authors?.length
+    ? authors.map((a: any) => ({
+        "@type": "Person",
+        name: a.name,
+        identifier: a.orcid ? `https://orcid.org/${a.orcid}` : undefined,
+      }))
+    : undefined,
+  isPartOf: journal
+    ? { "@type": "Periodical", name: journal, volumeNumber: volume, pagination: pages }
+    : undefined,
+  identifier: [
+    doi ? { "@type": "PropertyValue", propertyID: "doi", value: doi } : undefined,
+    arxiv ? { "@type": "PropertyValue", propertyID: "arXiv", value: arxiv } : undefined,
+  ].filter(Boolean),
+  sameAs: [doi ? `https://doi.org/${doi}` : undefined, arxiv ? `https://arxiv.org/abs/${arxiv}` : undefined].filter(Boolean),
+  url: url ?? Astro.url?.href,
+};
+---
+<script type="application/ld+json" is:inline>{JSON.stringify(data)}</script>
