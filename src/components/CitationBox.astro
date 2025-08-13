@@ -1,5 +1,6 @@
 ---
 import { toBibTeX } from "../utils/cite";
+
 const {
   title,
   pubDate,
@@ -10,27 +11,66 @@ const {
   doi,
   arxiv,
   url,
-  bibtexOverride, // optional: put full BibTeX here to bypass generator
+  bibtexOverride, // optional: full BibTeX to bypass generator
 } = Astro.props;
 
 const year = pubDate ? new Date(pubDate).getFullYear() : undefined;
 
 const bib = bibtexOverride ?? toBibTeX({
-  authors, year, journal, volume, pages, doi, arxiv, url
+  title, authors, year, journal, volume, pages, doi, arxiv, url
 });
-
 ---
-<section class="mt-5 border-gray-600 dark:border-gray-100 rounded-md border p-4">
+
+<section class="mt-5 rounded-md border p-4 border-gray-600 dark:border-gray-100">
   <h3 class="text-base m-1 p-1 font-semibold">Cite this work</h3>
-  <div class="text-sm mt-1 text-gray-500 dark:text-gray-300">
+
+  <div class="text-sm mt-1 text-gray-700 dark:text-gray-300">
     {authors?.map((a:any)=>a.name).join(", ")} ({year}). <em>{title}</em>{journal ? `. ${journal}` : ""}{volume ? `, ${volume}` : ""}{pages ? `:${pages}` : ""}{doi ? `. doi:${doi}` : ""}{arxiv ? `. arXiv:${arxiv}` : ""}.
   </div>
+
   <div class="mt-3 flex gap-2">
     {doi && <a class="rounded border px-3 py-1" href={`https://doi.org/${doi}`} rel="noopener" target="_blank">DOI</a>}
     {arxiv && <a class="rounded border px-3 py-1" href={`https://arxiv.org/abs/${arxiv}`} rel="noopener" target="_blank">arXiv</a>}
   </div>
+
   <details class="mt-3">
     <summary class="cursor-pointer select-none text-sm underline">Show BibTeX</summary>
-    <pre class="mt-2 overflow-auto text-xs bg-transparent"><code>{bib}</code></pre>
+
+    <!-- Custom BibTeX block with Copy button on the LEFT -->
+    <div class="mt-2 flex items-start gap-2 bibtex-block" data-citation-box>
+      <button type="button" class="copy-btn rounded px-2 py-1 text-xs border border-gray-300 dark:border-gray-600">
+        Copy
+      </button>
+
+      <!-- horizontal scroll container; transparent background -->
+      <div class="overflow-x-auto overflow-y-hidden">
+        <pre class="inline-block min-w-full text-xs bg-transparent border border-gray-200 dark:border-gray-600 rounded p-3 whitespace-pre">
+          <code class="bg-transparent">{bib}</code>
+        </pre>
+      </div>
+    </div>
   </details>
 </section>
+
+<style>
+  /* Hide the global auto-inserted copy button inside this BibTeX block */
+  .bibtex-block .copy-code { display: none !important; }
+</style>
+
+<script is:inline>
+  // Local copy handler for this component
+  document.querySelectorAll('[data-citation-box]').forEach(box => {
+    const btn = box.querySelector('.copy-btn');
+    const code = box.querySelector('code');
+    btn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code?.innerText ?? '');
+        const prev = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => (btn.textContent = prev || 'Copy'), 800);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  });
+</script>
