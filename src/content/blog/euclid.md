@@ -1,6 +1,6 @@
 ---
 authors:
-  - { name: "Martín", orcid: "0000-0001-8055-7949" }
+  - { name: "Martín"}
 journal: "A&A"
 volume: "697"
 isPaper: true

@@ -1,6 +1,6 @@
 ---
 authors:
-  - { name: "Rodrigo", orcid: "0000-0001-8055-7949" }
+  - { name: "Rodrigo"}
 journal: "A&A"
 volume: "689"
 isPaper: true
