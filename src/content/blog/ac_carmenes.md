@@ -34,7 +34,7 @@ bibtex: |
   primaryClass = {astro-ph.SR},
         adsurl = {https://ui.adsabs.harvard.edu/abs/2024A&A...687A.205M},
         adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-  }
+    }
 ---
 
 In this work, published in Astronomy & Astrophysics, we develop an innovative deep transfer learning methodology to determine stellar parameters in M dwarfs from synthetic spectra. Using of deep autoencoder neural networks, combined with a fine-tuning transfer learning approach, we project the data into a new low-dimensional feature space in which no significant differences are observed between the synthetic and the real data, solving the main limitations of previous works.
