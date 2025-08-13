@@ -11,7 +11,7 @@ const {
   doi,
   arxiv,
   url,
-  bibtexOverride, // optional: full BibTeX to bypass generator
+  bibtexOverride,
 } = Astro.props;
 
 const year = pubDate ? new Date(pubDate).getFullYear() : undefined;
@@ -58,9 +58,8 @@ const bib = bibtexOverride ?? toBibTeX({
       if (!code) return;
       try {
         await navigator.clipboard.writeText(code);
-        const prev = btn.textContent.replace("Copy BibTeX", "").trim();
         btn.firstChild.textContent = 'Copied!';
-        setTimeout(() => (btn.firstChild.textContent = 'Copy BibTeX'), 1000);
+        setTimeout(() => (btn.firstChild.textContent = 'Copy BibTeX'), 3000);
       } catch (err) {
         console.error('Copy failed', err);
       }
@@ -74,5 +73,15 @@ const bib = bibtexOverride ?? toBibTeX({
     white-space: nowrap;
     pointer-events: none;
     z-index: 10;
+  }
+  /* Match DOI/arXiv button styles */
+  .copy-bib-btn {
+    border-color: var(--color-border);
+    background-color: transparent;
+    color: var(--color-text-base);
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .copy-bib-btn:hover {
+    background-color: rgba(var(--color-border), 0.1);
   }
 </style>
