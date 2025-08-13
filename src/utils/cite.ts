@@ -13,8 +13,7 @@ export type CiteMeta = {
 
 export function toBibTeX(meta: CiteMeta) {
   const key = meta.key || (meta.authors?.[0]?.name?.split(' ').slice(-1)[0] || 'key') +
-    (meta.year || new Date().getFullYear()) +
-    (meta.title?.split(/\s+/)[0] || 'paper');
+    (meta.year || new Date().getFullYear());
 
   const authors = meta.authors?.length
     ? meta.authors.map(a => a.name.replace(/,/g,'')).join(' and ') : undefined;
