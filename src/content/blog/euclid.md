@@ -1,6 +1,6 @@
 ---
 authors:
-  - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
+  - { name: "Martín", orcid: "0000-0001-8055-7949" }
 journal: "A&A"
 volume: "697"
 isPaper: true

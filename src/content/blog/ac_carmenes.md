@@ -1,6 +1,6 @@
 ---
 authors:
-  - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
+  - { name: "Mas-Buitrago", orcid: "0000-0001-8055-7949" }
 journal: "A&A"
 volume: "687"
 isPaper: true
@@ -17,6 +17,24 @@ tags:
   - Deep Learning
   - Low-mass
 description: Lead author of a journal article published in Astronomy & Astrophysics
+bibtex: |
+  @ARTICLE{2024A&A...687A.205M,
+        author = {{Mas-Buitrago}, P. and {Gonz{\'a}lez-Marcos}, A. and {Solano}, E. and {Passegger}, V.~M. and {Cort{\'e}s-Contreras}, M. and {Ordieres-Mer{\'e}}, J. and {Bello-Garc{\'\i}a}, A. and {Caballero}, J.~A. and {Schweitzer}, A. and {Tabernero}, H.~M. and {Montes}, D. and {Cifuentes}, C.},
+          title = "{Using autoencoders and deep transfer learning to determine the stellar parameters of 286 CARMENES M dwarfs}",
+        journal = {\aap},
+      keywords = {methods: data analysis, techniques: spectroscopic, stars: fundamental parameters, stars: late-type, stars: low-mass, Astrophysics - Solar and Stellar Astrophysics, Astrophysics - Earth and Planetary Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics, Computer Science - Machine Learning},
+          year = 2024,
+          month = jul,
+        volume = {687},
+            eid = {A205},
+          pages = {A205},
+            doi = {10.1051/0004-6361/202449865},
+  archivePrefix = {arXiv},
+        eprint = {2405.08703},
+  primaryClass = {astro-ph.SR},
+        adsurl = {https://ui.adsabs.harvard.edu/abs/2024A&A...687A.205M},
+        adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+  }
 ---
 
 In this work, published in Astronomy & Astrophysics, we develop an innovative deep transfer learning methodology to determine stellar parameters in M dwarfs from synthetic spectra. Using of deep autoencoder neural networks, combined with a fine-tuning transfer learning approach, we project the data into a new low-dimensional feature space in which no significant differences are observed between the synthetic and the real data, solving the main limitations of previous works.

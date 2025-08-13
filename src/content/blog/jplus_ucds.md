@@ -1,6 +1,6 @@
 ---
 authors:
-  - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
+  - { name: "Mas-Buitrago", orcid: "0000-0001-8055-7949" }
 journal: "A&A"
 volume: "666"
 isPaper: true
@@ -18,6 +18,24 @@ tags:
   - Machine Learning
   - Low-mass
 description: Lead author of a journal article published in Astronomy & Astrophysics
+bibtex: |
+  @ARTICLE{2022A&A...666A.147M,
+        author = {{Mas-Buitrago}, P. and {Solano}, E. and {Gonz{\'a}lez-Marcos}, A. and {Rodrigo}, C. and {Mart{\'\i}n}, E.~L. and {Caballero}, J.~A. and {Jim{\'e}nez-Esteban}, F. and {Cruz}, P. and {Ederoclite}, A. and {Ordieres-Mer{\'e}}, J. and {Bello-Garc{\'\i}a}, A. and {Dupke}, R.~A. and {Cenarro}, A.~J. and {Crist{\'o}bal-Hornillos}, D. and {Hern{\'a}ndez-Monteagudo}, C. and {L{\'o}pez-Sanjuan}, C. and {Mar{\'\i}n-Franch}, A. and {Moles}, M. and {Varela}, J. and {V{\'a}zquez Rami{\'o}}, H. and {Alcaniz}, J. and {Sodr{\'e}}, L. and {Angulo}, R.~E.},
+          title = "{J-PLUS: Discovery and characterisation of ultracool dwarfs using Virtual Observatory tools. II. Second data release and machine learning methodology}",
+        journal = {\aap},
+      keywords = {methods: data analysis, surveys, virtual observatory tools, stars: low-mass, brown dwarfs, Astrophysics - Solar and Stellar Astrophysics, Astrophysics - Astrophysics of Galaxies, Astrophysics - Instrumentation and Methods for Astrophysics},
+          year = 2022,
+          month = oct,
+        volume = {666},
+            eid = {A147},
+          pages = {A147},
+            doi = {10.1051/0004-6361/202243895},
+  archivePrefix = {arXiv},
+        eprint = {2208.09377},
+  primaryClass = {astro-ph.SR},
+        adsurl = {https://ui.adsabs.harvard.edu/abs/2022A&A...666A.147M},
+        adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
 ---
 
 In this work, published in Astronomy & Astrophysics, we use data from the J-PLUS archive to consolidate a search methodology for ultracool dwarfs in large multi-filter photometric surveys, which will be key for the identification of ultracool dwarfs in upcoming surveys such as J-PAS and Euclid. We also develop a Python algorithm capable of detecting excess in the J-PLUS filters corresponding to the Halpha and CaII H and K emission lines, revealing the potential of multi-filter photometric surveys to detect flaring M dwarfs.

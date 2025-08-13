@@ -1,6 +1,6 @@
 ---
 authors:
-  - { name: "Pedro Mas-Buitrago", orcid: "0000-0001-8055-7949" }
+  - { name: "Rodrigo", orcid: "0000-0001-8055-7949" }
 journal: "A&A"
 volume: "689"
 isPaper: true
@@ -17,6 +17,24 @@ tags:
   - Virtual Observatory
   - Machine Learning
 description: Contributing author of a journal article published in Astronomy & Astrophysics
+bibtex: |
+  @ARTICLE{2024A&A...689A..93R,
+        author = {{Rodrigo}, Carlos and {Cruz}, Patricia and {Aguilar}, John F. and {Aller}, Alba and {Solano}, Enrique and {G{\'a}lvez-Ortiz}, Maria Cruz and {Jim{\'e}nez-Esteban}, Francisco and {Mas-Buitrago}, Pedro and {Bayo}, Amelia and {Cort{\'e}s-Contreras}, Miriam and {Murillo-Ojeda}, Raquel and {Bonoli}, Silvia and {Cenarro}, Javier and {Dupke}, Renato and {L{\'o}pez-Sanjuan}, Carlos and {Mar{\'\i}n-Franch}, Antonio and {de Oliveira}, Claudia Mendes and {Moles}, Mariano and {Taylor}, Keith and {Varela}, Jes{\'u}s and {Rami{\'o}}, H{\'e}ctor V{\'a}zquez},
+          title = "{Photometric segregation of dwarf and giant FGK stars using the SVO Filter Profile Service and photometric tools}",
+        journal = {\aap},
+      keywords = {methods: data analysis, techniques: photometric, astronomical databases: miscellaneous, virtual observatory tools, stars: fundamental parameters, stars: late-type, Solar and Stellar Astrophysics, Astrophysics of Galaxies},
+          year = 2024,
+          month = sep,
+        volume = {689},
+            eid = {A93},
+          pages = {A93},
+            doi = {10.1051/0004-6361/202449998},
+  archivePrefix = {arXiv},
+        eprint = {2406.03310},
+  primaryClass = {astro-ph.SR},
+        adsurl = {https://ui.adsabs.harvard.edu/abs/2024A&A...689A..93R},
+        adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+  }
 ---
 
 In this work, published in Astronomy & Astrophysics, we present the power of the [Spanish Virtual Observatory](https://svo.cab.inta-csic.es/main/index.php) Filter Profile Service and associated photometric tools, and demonstrate their power to segregate FGK dwarf and giant stars using narrow-band photometry. Using machine-learning techniques such as the Gaussian mixture model and the support vector machine algorithms, we defined several criteria based on J-PAS colours to discriminate between dwarf and giant stars, selecting the five most promising colour-colour diagrams for this task and defining a criteria to maximise the separation.
