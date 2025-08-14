@@ -26,13 +26,12 @@ const {
   modDatetime,
   tags = [],
 
-  // Optional fields — add to your software collection schema if you plan to use them
-  repo,      // e.g. "https://github.com/username/repo"
-  docs,      // e.g. "https://yourproject.readthedocs.io/"
-  demo,      // e.g. live demo URL
-  pypi,      // e.g. "your-package-name"
-  npm,       // e.g. "@scope/your-package" or "your-package"
-  license,   // e.g. "MIT"
+  repo,
+  docs,
+  demo,
+  pypi,
+  npm,
+  license,
 } = project.data as any;
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
@@ -56,19 +55,38 @@ const layoutProps = {
 <Layout {...layoutProps}>
   <Header activeNav="software" />
 
+  <!-- Go back button -->
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
+    <button
+      class="focus-outline mb-2 mt-8 flex hover:opacity-75"
+      onclick="(() => (history.length === 1) ? window.location = '/' : history.back())()"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path>
+      </svg>
+      <span>Go back</span>
+    </button>
+  </div>
+
   <main id="main-content" class="mx-auto w-full max-w-3xl px-4 pb-12">
-    <h1 class="text-2xl font-semibold text-skin-accent">{title}</h1>
+    <h1 class="text-2xl font-semibold text-skin-accent" transition:name={slugifyStr(title)}>{title}</h1>
     <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} size="lg" className="my-2" />
 
-    <!-- Action links -->
+    <!-- Action links (top only) -->
     <div class="mt-3 mb-2 flex flex-wrap items-center gap-2">
       {repo && <a class="rounded border px-3 py-1" href={repo} target="_blank" rel="noopener">Repository</a>}
       {docs && <a class="rounded border px-3 py-1" href={docs} target="_blank" rel="noopener">Docs</a>}
       {demo && <a class="rounded border px-3 py-1" href={demo} target="_blank" rel="noopener">Demo</a>}
-      {pypi && <a class="rounded border px-3 py-1" href={`https://pypi.org/project/${pypi}/`} target="_blank" rel="noopener">PyPI</a>}
+      {pypi && (
+        <a
+          class="rounded border px-3 py-1"
+          href={pypi.startsWith('http') ? pypi : `https://pypi.org/project/${pypi}/`}
+          target="_blank"
+          rel="noopener"
+        >PyPI</a>
+      )}
       {npm && <a class="rounded border px-3 py-1" href={`https://www.npmjs.com/package/${npm}`} target="_blank" rel="noopener">npm</a>}
       {license && <span class="rounded border px-3 py-1">{license}</span>}
-      <ShareLinks />
     </div>
 
     <article id="article" class="prose mx-auto mt-6 max-w-3xl">
@@ -80,7 +98,106 @@ const layoutProps = {
         {tags.map((tag: string) => <Tag tag={slugifyStr(tag)} />)}
       </ul>
     )}
+
+    <!-- Share buttons at the end -->
+    <div class="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row-reverse sm:items-end sm:gap-4 mt-6">
+      <button id="back-to-top" class="focus-outline whitespace-nowrap py-1 hover:opacity-75 flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90">
+          <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path>
+        </svg>
+        <span>Back to Top</span>
+      </button>
+      <ShareLinks />
+    </div>
   </main>
 
   <Footer />
 </Layout>
+
+<script is:inline data-astro-rerun>
+  function createProgressBar() {
+    const existing = document.querySelector(".progress-container");
+    if (existing) return;
+    const progressContainer = document.createElement("div");
+    progressContainer.className = "progress-container fixed top-0 z-10 h-1 w-full bg-skin-fill";
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar h-1 w-0 bg-skin-accent";
+    progressBar.id = "myBar";
+    progressContainer.appendChild(progressBar);
+    document.body.appendChild(progressContainer);
+  }
+
+  function updateScrollProgress() {
+    const onScroll = () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      const myBar = document.getElementById("myBar");
+      if (myBar) myBar.style.width = scrolled + "%";
+    };
+    document.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  function addHeadingLinks() {
+    const headings = Array.from(document.querySelectorAll("#article h2, #article h3, #article h4, #article h5, #article h6"));
+    for (const heading of headings) {
+      if (!heading.id) continue;
+      heading.classList.add("group");
+      const link = document.createElement("a");
+      link.className = "heading-link ml-2 opacity-0 group-hover:opacity-100 focus:opacity-100";
+      link.href = "#" + heading.id;
+      const span = document.createElement("span");
+      span.ariaHidden = "true";
+      span.innerText = "#";
+      link.appendChild(span);
+      heading.appendChild(link);
+    }
+  }
+
+  function attachCopyButtons() {
+    const copyButtonLabel = "Copy";
+    const codeBlocks = Array.from(document.querySelectorAll("#article pre"));
+    for (const codeBlock of codeBlocks) {
+      if (codeBlock.querySelector(".copy-code")) continue;
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+      const copyButton = document.createElement("button");
+      copyButton.className = "copy-code absolute right-3 -top-3 rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
+      copyButton.innerHTML = copyButtonLabel;
+      codeBlock.setAttribute("tabindex", "0");
+      codeBlock.appendChild(copyButton);
+      codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+      copyButton.addEventListener("click", async () => {
+        const code = codeBlock.querySelector("code");
+        const text = code?.innerText ?? "";
+        await navigator.clipboard.writeText(text);
+        copyButton.innerText = "Copied";
+        setTimeout(() => (copyButton.innerText = copyButtonLabel), 700);
+      });
+    }
+  }
+
+  function backToTop() {
+    document.querySelector("#back-to-top")?.addEventListener("click", () => {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    });
+  }
+
+  createProgressBar();
+  updateScrollProgress();
+  addHeadingLinks();
+  attachCopyButtons();
+  backToTop();
+
+  document.addEventListener("astro:after-swap", () => {
+    window.scrollTo({ left: 0, top: 0, behavior: "instant" });
+    createProgressBar();
+    updateScrollProgress();
+    addHeadingLinks();
+    attachCopyButtons();
+    backToTop();
+  });
+</script>
