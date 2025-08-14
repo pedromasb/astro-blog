@@ -10,11 +10,11 @@ import type { CollectionEntry } from "astro:content";
 import { SITE } from "@config";
 
 export interface Props {
-  post: CollectionEntry<"software">;
-  posts: CollectionEntry<"software">[];
+  project: CollectionEntry<"software">;
 }
 
-const { post, posts } = Astro.props;
+const { project } = Astro.props;
+const { Content } = await project.render();
 
 const {
   title,
@@ -26,16 +26,14 @@ const {
   modDatetime,
   tags = [],
 
-  // Optional fields from frontmatter
+  // Optional fields — add to your software collection schema if you plan to use them
   repo,      // e.g. "https://github.com/username/repo"
   docs,      // e.g. "https://yourproject.readthedocs.io/"
   demo,      // e.g. live demo URL
   pypi,      // e.g. "your-package-name"
   npm,       // e.g. "@scope/your-package" or "your-package"
   license,   // e.g. "MIT"
-} = post.data as any;
-
-const { Content } = await post.render();
+} = project.data as any;
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
@@ -53,33 +51,16 @@ const layoutProps = {
   ogImage: ogUrl,
   scrollSmooth: true,
 };
-
-/* ========== Prev/Next Navigation ========== */
-const allPosts = posts.map(({ data: { title }, slug }) => ({ slug, title }));
-const currentPostIndex = allPosts.findIndex(a => a.slug === post.slug);
-const prevPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
-const nextPost =
-  currentPostIndex < allPosts.length - 1 ? allPosts[currentPostIndex + 1] : null;
 ---
 
 <Layout {...layoutProps}>
   <Header activeNav="software" />
 
-  <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
-    <button
-      class="focus-outline mb-2 mt-8 flex hover:opacity-75"
-      onclick="(() => (history.length === 1) ? window.location = '/' : history.back())()"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"/></svg>
-      <span>Go back</span>
-    </button>
-  </div>
-
-  <main id="main-content">
-    <h1 class="post-title">{title}</h1>
+  <main id="main-content" class="mx-auto w-full max-w-3xl px-4 pb-12">
+    <h1 class="text-2xl font-semibold text-skin-accent">{title}</h1>
     <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} size="lg" className="my-2" />
 
-    <!-- Action Links -->
+    <!-- Action links -->
     <div class="mt-3 mb-2 flex flex-wrap items-center gap-2">
       {repo && <a class="rounded border px-3 py-1" href={repo} target="_blank" rel="noopener">Repository</a>}
       {docs && <a class="rounded border px-3 py-1" href={docs} target="_blank" rel="noopener">Docs</a>}
@@ -90,35 +71,15 @@ const nextPost =
       <ShareLinks />
     </div>
 
-    <article id="article" class="prose mx-auto mt-8 max-w-3xl">
+    <article id="article" class="prose mx-auto mt-6 max-w-3xl">
       <Content />
     </article>
 
-    <ul class="my-8">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} />)}
-    </ul>
-
-    <!-- Prev/Next Nav -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      {prevPost && (
-        <a href={`/software/${prevPost.slug}`} class="flex w-full gap-1 hover:opacity-75">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>
-          <div>
-            <span>Previous</span>
-            <div class="text-sm text-skin-accent/85">{prevPost.title}</div>
-          </div>
-        </a>
-      )}
-      {nextPost && (
-        <a href={`/software/${nextPost.slug}`} class="flex w-full justify-end gap-1 text-right hover:opacity-75 sm:col-start-2">
-          <div>
-            <span>Next</span>
-            <div class="text-sm text-skin-accent/85">{nextPost.title}</div>
-          </div>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
-        </a>
-      )}
-    </div>
+    {tags?.length > 0 && (
+      <ul class="my-8">
+        {tags.map((tag: string) => <Tag tag={slugifyStr(tag)} />)}
+      </ul>
+    )}
   </main>
 
   <Footer />
