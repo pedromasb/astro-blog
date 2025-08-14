@@ -28,7 +28,7 @@ const byYear = papers.reduce((acc, p) => {
   <Header activeNav="publications" />
 
   <main class="mx-auto w-full max-w-3xl px-4 pb-12">
-    <h1 class="text-3xl mt-5 font-semibold text-skin-accent">Publications</h1>
+    <h1 class="text-2xl mt-5 tracking-wider sm:text-3xl">Publications</h1>
     <p class="mt-2 opacity-80">Peer‑reviewed papers and preprints from my research. Click a title for the full post.</p>
 
     {Object.keys(byYear).sort((a,b) => Number(b) - Number(a)).map((y) => (
