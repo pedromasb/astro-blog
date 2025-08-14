@@ -122,7 +122,7 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
             <path d="M15 6l-6 6l6 6" />
           </svg>
           <div>
-            <span>Previous</span>
+            <span>Previous Software</span>
             <div class="text-sm text-skin-accent/85">{prevItem.title}</div>
           </div>
         </a>
@@ -130,7 +130,7 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
       {nextItem && (
         <a href={`/software/${nextItem.slug}`} class="flex w-full justify-end gap-1 text-right hover:opacity-75 sm:col-start-2">
           <div>
-            <span>Next</span>
+            <span>Next Software</span>
             <div class="text-sm text-skin-accent/85">{nextItem.title}</div>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
