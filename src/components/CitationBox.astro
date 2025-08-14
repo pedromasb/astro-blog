@@ -39,7 +39,7 @@ const bib = bibtexOverride ?? toBibTeX({
     {arxiv && <a class="rounded border px-3 py-1" href={`https://arxiv.org/abs/${arxiv}`} rel="noopener" target="_blank">arXiv</a>}
     
     <!-- Copy BibTeX with tooltip -->
-    <button type="button" class="copy-bib-btn rounded border px-3 py-1 text-sm relative group">
+    <button type="button" class="copy-bib-btn rounded border px-3 py-1 text-sm text-gray-600 dark:text-gray-100 border-gray-600 dark:border-gray-100 relative group">
       Copy BibTeX
       <span class="tooltip-text absolute left-1/2 -translate-x-1/2 top-full mt-1 px-2 py-1 text-xs rounded bg-gray-800 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         Copy citation in BibTeX format

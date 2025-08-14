@@ -7,6 +7,7 @@ import Datetime from "@components/Datetime";
 import ShareLinks from "@components/ShareLinks.astro";
 import { slugifyStr } from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 import { SITE } from "@config";
 
 export interface Props {
@@ -25,7 +26,6 @@ const {
   pubDatetime,
   modDatetime,
   tags = [],
-
   repo,
   docs,
   demo,
@@ -50,6 +50,20 @@ const layoutProps = {
   ogImage: ogUrl,
   scrollSmooth: true,
 };
+
+/** ========= Prev / Next (sorted by pubDatetime desc) ========= */
+const all = await getCollection("software", ({ data }) => !data.draft);
+const sorted = all
+  .map(p => ({
+    slug: p.slug,
+    title: p.data.title,
+    date: p.data.pubDatetime instanceof Date ? p.data.pubDatetime.getTime() : new Date(p.data.pubDatetime).getTime(),
+  }))
+  .sort((a, b) => b.date - a.date);
+
+const currentIndex = sorted.findIndex(p => p.slug === project.slug);
+const prevItem = currentIndex > 0 ? sorted[currentIndex - 1] : null;
+const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
 ---
 
 <Layout {...layoutProps}>
@@ -72,7 +86,7 @@ const layoutProps = {
     <h1 class="text-2xl font-semibold text-skin-accent" transition:name={slugifyStr(title)}>{title}</h1>
     <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} size="lg" className="my-2" />
 
-    <!-- Action links (top only) -->
+    <!-- Action links (top) -->
     <div class="mt-3 mb-2 flex flex-wrap items-center gap-2">
       {repo && <a class="rounded border px-3 py-1" href={repo} target="_blank" rel="noopener">Repository</a>}
       {docs && <a class="rounded border px-3 py-1" href={docs} target="_blank" rel="noopener">Docs</a>}
@@ -80,7 +94,7 @@ const layoutProps = {
       {pypi && (
         <a
           class="rounded border px-3 py-1"
-          href={pypi.startsWith('http') ? pypi : `https://pypi.org/project/${pypi}/`}
+          href={pypi.startsWith?.('http') ? pypi : `https://pypi.org/project/${pypi}/`}
           target="_blank"
           rel="noopener"
         >PyPI</a>
@@ -99,7 +113,35 @@ const layoutProps = {
       </ul>
     )}
 
-    <!-- Share buttons at the end -->
+    <!-- Prev / Next -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mt-6">
+      {prevItem && (
+        <a href={`/software/${prevItem.slug}`} class="flex w-full gap-1 hover:opacity-75">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M15 6l-6 6l6 6" />
+          </svg>
+          <div>
+            <span>Previous</span>
+            <div class="text-sm text-skin-accent/85">{prevItem.title}</div>
+          </div>
+        </a>
+      )}
+      {nextItem && (
+        <a href={`/software/${nextItem.slug}`} class="flex w-full justify-end gap-1 text-right hover:opacity-75 sm:col-start-2">
+          <div>
+            <span>Next</span>
+            <div class="text-sm text-skin-accent/85">{nextItem.title}</div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M9 6l6 6l-6 6" />
+          </svg>
+        </a>
+      )}
+    </div>
+
+    <!-- Share at the end + Back to Top -->
     <div class="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row-reverse sm:items-end sm:gap-4 mt-6">
       <button id="back-to-top" class="focus-outline whitespace-nowrap py-1 hover:opacity-75 flex items-center gap-1">
         <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90">
@@ -115,6 +157,7 @@ const layoutProps = {
 </Layout>
 
 <script is:inline data-astro-rerun>
+  /* Progress bar */
   function createProgressBar() {
     const existing = document.querySelector(".progress-container");
     if (existing) return;
@@ -126,7 +169,6 @@ const layoutProps = {
     progressContainer.appendChild(progressBar);
     document.body.appendChild(progressContainer);
   }
-
   function updateScrollProgress() {
     const onScroll = () => {
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
@@ -139,6 +181,7 @@ const layoutProps = {
     onScroll();
   }
 
+  /* Heading anchors */
   function addHeadingLinks() {
     const headings = Array.from(document.querySelectorAll("#article h2, #article h3, #article h4, #article h5, #article h6"));
     for (const heading of headings) {
@@ -155,6 +198,7 @@ const layoutProps = {
     }
   }
 
+  /* Copy buttons on code blocks */
   function attachCopyButtons() {
     const copyButtonLabel = "Copy";
     const codeBlocks = Array.from(document.querySelectorAll("#article pre"));
@@ -179,6 +223,7 @@ const layoutProps = {
     }
   }
 
+  /* Back to top */
   function backToTop() {
     document.querySelector("#back-to-top")?.addEventListener("click", () => {
       document.body.scrollTop = 0;
@@ -186,12 +231,14 @@ const layoutProps = {
     });
   }
 
+  // Init
   createProgressBar();
   updateScrollProgress();
   addHeadingLinks();
   attachCopyButtons();
   backToTop();
 
+  // Re-init after transitions
   document.addEventListener("astro:after-swap", () => {
     window.scrollTo({ left: 0, top: 0, behavior: "instant" });
     createProgressBar();
