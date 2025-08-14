@@ -88,9 +88,9 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
 
     <!-- Action links (top) -->
     <div class="mt-3 mb-2 flex flex-wrap items-center gap-2">
-      {repo && <a class="rounded border px-3 py-1" href={repo} target="_blank" rel="noopener">Repository</a>}
-      {docs && <a class="rounded border px-3 py-1" href={docs} target="_blank" rel="noopener">Docs</a>}
-      {demo && <a class="rounded border px-3 py-1" href={demo} target="_blank" rel="noopener">Demo</a>}
+      {repo && <a class="rounded border border-gray-600 dark:border-gray-100 px-3 py-1" href={repo} target="_blank" rel="noopener">Repository</a>}
+      {docs && <a class="rounded border border-gray-600 dark:border-gray-100 px-3 py-1" href={docs} target="_blank" rel="noopener">Docs</a>}
+      {demo && <a class="rounded border border-gray-600 dark:border-gray-100 px-3 py-1" href={demo} target="_blank" rel="noopener">Demo</a>}
       {pypi && (
         <a
           class="rounded border px-3 py-1"
