@@ -49,12 +49,12 @@ const byYear = papers.reduce((acc, p) => {
               </div>
               <div class="mt-1 flex flex-wrap gap-2 text-xs">
                 {data.doi && (
-                  <a class="rounded border border-gray-600 dark:border-gray-100 px-2 py-0.5 hover:opacity-80" target="_blank" rel="noopener" href={`https://doi.org/${data.doi}`}>DOI</a>
+                  <a class="paper-btn rounded border border-gray-600 dark:border-gray-100 px-2 py-0.5" target="_blank" rel="noopener" href={`https://doi.org/${data.doi}`}>DOI</a>
                 )}
                 {data.arxiv && (
-                  <a class="rounded border border-gray-600 dark:border-gray-100 px-2 py-0.5 hover:opacity-80" target="_blank" rel="noopener" href={`https://arxiv.org/abs/${data.arxiv}`}>arXiv</a>
+                  <a class="paper-btn rounded border border-gray-600 dark:border-gray-100 px-2 py-0.5" target="_blank" rel="noopener" href={`https://arxiv.org/abs/${data.arxiv}`}>arXiv</a>
                 )}
-                <a class="rounded border border-gray-600 dark:border-gray-100 px-2 py-0.5 hover:opacity-80" href={`/posts/${slug}/#article`}>Full post</a>
+                <a class="paper-btn rounded border border-gray-600 dark:border-gray-100 px-2 py-0.5" href={`/posts/${slug}/#article`}>Full post</a>
               </div>
             </li>
           ))}
@@ -65,3 +65,22 @@ const byYear = papers.reduce((acc, p) => {
 
   <Footer />
 </Layout>
+
+<style>
+  .paper-btn {
+    transition: all 0.2s ease;
+    transform: scale(1);
+  }
+  html[data-theme="light"] .paper-btn:hover {
+    background-color: rgb(var(--color-accent));
+    color: white;
+    border-color: rgb(var(--color-accent));
+    transform: scale(1.05);
+  }
+  html[data-theme="dark"] .paper-btn:hover {
+    background-color: rgb(var(--color-accent));
+    color: black;
+    border-color: rgb(var(--color-accent));
+    transform: scale(1.05);
+  }
+</style>
