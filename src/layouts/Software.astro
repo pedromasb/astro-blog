@@ -19,7 +19,7 @@ const { page } = Astro.props;
 <Layout title={`Software | ${SITE.title}`}>
   <Header activeNav="software" />
   <main class="mx-auto w-full max-w-3xl px-4 pb-12">
-    <h1 class="text-3xl mt-5 font-semibold text-skin-accent">Software</h1>
+    <h1 class="text-3xl mt-5 font-semibold">Software</h1>
     <p class="mt-2 opacity-80"> My software developments.</p>
     <ul>
       {page.data.map(({ data, slug }) => (
