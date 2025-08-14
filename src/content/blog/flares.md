@@ -9,7 +9,7 @@ arxiv: "2503.22525"
 
 pubDatetime: 2025-03-15T00:00:00
 title: Ca II and Hα flaring M dwarfs detected with multi-filter photometry
-slug: falres-mdwarfs
+slug: flares-mdwarfs
 featured: true
 draft: false
 tags:
