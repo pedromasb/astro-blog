@@ -1,0 +1,86 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Tag from "@components/Tag.astro";
+import Datetime from "@components/Datetime";
+import ShareLinks from "@components/ShareLinks.astro";
+import { slugifyStr } from "@utils/slugify";
+import type { CollectionEntry } from "astro:content";
+import { SITE } from "@config";
+
+export interface Props {
+  project: CollectionEntry<"software">;
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+
+const {
+  title,
+  author,
+  description,
+  ogImage,
+  canonicalURL,
+  pubDatetime,
+  modDatetime,
+  tags = [],
+
+  // Optional fields — add to your software collection schema if you plan to use them
+  repo,      // e.g. "https://github.com/username/repo"
+  docs,      // e.g. "https://yourproject.readthedocs.io/"
+  demo,      // e.g. live demo URL
+  pypi,      // e.g. "your-package-name"
+  npm,       // e.g. "@scope/your-package" or "your-package"
+  license,   // e.g. "MIT"
+} = project.data as any;
+
+const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
+const ogUrl = new URL(
+  ogImageUrl ?? `/software/${slugifyStr(title)}.png`,
+  Astro.url.origin
+).href;
+
+const layoutProps = {
+  title: `${title} | ${SITE.title}`,
+  author,
+  description,
+  pubDatetime,
+  modDatetime,
+  canonicalURL,
+  ogImage: ogUrl,
+  scrollSmooth: true,
+};
+---
+
+<Layout {...layoutProps}>
+  <Header activeNav="software" />
+
+  <main id="main-content" class="mx-auto w-full max-w-3xl px-4 pb-12">
+    <h1 class="text-2xl font-semibold text-skin-accent">{title}</h1>
+    <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} size="lg" className="my-2" />
+
+    <!-- Action links -->
+    <div class="mt-3 mb-2 flex flex-wrap items-center gap-2">
+      {repo && <a class="rounded border px-3 py-1" href={repo} target="_blank" rel="noopener">Repository</a>}
+      {docs && <a class="rounded border px-3 py-1" href={docs} target="_blank" rel="noopener">Docs</a>}
+      {demo && <a class="rounded border px-3 py-1" href={demo} target="_blank" rel="noopener">Demo</a>}
+      {pypi && <a class="rounded border px-3 py-1" href={`https://pypi.org/project/${pypi}/`} target="_blank" rel="noopener">PyPI</a>}
+      {npm && <a class="rounded border px-3 py-1" href={`https://www.npmjs.com/package/${npm}`} target="_blank" rel="noopener">npm</a>}
+      {license && <span class="rounded border px-3 py-1">{license}</span>}
+      <ShareLinks />
+    </div>
+
+    <article id="article" class="prose mx-auto mt-6 max-w-3xl">
+      <Content />
+    </article>
+
+    {tags?.length > 0 && (
+      <ul class="my-8">
+        {tags.map((tag: string) => <Tag tag={slugifyStr(tag)} />)}
+      </ul>
+    )}
+  </main>
+
+  <Footer />
+</Layout>

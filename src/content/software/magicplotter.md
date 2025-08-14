@@ -8,6 +8,9 @@ draft: false
 tags:
   - Data Visualization
 description: Streamlit web application
+repo: "https://github.com/pedromasb/magicplotter"
+demo: "https://magicplotter.streamlit.app/"
+
 ---
 
 MagicPlotter is a Streamlit web appplication that allows the user to create and share interactive visualizations in record time and without writing any code. It is the culmination of a research process focused on developing new ways to enhance the use of interactive visualizations within the research community, sometimes adding great value to the presentation of results.

@@ -1,0 +1,15 @@
+---
+import { SITE } from "@config";
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import SoftwareLayout from "@layouts/Software.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const projects = await getCollection("software", ({ data }) => !data.draft);
+  return paginate(projects, { pageSize: SITE.postPerPage });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<SoftwareLayout {page} />
