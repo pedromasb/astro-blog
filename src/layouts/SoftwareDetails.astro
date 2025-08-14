@@ -156,6 +156,25 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
   <Footer />
 </Layout>
 
+<style>
+  .paper-btn {
+    transition: all 0.2s ease;
+    transform: scale(1);
+  }
+  html[data-theme="light"] .paper-btn:hover {
+    background-color: rgb(var(--color-accent));
+    color: white;
+    border-color: rgb(var(--color-accent));
+    transform: scale(1.05);
+  }
+  html[data-theme="dark"] .paper-btn:hover {
+    background-color: rgb(var(--color-accent));
+    color: black;
+    border-color: rgb(var(--color-accent));
+    transform: scale(1.05);
+  }
+</style>
+
 <script is:inline data-astro-rerun>
   /* Progress bar */
   function createProgressBar() {
