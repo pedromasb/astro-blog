@@ -16,7 +16,9 @@ export default function ThesisAsk() {
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({ query: q }),
       });
-      const data = await r.json();
+      const ct = r.headers.get("content-type") || "";
+      const raw = await r.text();
+      const data = ct.includes("application/json") ? JSON.parse(raw) : { error: raw };
       if (!r.ok) throw new Error(data.error || r.statusText);
       setA(data.answer);
       setSources(data.sources || []);

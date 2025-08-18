@@ -4,43 +4,45 @@ import { Pinecone } from "@pinecone-database/pinecone";
 import OpenAI from "openai";
 import { InferenceClient } from "@huggingface/inference";
 
-// ---- config from env ----
-const PINECONE_API_KEY = import.meta.env.PINECONE_API_KEY!;
-const PINECONE_INDEX = import.meta.env.PINECONE_INDEX || "thesis-chat";
-const PINECONE_NAMESPACE = import.meta.env.PINECONE_NAMESPACE || "ch_in_emb"; // or "v1"
-const HF_TOKEN = import.meta.env.HF_TOKEN!; // Hugging Face Inference token
-const OPENAI_API_KEY = import.meta.env.OPENAI_API_KEY!;
+// --- Lazy singletons (initialized on first call only)
+let _pc: Pinecone | null = null;
+let _openai: OpenAI | null = null;
+let _hf: InferenceClient | null = null;
 
-// ---- init clients ----
-const pc = new Pinecone({ apiKey: PINECONE_API_KEY });
-const index = pc.Index(PINECONE_INDEX);
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
-const hf = new InferenceClient(import.meta.env.HF_TOKEN!);
+function requireEnv(name: string): string {
+  const v = (import.meta as any).env?.[name];
+  if (!v) throw new Error(`Missing env var: ${name}`);
+  return v;
+}
 
+function getClients() {
+  // Validate env inside the handler so errors are caught and serialized to JSON
+  const PINECONE_API_KEY = requireEnv("PINECONE_API_KEY");
+  const OPENAI_API_KEY = requireEnv("OPENAI_API_KEY");
+  const HF_TOKEN = requireEnv("HF_TOKEN");
 
-// Embeddings for a single query (all-mpnet-base-v2, 768-d)
-async function embedQueryHF(query: string): Promise<number[]> {
-  if (!HF_TOKEN) {
-    throw new Error("HF_TOKEN is not set in env");
-  }
+  if (!_pc) _pc = new Pinecone({ apiKey: PINECONE_API_KEY });
+  if (!_openai) _openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+  if (!_hf) _hf = new InferenceClient(HF_TOKEN);
+  return { pc: _pc!, openai: _openai!, hf: _hf! };
+}
 
-  // Hits the correct feature-extraction task (no manual URL juggling)
+const PINECONE_INDEX = (import.meta as any).env?.PINECONE_INDEX || "thesis-chat";
+const PINECONE_NAMESPACE = (import.meta as any).env?.PINECONE_NAMESPACE || "ch_in_emb"; // or "v1"
+
+// Embeddings with HF feature-extraction (SDK picks correct endpoint)
+async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
   const out = await hf.featureExtraction({
     model: "sentence-transformers/all-mpnet-base-v2",
     inputs: query,
-    // these are honored by sentence-transformers backends; ignored if unsupported
     pooling: "mean",
     normalize: true,
     wait_for_model: true,
   });
-
-  // SDK returns number[] or number[][] depending on batching → normalize:
   const vec = Array.isArray((out as number[] | number[][])[0])
     ? (out as number[][])[0]
     : (out as number[]);
-  if (!Array.isArray(vec) || vec.length === 0) {
-    throw new Error("HF returned empty embedding");
-  }
+  if (!Array.isArray(vec) || vec.length === 0) throw new Error("HF returned empty embedding");
   return vec;
 }
 
@@ -59,39 +61,35 @@ function trim(s = "", max = 1100) {
 }
 
 function buildPrompt(question: string, contexts: { text: string; meta: any }[]) {
-  const numbered = contexts.map((c, i) => {
-    const header = asPath(c.meta);
-    return `[[${i + 1}]] ${header}\n${trim(c.text)}`;
-  });
-  const ctx = numbered.join("\n\n---\n\n");
-
+  const numbered = contexts.map((c, i) => `[[${i + 1}]] ${asPath(c.meta)}\n${trim(c.text)}`).join("\n\n---\n\n");
   const system =
     "You are a careful, factual assistant. Answer using ONLY the provided context blocks; do not invent information. " +
     "Explain clearly (not overly terse). Cite the blocks you used by bracket number like [1], [2]. " +
     "If the answer is not contained in the context, say you don't know.";
-  const user = `Question: ${question}\n\nContext:\n${ctx}\n\n`;
-
+  const user = `Question: ${question}\n\nContext:\n${numbered}\n\n`;
   return { system, user };
 }
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const { query } = await request.json();
+    const body = await request.json().catch(() => ({}));
+    const query = body?.query;
     if (!query || typeof query !== "string") {
-      return new Response(JSON.stringify({ error: "Missing 'query' string" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Missing 'query' string" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
-    // 1) embed query
-    const qvec = await embedQueryHF(query);
+    const { pc, openai, hf } = getClients();
+    const index = pc.Index(PINECONE_INDEX);
 
-    // 2) vector search (grab plenty; we‘ll keep top 6–8)
-    const res = await index
-      .namespace(PINECONE_NAMESPACE) // ✅ scope the namespace here
-      .query({
-        vector: qvec,
-        topK: 50,
-        includeMetadata: true,
-      });
+    // 1) embed
+    const qvec = await embedQueryHF(hf, query);
+
+    // 2) vector search (namespace via chaining for SDKs that require it)
+    const res = await index.namespace(PINECONE_NAMESPACE).query({
+      vector: qvec,
+      topK: 50,
+      includeMetadata: true,
+    });
 
     const matches = (res.matches || []).map((m: any) => ({
       text: m.metadata?.text || "",
@@ -100,27 +98,32 @@ export const POST: APIRoute = async ({ request }) => {
       id: m.id,
     }));
 
-    // (Optional) rerank with Cohere here if you want; otherwise, just take top-N
-    const topK = 8;
-    const top = matches.slice(0, topK);
+    const top = matches.slice(0, 8);
 
-    // 3) build prompt
+    // 3) prompt
     const { system, user } = buildPrompt(query, top);
 
-    // 4) call OpenAI (use gpt-4o-mini for speed/cost)
+    // 4) LLM
     const completion = await openai.chat.completions.create({
-      model: "gpt-5-mini",
+      model: "gpt-4o-mini",           // valid model
+      temperature: 0.3,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
       ],
     });
 
-    const answer = completion.choices[0]?.message?.content ?? "No answer.";
+    const answer = completion.choices?.[0]?.message?.content ?? "No answer.";
+
     return new Response(JSON.stringify({ answer, sources: top }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: String(err?.message || err) }), { status: 500 });
+    // ALWAYS return JSON on error
+    const msg = typeof err?.message === "string" ? err.message : String(err);
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };
