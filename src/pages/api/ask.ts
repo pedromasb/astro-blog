@@ -17,7 +17,6 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 // Embeddings for a single query using HF Inference (feature-extraction)
 async function embedQueryHF(query: string): Promise<number[]> {
-  const HF_TOKEN = import.meta.env.HF_TOKEN;
   if (!HF_TOKEN) throw new Error("HF_TOKEN is not set in env");
 
   // Primary: explicit feature-extraction endpoint (returns embeddings)
