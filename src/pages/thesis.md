@@ -3,9 +3,7 @@ layout: ../layouts/ThesisLayout.astro
 title: Doctoral Thesis
 ---
 
-# Doctoral Thesis
-
-<div class="rounded-2xl border border-skin-line/50 bg-skin-card px-5 py-5 sm:px-6 sm:py-6 shadow-sm">
+<div class="rounded-2xl border border-skin-line/50 bg-skin-card px-5 pt-3 pb-5 sm:px-6 sm:pt-4 sm:pb-6 shadow-sm">
   <h2 class="text-xl sm:text-2xl font-semibold mb-3">Title</h2>
   <p class="text-lg sm:text-xl italic">
     Virtual Observatory and machine learning for the study of low-mass objects in photometric and spectroscopic surveys
