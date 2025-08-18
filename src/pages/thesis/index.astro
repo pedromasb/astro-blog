@@ -1,0 +1,45 @@
+---
+import ThesisLayout from "../../layouts/ThesisLayout.astro";
+import ThesisAsk from "../../components/ThesisAsk.tsx"; // React island
+---
+
+<ThesisLayout title="Doctoral Thesis" description="Summary and abstract of my PhD thesis.">
+  <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Doctoral Thesis</h1>
+
+  <div class="rounded-2xl border border-skin-line/50 bg-skin-card px-5 pt-3 pb-5 sm:px-6 sm:pt-4 sm:pb-6 shadow-sm">
+    <h2 class="text-xl sm:text-2xl font-semibold mb-3">🎓 Title</h2>
+    <p class="text-lg sm:text-xl italic">
+      Virtual Observatory and machine learning for the study of low-mass objects in photometric and spectroscopic surveys
+    </p>
+
+    <div class="my-5 h-px bg-skin-line/60"></div>
+
+    <h3 class="text-lg font-semibold mb-2">👨‍🏫 Supervisors</h3>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Dr. Enrique Solano Márquez</li>
+      <li>Dra. Ana González Marcos</li>
+    </ul>
+
+    <div class="my-5 h-px bg-skin-line/60"></div>
+
+    <h3 class="text-lg font-semibold mb-2">🏛 Institution & University</h3>
+    <p><span class="font-medium">Research Institution:</span> Centro de Astrobiología (CAB), INTA-CSIC</p>
+    <p><span class="font-medium">University:</span> Universidad Complutense de Madrid</p>
+  </div>
+
+  <hr class="my-8" />
+
+  <h2 class="text-2xl font-semibold mb-3">📄 Abstract</h2>
+  <p class="whitespace-pre-wrap leading-relaxed">
+    <!-- paste full abstract here -->
+  </p>
+
+  <hr class="my-8" />
+
+  <h2 class="text-2xl font-semibold mb-3">💬 Talk with my thesis</h2>
+  <p class="text-sm text-skin-muted mb-4">
+    Ask a question about the thesis; results include bracketed citations to the most relevant sections.
+  </p>
+  <!-- Hydrate the interactive Q&A widget -->
+  <ThesisAsk client:load />
+</ThesisLayout>
