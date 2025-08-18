@@ -3,11 +3,13 @@ import type { APIRoute } from "astro";
 import { Pinecone } from "@pinecone-database/pinecone";
 import OpenAI from "openai";
 import { InferenceClient } from "@huggingface/inference";
+import { CohereClient } from "cohere-ai";
 
 // --- Lazy singletons (initialized on first call only)
 let _pc: Pinecone | null = null;
 let _openai: OpenAI | null = null;
 let _hf: InferenceClient | null = null;
+let _cohere: CohereClient | null = null;
 
 function requireEnv(name: string): string {
   const v = (import.meta as any).env?.[name];
@@ -20,11 +22,14 @@ function getClients() {
   const PINECONE_API_KEY = requireEnv("PINECONE_API_KEY");
   const OPENAI_API_KEY = requireEnv("OPENAI_API_KEY");
   const HF_TOKEN = requireEnv("HF_TOKEN");
+  const COHERE_API_KEY   = (import.meta as any).env?.COHERE_API_KEY; // optional
 
   if (!_pc) _pc = new Pinecone({ apiKey: PINECONE_API_KEY });
   if (!_openai) _openai = new OpenAI({ apiKey: OPENAI_API_KEY });
   if (!_hf) _hf = new InferenceClient(HF_TOKEN);
-  return { pc: _pc!, openai: _openai!, hf: _hf! };
+  if (!_cohere && COHERE_API_KEY) _cohere = new CohereClient({ token: COHERE_API_KEY });
+
+  return { pc: _pc!, openai: _openai!, hf: _hf!, cohere: _cohere};
 }
 
 const PINECONE_INDEX = (import.meta as any).env?.PINECONE_INDEX || "thesis-chat";
@@ -70,6 +75,40 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
   return { system, user };
 }
 
+type Match = { id: string; text: string; meta: any; score: number };
+
+async function rerankWithCohere(query: string, matches: Match[], cohere?: CohereClient, keep = 8) {
+  if (!cohere || matches.length === 0) return matches.slice(0, keep);
+
+  // Prepare docs for Cohere
+  const documents = matches.map((m, i) => ({
+    id: String(i),            // we’ll map back by this
+    text: m.text || "",
+  }));
+
+  // Choose model: english or multilingual
+  const model = "rerank-english-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
+
+  const rr = await cohere.rerank({
+    model,
+    query,
+    documents,
+    topN: Math.min(keep, documents.length),
+  });
+
+  // Reorder matches by Cohere’s result indices
+  const order = rr.results
+    .sort((a, b) => (b.relevanceScore ?? 0) - (a.relevanceScore ?? 0))
+    .map(r => Number(r.index));
+
+  const re = order.map(i => ({
+    ...matches[i],
+    rerankScore: rr.results.find(r => Number(r.index) === i)?.relevanceScore ?? null,
+  }));
+
+  return re;
+}
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json().catch(() => ({}));
@@ -92,13 +131,22 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     const matches = (res.matches || []).map((m: any) => ({
+      id: m.id,
       text: m.metadata?.text || "",
       meta: m.metadata || {},
-      score: m.score,
-      id: m.id,
+      score: m.score, // vector sim score (pre-rerank)
     }));
 
-    const top = matches.slice(0, 8);
+    const topK = 8;
+    const { cohere } = getClients();
+    let top: Match[];
+
+    try {
+      top = await rerankWithCohere(query, matches, cohere ?? undefined, topK);
+    } catch (e) {
+      // Fail open: if rerank errors, fall back to vector order
+      top = matches.slice(0, topK);
+    }
 
     // 3) prompt
     const { system, user } = buildPrompt(query, top);
