@@ -1,5 +1,5 @@
 ---
-layout: ../../layouts/ThesisLayout.astro
+layout: ../layouts/ThesisLayout.astro
 title: Doctoral Thesis
 ---
 
