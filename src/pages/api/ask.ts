@@ -2,6 +2,7 @@
 import type { APIRoute } from "astro";
 import { Pinecone } from "@pinecone-database/pinecone";
 import OpenAI from "openai";
+import { InferenceClient } from "@huggingface/inference";
 
 // ---- config from env ----
 const PINECONE_API_KEY = import.meta.env.PINECONE_API_KEY!;
@@ -14,54 +15,35 @@ const OPENAI_API_KEY = import.meta.env.OPENAI_API_KEY!;
 const pc = new Pinecone({ apiKey: PINECONE_API_KEY });
 const index = pc.Index(PINECONE_INDEX);
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+const hf = new InferenceClient(import.meta.env.HF_TOKEN!);
 
-// Embeddings for a single query using HF Inference (feature-extraction)
+
+// Embeddings for a single query (all-mpnet-base-v2, 768-d)
 async function embedQueryHF(query: string): Promise<number[]> {
-  if (!HF_TOKEN) throw new Error("HF_TOKEN is not set in env");
+  if (!import.meta.env.HF_TOKEN) {
+    throw new Error("HF_TOKEN is not set in env");
+  }
 
-  // ✅ Correct endpoint (no "pipeline/" prefix)
-  const urlFE =
-    "https://api-inference.huggingface.co/feature-extraction/sentence-transformers/all-mpnet-base-v2";
-
-  const payload = { inputs: query, options: { wait_for_model: true } };
-
-  let resp = await fetch(urlFE, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${HF_TOKEN}`,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(payload),
+  // Hits the correct feature-extraction task (no manual URL juggling)
+  const out = await hf.featureExtraction({
+    model: "sentence-transformers/all-mpnet-base-v2",
+    inputs: query,
+    // these are honored by sentence-transformers backends; ignored if unsupported
+    pooling: "mean",
+    normalize: true,
+    wait_for_model: true,
   });
 
-  // Retry if the model is warming up
-  for (let attempt = 0; resp.status === 503 && attempt < 2; attempt++) {
-    await new Promise((r) => setTimeout(r, 1200));
-    resp = await fetch(urlFE, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${HF_TOKEN}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-  }
-
-  if (!resp.ok) {
-    const text = await resp.text().catch(() => "");
-    throw new Error(`HF error ${resp.status}: ${text || "Unknown error"}`);
-  }
-
-  const data = await resp.json();
-  // HF may return [768] or [[768]] depending on batching
-  const vec = Array.isArray(data[0]) ? data[0] : data;
+  // SDK returns number[] or number[][] depending on batching → normalize:
+  const vec = Array.isArray((out as number[] | number[][])[0])
+    ? (out as number[][])[0]
+    : (out as number[]);
   if (!Array.isArray(vec) || vec.length === 0) {
     throw new Error("HF returned empty embedding");
   }
-  return vec as number[];
+  return vec;
 }
+
 function asPath(md: any) {
   const parts = [
     md?.chapter_key && `Ch.${md.chapter_key}: ${md.chapter || ""}`,
