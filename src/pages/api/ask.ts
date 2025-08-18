@@ -19,16 +19,12 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 async function embedQueryHF(query: string): Promise<number[]> {
   if (!HF_TOKEN) throw new Error("HF_TOKEN is not set in env");
 
-  // Primary: explicit feature-extraction endpoint (returns embeddings)
+  // ✅ Correct endpoint (no "pipeline/" prefix)
   const urlFE =
-    "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-mpnet-base-v2";
+    "https://api-inference.huggingface.co/feature-extraction/sentence-transformers/all-mpnet-base-v2";
 
-  const payload = {
-    inputs: query,
-    options: { wait_for_model: true },
-  };
+  const payload = { inputs: query, options: { wait_for_model: true } };
 
-  // Try feature-extraction route first
   let resp = await fetch(urlFE, {
     method: "POST",
     headers: {
@@ -39,7 +35,7 @@ async function embedQueryHF(query: string): Promise<number[]> {
     body: JSON.stringify(payload),
   });
 
-  // If the model is warming up, retry briefly
+  // Retry if the model is warming up
   for (let attempt = 0; resp.status === 503 && attempt < 2; attempt++) {
     await new Promise((r) => setTimeout(r, 1200));
     resp = await fetch(urlFE, {
@@ -54,48 +50,18 @@ async function embedQueryHF(query: string): Promise<number[]> {
   }
 
   if (!resp.ok) {
-    // Fallback: models endpoint with parameters that most backends accept for embeddings
-    const urlModels =
-      "https://api-inference.huggingface.co/models/sentence-transformers/all-mpnet-base-v2";
-    const resp2 = await fetch(urlModels, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${HF_TOKEN}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        inputs: query,
-        options: { wait_for_model: true },
-        // some backends honor these for embeddings; harmless if ignored
-        parameters: { pooling: "mean", normalize: true },
-      }),
-    });
-
-    if (!resp2.ok) {
-      const t1 = await resp.text().catch(() => "");
-      const t2 = await resp2.text().catch(() => "");
-      throw new Error(
-        `HF error (feature-extraction: ${resp.status} -> ${t1}) and (models: ${resp2.status} -> ${t2})`
-      );
-    }
-
-    const data2 = await resp2.json();
-    const vec2 = Array.isArray(data2[0]) ? data2[0] : data2;
-    if (!Array.isArray(vec2) || vec2.length === 0) {
-      throw new Error("HF returned empty embedding (models endpoint)");
-    }
-    return vec2 as number[];
+    const text = await resp.text().catch(() => "");
+    throw new Error(`HF error ${resp.status}: ${text || "Unknown error"}`);
   }
 
   const data = await resp.json();
+  // HF may return [768] or [[768]] depending on batching
   const vec = Array.isArray(data[0]) ? data[0] : data;
   if (!Array.isArray(vec) || vec.length === 0) {
-    throw new Error("HF returned empty embedding (feature-extraction endpoint)");
+    throw new Error("HF returned empty embedding");
   }
   return vec as number[];
 }
-
 function asPath(md: any) {
   const parts = [
     md?.chapter_key && `Ch.${md.chapter_key}: ${md.chapter || ""}`,
