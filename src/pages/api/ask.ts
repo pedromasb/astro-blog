@@ -60,7 +60,7 @@ function asPath(md: any) {
   return parts.join(" | ");
 }
 
-function trim(s = "", max = 1100) {
+function trim(s = "", max = 900) {
   s = s.trim();
   return s.length <= max ? s : s.slice(0, max) + " …";
 }
@@ -126,7 +126,7 @@ export const POST: APIRoute = async ({ request }) => {
     // 2) vector search (namespace via chaining for SDKs that require it)
     const res = await index.namespace(PINECONE_NAMESPACE).query({
       vector: qvec,
-      topK: 50,
+      topK: 25,
       includeMetadata: true,
     });
 
@@ -137,7 +137,7 @@ export const POST: APIRoute = async ({ request }) => {
       score: m.score, // vector sim score (pre-rerank)
     }));
 
-    const topK = 8;
+    const topK = 6;
     const { cohere } = getClients();
     let top: Match[];
 
