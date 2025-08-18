@@ -1,25 +1,32 @@
 ---
 import { SITE } from "@config";
-import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
 
 export interface Props {
-  frontmatter: {
+  // allow either plain props...
+  title?: string;
+  description?: string;
+  // ...or a legacy frontmatter object
+  frontmatter?: {
     title: string;
     description?: string;
   };
 }
 
-const { frontmatter } = Astro.props;
+const { title, description, frontmatter } = Astro.props;
+
+// Resolve final title/description from either shape
+const pageTitle = (title ?? frontmatter?.title ?? "Doctoral Thesis");
+const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — details and abstract");
 ---
 
-<Layout title={`${frontmatter.title} | ${SITE.title}`}>
+<Layout title={`${pageTitle} | ${SITE.title}`} description={pageDesc}>
   <Header activeNav="thesis" />
   <main id="main-content">
     <section id="thesis" class="prose mb-28 max-w-3xl prose-img:border-0">
-      <h1 class="text-2xl mt-5 tracking-wider sm:text-3xl">{frontmatter.title}</h1>
+      <h1 class="text-2xl mt-5 tracking-wider sm:text-3xl">{pageTitle}</h1>
       <slot />
     </section>
   </main>
