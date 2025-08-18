@@ -68,9 +68,10 @@ function trim(s = "", max = 900) {
 function buildPrompt(question: string, contexts: { text: string; meta: any }[]) {
   const numbered = contexts.map((c, i) => `[[${i + 1}]] ${asPath(c.meta)}\n${trim(c.text)}`).join("\n\n---\n\n");
   const system =
-    "You are a careful, factual assistant. Answer using ONLY the provided context blocks; do not invent information. " +
+    "You answer questions using ONLY the provided context blocks." +
     "Explain clearly (not overly terse). Cite the blocks you used by bracket number like [1], [2]. " +
-    "If the answer is not contained in the context, say you don't know.";
+    "Format your answers using Markdown (bold, italics, bullet points, code blocks)." +
+    "If the answer is not contained in the context, say that the question is outside the context of this PhD thesis.";
   const user = `Question: ${question}\n\nContext:\n${numbered}\n\n`;
   return { system, user };
 }
