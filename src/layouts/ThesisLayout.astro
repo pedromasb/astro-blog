@@ -1,30 +1,27 @@
 ---
-import Header from "@components/Header.astro";
+import { SITE } from "@config";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Footer from "@components/Footer.astro";
-import Seo from "@components/Seo.astro";
+import Header from "@components/Header.astro";
+import Layout from "./Layout.astro";
 
-// Props you can set from page frontmatter if you want custom SEO
 export interface Props {
-  title?: string;
-  description?: string;
+  frontmatter: {
+    title: string;
+    description?: string;
+  };
 }
 
-// Pull page-level props if provided
-const { title = "Doctoral Thesis", description = "PhD thesis — details and abstract" } = Astro.props;
+const { frontmatter } = Astro.props;
 ---
 
-<html lang="en">
-  <head>
-    <Seo title={title} description={description} />
-  </head>
-  <body class="min-h-screen bg-skin-fill text-skin-base">
-    <!-- Highlight "Doctoral Thesis" in the header -->
-    <Header activeNav="thesis" />
-
-    <main id="main-content" class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-0 py-8 sm:py-12">
+<Layout title={`${frontmatter.title} | ${SITE.title}`}>
+  <Header activeNav="thesis" />
+  <main id="main-content">
+    <section id="thesis" class="prose mb-28 max-w-3xl prose-img:border-0">
+      <h1 class="text-2xl mt-5 tracking-wider sm:text-3xl">{frontmatter.title}</h1>
       <slot />
-    </main>
-
-    <Footer />
-  </body>
-</html>
+    </section>
+  </main>
+  <Footer />
+</Layout>
