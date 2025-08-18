@@ -1,0 +1,30 @@
+---
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Seo from "@components/Seo.astro";
+
+// Props you can set from page frontmatter if you want custom SEO
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+// Pull page-level props if provided
+const { title = "Doctoral Thesis", description = "PhD thesis — details and abstract" } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <Seo title={title} description={description} />
+  </head>
+  <body class="min-h-screen bg-skin-fill text-skin-base">
+    <!-- Highlight "Doctoral Thesis" in the header -->
+    <Header activeNav="doctoral-thesis" />
+
+    <main id="main-content" class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-0 py-8 sm:py-12">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>
