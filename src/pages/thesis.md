@@ -6,7 +6,7 @@ title: Doctoral Thesis
 # Doctoral Thesis
 
 <div class="rounded-2xl border border-skin-line/50 bg-skin-card px-5 py-5 sm:px-6 sm:py-6 shadow-sm">
-  <h2 class="text-xl sm:text-2xl font-semibold mb-3">🎓 Title</h2>
+  <h2 class="text-xl sm:text-2xl font-semibold mb-3">Title</h2>
   <p class="text-lg sm:text-xl italic">
     Virtual Observatory and machine learning for the study of low-mass objects in photometric and spectroscopic surveys
   </p>
@@ -21,9 +21,9 @@ title: Doctoral Thesis
 
   <div class="my-5 h-px bg-skin-line/60"></div>
 
-  <h3 class="text-lg font-semibold mb-2">🏛 Institution & University</h3>
-  <p><span class="font-medium">Research Institution:</span> Your Institute / Center</p>
-  <p><span class="font-medium">University:</span> Your University Name</p>
+  <h3 class="text-lg font-semibold mb-2">Institution & University</h3>
+  <p><span class="font-medium">Research Institution:</span> Centro de Astrobiología (CAB), INTA-CSIC</p>
+  <p><span class="font-medium">University:</span> Universidad Complutense de Madrid</p>
 </div>
 
 ---
