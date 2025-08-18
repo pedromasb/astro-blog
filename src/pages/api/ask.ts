@@ -17,24 +17,39 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 // --- embed query with all-mpnet-base-v2 (Hugging Face Inference) ---
 async function embedQueryHF(query: string): Promise<number[]> {
-  const resp = await fetch(
-    "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-mpnet-base-v2",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${HF_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ inputs: query, options: { wait_for_model: true } }),
-    }
-  );
-  if (!resp.ok) {
-    const err = await resp.text();
-    throw new Error(`HF error: ${err}`);
+  if (!HF_TOKEN) {
+    throw new Error("HF_TOKEN is not set in env");
   }
+
+  const url =
+    "https://api-inference.huggingface.co/models/sentence-transformers/all-mpnet-base-v2";
+
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${HF_TOKEN}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      inputs: query,
+      options: { wait_for_model: true },
+    }),
+  });
+
+  // helpful diagnostic if we *still* don't get JSON
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`HF error ${resp.status}: ${text}`);
+  }
+
   const data = await resp.json();
-  // HF may return [768] or [[768]]
-  return Array.isArray(data[0]) ? data[0] : data;
+  // HF can return either [768] or [[768]] depending on batching
+  const vec = Array.isArray(data[0]) ? data[0] : data;
+  if (!Array.isArray(vec) || vec.length === 0) {
+    throw new Error("HF returned empty embedding");
+  }
+  return vec as number[];
 }
 
 function asPath(md: any) {
