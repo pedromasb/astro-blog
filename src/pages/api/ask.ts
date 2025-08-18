@@ -102,7 +102,6 @@ export const POST: APIRoute = async ({ request }) => {
     // 4) call OpenAI (use gpt-4o-mini for speed/cost)
     const completion = await openai.chat.completions.create({
       model: "gpt-5-mini",
-      temperature: 0.3,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
