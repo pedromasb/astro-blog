@@ -105,8 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 4) LLM
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",           // valid model
-      temperature: 0.3,
+      model: "gpt-5-mini",           // valid model
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
