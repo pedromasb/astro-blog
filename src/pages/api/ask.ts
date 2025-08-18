@@ -20,7 +20,7 @@ const hf = new InferenceClient(import.meta.env.HF_TOKEN!);
 
 // Embeddings for a single query (all-mpnet-base-v2, 768-d)
 async function embedQueryHF(query: string): Promise<number[]> {
-  if (!import.meta.env.HF_TOKEN) {
+  if (!HF_TOKEN) {
     throw new Error("HF_TOKEN is not set in env");
   }
 
@@ -85,12 +85,13 @@ export const POST: APIRoute = async ({ request }) => {
     const qvec = await embedQueryHF(query);
 
     // 2) vector search (grab plenty; we‘ll keep top 6–8)
-    const res = await index.query({
-      vector: qvec,
-      topK: 50,
-      includeMetadata: true,
-      namespace: PINECONE_NAMESPACE,
-    });
+    const res = await index
+      .namespace(PINECONE_NAMESPACE) // ✅ scope the namespace here
+      .query({
+        vector: qvec,
+        topK: 50,
+        includeMetadata: true,
+      });
 
     const matches = (res.matches || []).map((m: any) => ({
       text: m.metadata?.text || "",
