@@ -1,6 +1,6 @@
 ---
-import ThesisLayout from "../layouts/ThesisLayout.astro";
-import ThesisAsk from "../components/ThesisAsk.tsx";
+import ThesisLayout from "../../layouts/ThesisLayout.astro";
+import ThesisAsk from "../../components/ThesisAsk.tsx";
 ---
 
 <ThesisLayout title="Doctoral Thesis" >
