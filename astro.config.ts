@@ -11,7 +11,6 @@ import { SITE } from "./src/config";
 export default defineConfig({
   output:"hybrid",
   adapter: vercel(),
-  trailingSlash: "never",
   site: SITE.website,
   integrations: [
     tailwind({

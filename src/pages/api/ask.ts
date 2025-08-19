@@ -25,8 +25,8 @@ function getClients() {
   // Validate env inside the handler so errors are caught and serialized to JSON
   const PINECONE_API_KEY = process.env.PINECONE_API_KEY!;
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
-  const HF_TOKEN = process.env.HF_TOKEN!;
-  const COHERE_API_KEY   = process.env.COHERE_API_KEY || undefined;
+  const HF_TOKEN = requireEnv("HF_TOKEN");
+  const COHERE_API_KEY   = (import.meta as any).env?.COHERE_API_KEY; // optional
 
   if (!_pc) _pc = new Pinecone({ apiKey: PINECONE_API_KEY });
   if (!_openai) _openai = new OpenAI({ apiKey: OPENAI_API_KEY });
