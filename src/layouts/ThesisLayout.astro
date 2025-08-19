@@ -115,8 +115,7 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
             // Render sources as numbered list
             const sources = Array.isArray(data.sources) ? data.sources : [];
             const listItems = sources.map((s, i) => {
-              const path = asPath(s.metadata || {});
-              const label = path || "(no path)";
+              const label = s.path || asPath(s.meta ?? s.metadata ?? {}) || "(no path)";
               return `<li>[${i + 1}] ${label}</li>`;
             }).join("");
 
@@ -162,7 +161,7 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
   .thesis-chat textarea {
     @apply w-full rounded-xl border border-skin-line/60 bg-transparent
            px-3 py-2 outline-none
-           focus-visible:ring-1 focus-visible:ring-gray-400 dark:focus-visible:ring-gray-600;;
+           focus-visible:ring-1 focus-visible:ring-gray-400 dark:focus-visible:ring-gray-600;
   }
 
   .thesis-chat button {

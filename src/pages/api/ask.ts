@@ -74,8 +74,8 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
     "You answer questions using ONLY the provided context blocks." +
     "Explain clearly (not overly terse). Cite the blocks you used by bracket number like [1], [2]. " +
     "Format your answers using Markdown (bold, italics, bullet points, code blocks)." +
-    "If the answer is not contained in the context, say that the question is outside the context of this PhD thesis.";
-    
+    "If the answer is not contained in the context, answer ONLY that the question is outside the context of this PhD thesis.";
+
   const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
   return { system, user };
 }
@@ -167,9 +167,18 @@ export const POST: APIRoute = async ({ request }) => {
 
     const answer = completion.choices?.[0]?.message?.content ?? "No answer.";
 
-    return new Response(JSON.stringify({ answer, sources: top }), {
+    const sources = top.map(m => ({
+      id: m.id,
+      score: m.score,
+      text: m.text,
+      metadata: m.meta,            // <-- normalize key for the client
+      path: asPath(m.meta || {}),  // <-- optional convenience
+    }));
+
+    return new Response(JSON.stringify({ answer, sources }), {
       headers: { "Content-Type": "application/json" },
     });
+    
   } catch (err: any) {
     // ALWAYS return JSON on error
     const msg = typeof err?.message === "string" ? err.message : String(err);
