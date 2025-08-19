@@ -52,9 +52,11 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
         Talk with my thesis
       </h2>
 
-      <form class="flex gap-2 items-center">
+      <!-- Chat form -->
+      <form id="thesis-form" class="flex gap-2 items-center">
         <input
           type="text"
+          id="thesis-query"
           name="query"
           placeholder="Ask about J-PLUS, CARMENES, UCDs…"
           class="flex-1 rounded-lg border border-skin-line px-3 py-2
@@ -70,6 +72,40 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
           Ask
         </button>
       </form>
+
+      <!-- Answer container -->
+      <div id="thesis-answer" class="mt-6 text-base leading-relaxed"></div>
+
+      <script>
+        const form = document.getElementById("thesis-form");
+        const input = document.getElementById("thesis-query");
+        const answerBox = document.getElementById("thesis-answer");
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const query = input.value.trim();
+          if (!query) return;
+
+          answerBox.textContent = "Thinking…";
+
+          try {
+            const resp = await fetch("/api/ask", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ query }),
+            });
+
+            const data = await resp.json();
+            if (data.answer) {
+              answerBox.innerHTML = data.answer.replace(/\n/g, "<br>");
+            } else {
+              answerBox.textContent = data.error || "No answer found.";
+            }
+          } catch (err) {
+            answerBox.textContent = "Error: " + err.message;
+          }
+        });
+      </script>
     </section>
 
     <!-- Optional extra content below -->
