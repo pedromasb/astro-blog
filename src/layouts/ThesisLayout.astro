@@ -3,6 +3,7 @@ import { SITE } from "@config";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
+import { marked } from "marked";
 
 export interface Props {
   title?: string;
@@ -109,8 +110,9 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
               throw new Error(data.error || resp.statusText);
             }
 
-            // Render answer
-            const answerHtml = (data.answer || "No answer.").replace(/\n/g, "<br>");
+            // Render answer (Markdown → HTML)
+            const rawAnswer = data.answer || "No answer.";
+            const answerHtml = marked.parse(rawAnswer);
 
             // Render sources as numbered list
             const sources = Array.isArray(data.sources) ? data.sources : [];
