@@ -32,21 +32,6 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
       </div>
     </section>
 
-    <!-- Abstract (transparent “card”: only border) -->
-    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-10" aria-labelledby="abstract-heading">
-      <div class="p-5 sm:p-6">
-        <h2 id="abstract-heading" class="text-xl sm:text-2xl font-semibold mb-3">Abstract</h2>
-        <!-- Scrollable area -->
-        <div
-          role="region"
-          aria-label="Abstract content"
-          class="max-h-[28rem] overflow-y-auto pr-1 font-serif leading-relaxed"
-        >
-          <slot name="abstract" />
-        </div>
-      </div>
-    </section>
-
     <section class="thesis-chat mt-12 max-w-2xl mx-auto">
       <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-center">
         Talk with my thesis
@@ -135,6 +120,21 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
           }
         });
       </script>
+    </section>
+
+    <!-- Abstract (transparent “card”: only border) -->
+    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-10" aria-labelledby="abstract-heading">
+      <div class="p-5 sm:p-6">
+        <h2 id="abstract-heading" class="text-xl sm:text-2xl font-semibold mb-3">Abstract</h2>
+        <!-- Scrollable area -->
+        <div
+          role="region"
+          aria-label="Abstract content"
+          class="max-h-[28rem] overflow-y-auto pr-1 font-serif leading-relaxed"
+        >
+          <slot name="abstract" />
+        </div>
+      </div>
     </section>
 
     <!-- Optional extra content below -->
