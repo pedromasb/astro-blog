@@ -81,12 +81,21 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
         const input = document.getElementById("thesis-query");
         const answerBox = document.getElementById("thesis-answer");
 
+        function asPath(md = {}) {
+          const parts = [];
+          if (md.chapter_key || md.chapter) parts.push(`Ch.${md.chapter_key ?? ""}: ${md.chapter ?? ""}`.trim());
+          if (md.section_key || md.section) parts.push(`S.${md.section_key ?? ""}: ${md.section ?? ""}`.trim());
+          if (md.subsection_key || md.subsection) parts.push(`SS.${md.subsection_key ?? ""}: ${md.subsection ?? ""}`.trim());
+          return parts.filter(p => p && !p.endsWith(":")).join(" | ");
+        }
+
         form.addEventListener("submit", async (e) => {
           e.preventDefault();
           const query = input.value.trim();
           if (!query) return;
 
-          answerBox.textContent = "Thinking…";
+          // reset UI
+          answerBox.innerHTML = `<div class="text-skin-muted">Thinking…</div>`;
 
           try {
             const resp = await fetch("/api/ask", {
@@ -94,15 +103,33 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ query }),
             });
-
             const data = await resp.json();
-            if (data.answer) {
-              answerBox.innerHTML = data.answer.replace(/\n/g, "<br>");
-            } else {
-              answerBox.textContent = data.error || "No answer found.";
+
+            if (!resp.ok) {
+              throw new Error(data.error || resp.statusText);
             }
+
+            // Render answer
+            const answerHtml = (data.answer || "No answer.").replace(/\n/g, "<br>");
+
+            // Render sources as numbered list
+            const sources = Array.isArray(data.sources) ? data.sources : [];
+            const listItems = sources.map((s, i) => {
+              const path = asPath(s.metadata || {});
+              const label = path || "(no path)";
+              return `<li>[${i + 1}] ${label}</li>`;
+            }).join("");
+
+            const sourcesHtml = sources.length
+              ? `<div class="mt-4">
+                  <div class="text-sm font-semibold mb-1">Sources</div>
+                  <ol class="list-decimal pl-5 text-sm leading-relaxed">${listItems}</ol>
+                </div>`
+              : "";
+
+            answerBox.innerHTML = `<div class="prose prose-neutral dark:prose-invert">${answerHtml}</div>${sourcesHtml}`;
           } catch (err) {
-            answerBox.textContent = "Error: " + err.message;
+            answerBox.innerHTML = `<div class="text-red-600 text-sm">Error: ${err.message}</div>`;
           }
         });
       </script>

@@ -66,13 +66,17 @@ function trim(s = "", max = 900) {
 }
 
 function buildPrompt(question: string, contexts: { text: string; meta: any }[]) {
-  const numbered = contexts.map((c, i) => `[[${i + 1}]] ${asPath(c.meta)}\n${trim(c.text)}`).join("\n\n---\n\n");
-  const system =
+  const numbered = contexts.map((c, i) => {
+    const header = asPath(c.meta);
+    return `[[${i + 1}]] ${header}\n${trim(c.text)}`;
+  });
+  const ctx = numbered.join("\n\n---\n\n");  const system =
     "You answer questions using ONLY the provided context blocks." +
     "Explain clearly (not overly terse). Cite the blocks you used by bracket number like [1], [2]. " +
     "Format your answers using Markdown (bold, italics, bullet points, code blocks)." +
     "If the answer is not contained in the context, say that the question is outside the context of this PhD thesis.";
-  const user = `Question: ${question}\n\nContext:\n${numbered}\n\n`;
+    
+  const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
   return { system, user };
 }
 
