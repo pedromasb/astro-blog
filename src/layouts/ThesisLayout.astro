@@ -59,7 +59,7 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
     </section>
 
     <!-- Retro-minimal “Talk with my thesis” -->
-    <section class="rounded-2xl border-2 border-skin-base bg-transparent shadow-none">
+    <section class="rounded-2xl border-2 border-skin-line bg-transparent shadow-none">
       <div class="p-4 sm:p-5">
         <h2 class="text-xl sm:text-2xl font-semibold mb-3">Talk with my thesis</h2>
 
@@ -82,10 +82,10 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
 <style>
   /* Retro-minimal overrides inside the chat wrapper (no icons, no background) */
   .thesis-chat :is(input, textarea) {
-    @apply font-mono bg-transparent border border-skin-base rounded-none px-3 py-2 outline-none;
+    @apply font-mono bg-transparent border border-skin-line rounded-none px-3 py-2 outline-none;
   }
   .thesis-chat button {
-    @apply font-mono border border-skin-base rounded-none px-3 py-2 bg-transparent hover:underline;
+    @apply font-mono border border-skin-line rounded-none px-3 py-2 bg-transparent hover:underline;
   }
   .thesis-chat .prose p {
     @apply leading-relaxed;
