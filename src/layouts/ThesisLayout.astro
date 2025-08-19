@@ -5,10 +5,8 @@ import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
 
 export interface Props {
-  // allow either plain props...
   title?: string;
   description?: string;
-  // ...or a legacy frontmatter object
   frontmatter?: {
     title: string;
     description?: string;
@@ -17,77 +15,95 @@ export interface Props {
 
 const { title, description, frontmatter } = Astro.props;
 
-// Resolve final title/description from either shape
 const pageTitle = (title ?? frontmatter?.title ?? "Doctoral Thesis");
 const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — details and abstract");
 ---
 
 <Layout title={`${pageTitle} | ${SITE.title}`} description={pageDesc}>
   <Header activeNav="thesis" />
+
   <main id="main-content" class="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-12">
-    <!-- Title / Hero -->
-    <header class="mb-8 sm:mb-10">
-      <h1
-        class="text-4xl sm:text-5xl font-extrabold tracking-tight 
-               bg-gradient-to-r from-sky-500 to-fuchsia-500 bg-clip-text text-transparent">
-        {pageTitle}
-      </h1>
-      {pageDesc && (
-        <p class="mt-3 text-sm sm:text-base text-skin-muted">{pageDesc}</p>
-      )}
+    <!-- Title formatted like other pages -->
+    <header class="mb-6 sm:mb-8">
+      <h1 class="text-2xl mt-5 tracking-wider sm:text-3xl">{pageTitle}</h1>
+      {pageDesc && <p class="mt-2 text-sm sm:text-base text-skin-muted">{pageDesc}</p>}
     </header>
 
-    <!-- 2-column split: LEFT meta card | RIGHT abstract card -->
+    <!-- Two-column split: meta (left) | abstract (right) -->
     <section class="grid gap-6 lg:grid-cols-5 mb-10">
-      <!-- (1) + (2): CARD — metadata -->
-      <aside class="lg:col-span-2 rounded-3xl border border-skin-line/40 bg-skin-card/80 shadow-lg">
+      <!-- Meta card -->
+      <aside class="lg:col-span-2 rounded-2xl border border-skin-line/40 bg-skin-card/80 shadow-sm">
         <div class="p-5 sm:p-6">
           <slot name="meta" />
         </div>
       </aside>
 
-      <!-- (1) + (2): CARD — abstract with serif typography -->
-      <article class="lg:col-span-3 rounded-3xl border border-skin-line/40 bg-skin-card/80 shadow-lg">
-        <div class="p-5 sm:p-6 prose prose-neutral dark:prose-invert max-w-none">
-          <div class="font-serif not-prose">
-            <h2 class="text-xl sm:text-2xl font-semibold mb-3">Abstract</h2>
-          </div>
-          <div class="font-serif leading-relaxed">
+      <!-- Abstract card (scrollable) -->
+      <article
+        class="lg:col-span-3 rounded-2xl border border-skin-line/40 bg-skin-card/80 shadow-sm"
+        aria-labelledby="abstract-heading"
+      >
+        <div class="p-5 sm:p-6">
+          <h2 id="abstract-heading" class="text-xl sm:text-2xl font-semibold mb-3">Abstract</h2>
+
+          <!-- Scrollable region -->
+          <div
+            role="region"
+            aria-label="Abstract content"
+            class="max-h-[28rem] overflow-y-auto pr-1 font-serif leading-relaxed"
+          >
             <slot name="abstract" />
           </div>
         </div>
       </article>
     </section>
 
-    <!-- (3) Timeline / milestones -->
-    <section class="mb-10 rounded-3xl border border-skin-line/40 bg-skin-card/80 shadow-lg">
-      <div class="p-5 sm:p-6">
-        <h2 class="text-xl sm:text-2xl font-semibold mb-4">Milestones</h2>
-        <div class="relative pl-6">
-          <div class="absolute left-2 top-0 bottom-0 w-px bg-skin-line/60"></div>
-          <slot name="timeline" />
+    <!-- Retro-minimal “Talk with my thesis” -->
+    <section class="rounded-2xl border-2 border-skin-base bg-transparent shadow-none">
+      <div class="p-4 sm:p-5">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-3">Talk with my thesis</h2>
+
+        <!-- Retro wrapper applies minimal/monospace styles to the widget -->
+        <div class="thesis-chat font-mono text-[0.95rem]">
+          <slot name="chat" />
         </div>
       </div>
     </section>
 
-    <!-- (4) Talk with my thesis (chat-like zone) -->
-    <section class="rounded-3xl border border-skin-line/40 bg-skin-card/80 shadow-lg">
-      <div class="p-5 sm:p-6">
-        <h2 class="text-xl sm:text-2xl font-semibold mb-4">Talk with my thesis</h2>
-
-        <!-- Chat container (neutral background via tokens only; no images) -->
-        <div class="rounded-2xl border border-skin-line/50">
-          <div class="p-4 sm:p-5">
-            <slot name="chat" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Back-compat: if you still place content directly without named slots -->
+    <!-- Back-compat: any extra content -->
     <section class="prose prose-neutral dark:prose-invert max-w-none mt-10">
       <slot />
     </section>
   </main>
+
   <Footer />
 </Layout>
+
+<style>
+  /* Retro-minimal overrides inside the chat wrapper (no icons, no background) */
+  .thesis-chat :is(input, textarea) {
+    @apply font-mono bg-transparent border border-skin-base rounded-none px-3 py-2 outline-none;
+  }
+  .thesis-chat button {
+    @apply font-mono border border-skin-base rounded-none px-3 py-2 bg-transparent hover:underline;
+  }
+  .thesis-chat .prose p {
+    @apply leading-relaxed;
+  }
+
+  /* Optional: subtler look for the card edges on dark/light */
+  .thesis-chat,
+  .thesis-chat * {
+    text-shadow: none;
+    box-shadow: none;
+  }
+
+  /* Tighter scrollbars for the abstract area (where supported) */
+  @supports selector(::-webkit-scrollbar) {
+    article [role="region"]::-webkit-scrollbar { width: 8px; }
+    article [role="region"]::-webkit-scrollbar-thumb {
+      background: color-mix(in oklab, currentColor 20%, transparent);
+      border-radius: 8px;
+    }
+  }
+</style>

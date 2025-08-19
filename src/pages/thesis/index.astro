@@ -1,13 +1,13 @@
 ---
 import ThesisLayout from "../../layouts/ThesisLayout.astro";
-import ThesisAsk from "../../components/ThesisAsk.tsx"; // your React island (already built)
+import ThesisAsk from "../../components/ThesisAsk.tsx";
 ---
 
 <ThesisLayout
   title="Doctoral Thesis"
-  description="PhD thesis — details, abstract, milestones, and an interactive Q&A tool."
+  description="PhD thesis — details, abstract, and an interactive Q&A tool."
 >
-  <!-- (2) LEFT COLUMN: metadata card -->
+  <!-- LEFT: Metadata -->
   <Fragment slot="meta">
     <h2 class="text-lg sm:text-xl font-semibold mb-3">Thesis Details</h2>
 
@@ -40,52 +40,15 @@ import ThesisAsk from "../../components/ThesisAsk.tsx"; // your React island (al
     </div>
   </Fragment>
 
-  <!-- (2) RIGHT COLUMN: abstract card -->
+  <!-- RIGHT: Abstract -->
   <Fragment slot="abstract">
     <p>
-      <!-- Paste your full abstract here. Keep paragraphs; the serif styling improves long-form readability. -->
+      <!-- Paste your full abstract here. Long abstracts will scroll inside the card. -->
     </p>
   </Fragment>
 
-  <!-- (3) TIMELINE -->
-  <Fragment slot="timeline">
-    <!-- Each milestone -->
-    <div class="relative mb-6">
-      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
-      <div class="text-sm text-skin-muted">2019</div>
-      <div class="font-medium">PhD start</div>
-      <div class="text-sm text-skin-muted">Initial literature review and data curation</div>
-    </div>
-
-    <div class="relative mb-6">
-      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
-      <div class="text-sm text-skin-muted">2021</div>
-      <div class="font-medium">J-PLUS UCD candidate catalog</div>
-      <div class="text-sm text-skin-muted">Parallax/proper motion/photometry selection & validation</div>
-    </div>
-
-    <div class="relative mb-6">
-      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
-      <div class="text-sm text-skin-muted">2023</div>
-      <div class="font-medium">CARMENES deep transfer learning</div>
-      <div class="text-sm text-skin-muted">Autoencoders + transfer learning for stellar parameters</div>
-    </div>
-
-    <div class="relative">
-      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
-      <div class="text-sm text-skin-muted">2025</div>
-      <div class="font-medium">Thesis submission & defense</div>
-    </div>
-  </Fragment>
-
-  <!-- (4) CHAT ZONE -->
+  <!-- CHAT (retro-minimal) -->
   <Fragment slot="chat">
-    <!-- Keep the widget simple; it will render *inside* the styled container from the layout -->
     <ThesisAsk client:load />
   </Fragment>
-
-  <!-- (5) Optional extra prose below all cards (kept for back-compat) -->
-  <!--
-  <p>Any additional notes can go here…</p>
-  -->
 </ThesisLayout>
