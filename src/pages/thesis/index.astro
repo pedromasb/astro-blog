@@ -1,45 +1,91 @@
 ---
-import ThesisLayout from "@layouts/ThesisLayout.astro";
-import ThesisAsk from "@components/ThesisAsk.tsx"; // React island
+import ThesisLayout from "../../layouts/ThesisLayout.astro";
+import ThesisAsk from "../../components/ThesisAsk.tsx"; // your React island (already built)
 ---
 
-<ThesisLayout title="Doctoral Thesis" description="Summary and abstract of my PhD thesis.">
-  <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Doctoral Thesis</h1>
+<ThesisLayout
+  title="Doctoral Thesis"
+  description="PhD thesis — details, abstract, milestones, and an interactive Q&A tool."
+>
+  <!-- (2) LEFT COLUMN: metadata card -->
+  <Fragment slot="meta">
+    <h2 class="text-lg sm:text-xl font-semibold mb-3">Thesis Details</h2>
 
-  <div class="rounded-2xl border border-skin-line/50 bg-skin-card px-5 pt-3 pb-5 sm:px-6 sm:pt-4 sm:pb-6 shadow-sm">
-    <h2 class="text-xl sm:text-2xl font-semibold mb-3">🎓 Title</h2>
-    <p class="text-lg sm:text-xl italic">
-      Virtual Observatory and machine learning for the study of low-mass objects in photometric and spectroscopic surveys
+    <div class="space-y-3 text-sm sm:text-base">
+      <div>
+        <div class="text-skin-muted uppercase tracking-wide text-xs mb-1">Title</div>
+        <div class="text-base sm:text-lg font-medium">
+          Virtual Observatory and machine learning for the study of low-mass objects in photometric and spectroscopic surveys
+        </div>
+      </div>
+
+      <div>
+        <div class="text-skin-muted uppercase tracking-wide text-xs mb-1">Supervisors</div>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Dr. Enrique Solano Márquez</li>
+          <li>Dra. Ana González Marcos</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2 sm:grid-cols-2">
+        <div>
+          <div class="text-skin-muted uppercase tracking-wide text-xs mb-1">Institution</div>
+          <div>Centro de Astrobiología (CAB), INTA-CSIC</div>
+        </div>
+        <div>
+          <div class="text-skin-muted uppercase tracking-wide text-xs mb-1">University</div>
+          <div>Universidad Complutense de Madrid</div>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  <!-- (2) RIGHT COLUMN: abstract card -->
+  <Fragment slot="abstract">
+    <p>
+      <!-- Paste your full abstract here. Keep paragraphs; the serif styling improves long-form readability. -->
     </p>
+  </Fragment>
 
-    <div class="my-5 h-px bg-skin-line/60"></div>
+  <!-- (3) TIMELINE -->
+  <Fragment slot="timeline">
+    <!-- Each milestone -->
+    <div class="relative mb-6">
+      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
+      <div class="text-sm text-skin-muted">2019</div>
+      <div class="font-medium">PhD start</div>
+      <div class="text-sm text-skin-muted">Initial literature review and data curation</div>
+    </div>
 
-    <h3 class="text-lg font-semibold mb-2">Supervisors</h3>
-    <ul class="list-disc pl-6 space-y-1">
-      <li>Dr. Enrique Solano Márquez</li>
-      <li>Dra. Ana González Marcos</li>
-    </ul>
+    <div class="relative mb-6">
+      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
+      <div class="text-sm text-skin-muted">2021</div>
+      <div class="font-medium">J-PLUS UCD candidate catalog</div>
+      <div class="text-sm text-skin-muted">Parallax/proper motion/photometry selection & validation</div>
+    </div>
 
-    <div class="my-5 h-px bg-skin-line/60"></div>
+    <div class="relative mb-6">
+      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
+      <div class="text-sm text-skin-muted">2023</div>
+      <div class="font-medium">CARMENES deep transfer learning</div>
+      <div class="text-sm text-skin-muted">Autoencoders + transfer learning for stellar parameters</div>
+    </div>
 
-    <h3 class="text-lg font-semibold mb-2">🏛 Institution & University</h3>
-    <p><span class="font-medium">Research Institution:</span> Centro de Astrobiología (CAB), INTA-CSIC</p>
-    <p><span class="font-medium">University:</span> Universidad Complutense de Madrid</p>
-  </div>
+    <div class="relative">
+      <div class="absolute -left-[7px] top-1 h-3 w-3 rounded-full border border-skin-line/70 bg-skin-fill"></div>
+      <div class="text-sm text-skin-muted">2025</div>
+      <div class="font-medium">Thesis submission & defense</div>
+    </div>
+  </Fragment>
 
-  <hr class="my-8" />
+  <!-- (4) CHAT ZONE -->
+  <Fragment slot="chat">
+    <!-- Keep the widget simple; it will render *inside* the styled container from the layout -->
+    <ThesisAsk client:load />
+  </Fragment>
 
-  <h2 class="text-2xl font-semibold mb-3">📄 Abstract</h2>
-  <p class="whitespace-pre-wrap leading-relaxed">
-    <!-- paste full abstract here -->
-  </p>
-
-  <hr class="my-8" />
-
-  <h2 class="text-2xl font-semibold mb-3">💬 Talk with my thesis</h2>
-  <p class="text-sm text-skin-muted mb-4">
-    Ask a question about the thesis; results include bracketed citations to the most relevant sections.
-  </p>
-  <!-- Hydrate the interactive Q&A widget -->
-  <ThesisAsk client:load />
+  <!-- (5) Optional extra prose below all cards (kept for back-compat) -->
+  <!--
+  <p>Any additional notes can go here…</p>
+  -->
 </ThesisLayout>
