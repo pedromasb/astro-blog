@@ -116,7 +116,8 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
             const sources = Array.isArray(data.sources) ? data.sources : [];
             const listItems = sources.map((s, i) => {
               const label = s.path || asPath(s.meta ?? s.metadata ?? {}) || "(no path)";
-              return `<li>[${i + 1}] ${label}</li>`;
+              const snippet = s.preview ? `<div class="text-skin-muted italic">${s.preview}</div>` : "";
+              return `<li class="mb-2">[${i + 1}] ${label}${snippet}</li>`;
             }).join("");
 
             const sourcesHtml = sources.length
@@ -184,6 +185,11 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
   .thesis-chat ol {
     @apply list-decimal pl-5;
   }
+
+  .thesis-chat ol li div {
+  font-size: 0.875rem; /* small */
+  line-height: 1.4;
+}
 
   /* Scrollbar for abstract (only where supported) */
   @supports selector(::-webkit-scrollbar) {

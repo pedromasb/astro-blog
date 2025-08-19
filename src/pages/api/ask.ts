@@ -65,6 +65,11 @@ function trim(s = "", max = 900) {
   return s.length <= max ? s : s.slice(0, max) + " …";
 }
 
+function preview(text = "", max = 180) {
+  text = text.replace(/\s+/g, " ").trim(); // normalize whitespace
+  return text.length <= max ? text : text.slice(0, max) + "…";
+}
+
 function buildPrompt(question: string, contexts: { text: string; meta: any }[]) {
   const numbered = contexts.map((c, i) => {
     const header = asPath(c.meta);
@@ -171,6 +176,7 @@ export const POST: APIRoute = async ({ request }) => {
       id: m.id,
       score: m.score,
       text: m.text,
+      preview: preview(m.text),
       metadata: m.meta,            // <-- normalize key for the client
       path: asPath(m.meta || {}),  // <-- optional convenience
     }));
@@ -178,7 +184,7 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ answer, sources }), {
       headers: { "Content-Type": "application/json" },
     });
-    
+
   } catch (err: any) {
     // ALWAYS return JSON on error
     const msg = typeof err?.message === "string" ? err.message : String(err);
