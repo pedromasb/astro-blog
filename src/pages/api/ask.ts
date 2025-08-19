@@ -5,6 +5,10 @@ import OpenAI from "openai";
 import { InferenceClient } from "@huggingface/inference";
 import { CohereClient } from "cohere-ai";
 
+export const prerender = false;
+export const runtime = 'node'; // ensure Node runtime on Vercel
+
+
 // --- Lazy singletons (initialized on first call only)
 let _pc: Pinecone | null = null;
 let _openai: OpenAI | null = null;
@@ -19,10 +23,10 @@ function requireEnv(name: string): string {
 
 function getClients() {
   // Validate env inside the handler so errors are caught and serialized to JSON
-  const PINECONE_API_KEY = requireEnv("PINECONE_API_KEY");
-  const OPENAI_API_KEY = requireEnv("OPENAI_API_KEY");
-  const HF_TOKEN = requireEnv("HF_TOKEN");
-  const COHERE_API_KEY   = (import.meta as any).env?.COHERE_API_KEY; // optional
+  const PINECONE_API_KEY = process.env.PINECONE_API_KEY!;
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
+  const HF_TOKEN = process.env.HF_TOKEN!;
+  const COHERE_API_KEY   = process.env.COHERE_API_KEY || undefined;
 
   if (!_pc) _pc = new Pinecone({ apiKey: PINECONE_API_KEY });
   if (!_openai) _openai = new OpenAI({ apiKey: OPENAI_API_KEY });
@@ -32,8 +36,8 @@ function getClients() {
   return { pc: _pc!, openai: _openai!, hf: _hf!, cohere: _cohere};
 }
 
-const PINECONE_INDEX = (import.meta as any).env?.PINECONE_INDEX || "thesis-chat";
-const PINECONE_NAMESPACE = (import.meta as any).env?.PINECONE_NAMESPACE || "ch_in_emb"; // or "v1"
+const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
+const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "ch_in_emb";
 
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
 async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
@@ -193,3 +197,18 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 };
+
+export const GET: APIRoute = async () =>
+  new Response(JSON.stringify({ ok: true, hint: "Use POST { query }" }), {
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+  });
+
+  export const OPTIONS: APIRoute = async () =>
+  new Response(null, {
+    status: 204,
+    headers: {
+      Allow: "GET, POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "content-type, authorization",
+    },
+  });
