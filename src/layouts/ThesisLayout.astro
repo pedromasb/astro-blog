@@ -95,7 +95,8 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
   .thesis-chat input:not([type]),
   .thesis-chat textarea {
     @apply w-full rounded-xl border border-skin-line/60 bg-transparent
-           px-3 py-2 outline-none focus:ring-1 focus:ring-skin-line/60;
+           px-3 py-2 outline-none
+           focus-visible:ring-1 focus-visible:ring-gray-400 dark:focus-visible:ring-gray-600;;
   }
 
   .thesis-chat button {
