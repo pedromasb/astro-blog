@@ -101,7 +101,8 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
 
   .thesis-chat button {
     @apply rounded-xl border border-skin-line/60 bg-transparent
-           px-4 py-2 hover:bg-skin-line/10 transition;
+           px-4 py-2 transition
+           hover:bg-gray-200/40 dark:hover:bg-gray-700/40;;
   }
 
   /* Typical layout for an input row (if ThesisAsk uses a flex row) */
