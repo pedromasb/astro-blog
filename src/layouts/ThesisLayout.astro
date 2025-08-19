@@ -14,7 +14,6 @@ export interface Props {
 }
 
 const { title, description, frontmatter } = Astro.props;
-
 const pageTitle = (title ?? frontmatter?.title ?? "Doctoral Thesis");
 const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — details and abstract");
 ---
@@ -22,55 +21,55 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
 <Layout title={`${pageTitle} | ${SITE.title}`} description={pageDesc}>
   <Header activeNav="thesis" />
 
-  <main id="main-content" class="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-12">
-    <!-- Title formatted like other pages -->
-    <header class="mb-6 sm:mb-8">
-      <h1 class="text-2xl mt-5 tracking-wider sm:text-3xl">{pageTitle}</h1>
-      {pageDesc && <p class="mt-2 text-sm sm:text-base text-skin-muted">{pageDesc}</p>}
-    </header>
+  <main id="main-content" class="mx-auto max-w-3xl px-4 sm:px-6 py-8 sm:py-12">
+    <!-- Match site-wide title style -->
+    <h1 class="text-3xl mt-5 font-semibold">{pageTitle}</h1>
+    {pageDesc && <p class="mt-2 opacity-80">{pageDesc}</p>}
 
-    <!-- Two-column split: meta (left) | abstract (right) -->
-    <section class="grid gap-6 lg:grid-cols-5 mb-10">
-      <!-- Meta card -->
-      <aside class="lg:col-span-2 rounded-2xl border border-skin-line/40 bg-skin-card/80 shadow-sm">
-        <div class="p-5 sm:p-6">
-          <slot name="meta" />
-        </div>
-      </aside>
-
-      <!-- Abstract card (scrollable) -->
-      <article
-        class="lg:col-span-3 rounded-2xl border border-skin-line/40 bg-skin-card/80 shadow-sm"
-        aria-labelledby="abstract-heading"
-      >
-        <div class="p-5 sm:p-6">
-          <h2 id="abstract-heading" class="text-xl sm:text-2xl font-semibold mb-3">Abstract</h2>
-
-          <!-- Scrollable region -->
-          <div
-            role="region"
-            aria-label="Abstract content"
-            class="max-h-[28rem] overflow-y-auto pr-1 font-serif leading-relaxed"
-          >
-            <slot name="abstract" />
-          </div>
-        </div>
-      </article>
+    <!-- Meta (transparent “card”: only border) -->
+    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-8">
+      <div class="p-5 sm:p-6">
+        <slot name="meta" />
+      </div>
     </section>
 
-    <!-- Retro-minimal “Talk with my thesis” -->
-    <section class="rounded-2xl border-2 border-skin-line bg-transparent shadow-none">
-      <div class="p-4 sm:p-5">
-        <h2 class="text-xl sm:text-2xl font-semibold mb-3">Talk with my thesis</h2>
-
-        <!-- Retro wrapper applies minimal/monospace styles to the widget -->
-        <div class="thesis-chat font-mono text-[0.95rem]">
-          <slot name="chat" />
+    <!-- Abstract (transparent “card”: only border) -->
+    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-10" aria-labelledby="abstract-heading">
+      <div class="p-5 sm:p-6">
+        <h2 id="abstract-heading" class="text-xl sm:text-2xl font-semibold mb-3">Abstract</h2>
+        <!-- Scrollable area -->
+        <div
+          role="region"
+          aria-label="Abstract content"
+          class="max-h-[28rem] overflow-y-auto pr-1 font-serif leading-relaxed"
+        >
+          <slot name="abstract" />
         </div>
       </div>
     </section>
 
-    <!-- Back-compat: any extra content -->
+    <!-- Talk with my thesis (chat-like area) -->
+    <section class="rounded-2xl border border-skin-line/40 shadow-none">
+      <div class="p-0 sm:p-0">
+        <!-- Chat panel (no background, just border; input bar matches ChatGPT-ish styling) -->
+        <div class="thesis-chat flex flex-col">
+          <!-- Messages/output area -->
+          <div class="chat-body px-4 sm:px-5 py-4">
+            <slot name="chat" />
+          </div>
+
+          <!-- Input bar container — your ThesisAsk renders its own input;
+               these styles make it look like a chat input row -->
+          <div class="chat-input sticky bottom-0 w-full border-t border-skin-line/40">
+            <div class="px-4 sm:px-5 py-3">
+              <!-- The ThesisAsk component’s input/button will sit here; styles below normalize it -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Optional extra content below -->
     <section class="prose prose-neutral dark:prose-invert max-w-none mt-10">
       <slot />
     </section>
@@ -80,28 +79,49 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
 </Layout>
 
 <style>
-  /* Retro-minimal overrides inside the chat wrapper (no icons, no background) */
-  .thesis-chat :is(input, textarea) {
-    @apply font-mono bg-transparent border border-skin-line rounded-none px-3 py-2 outline-none;
+  /* Make ThesisAsk look like a chat box without changing its JSX */
+  .thesis-chat {
+    /* no background; border already on parent section */
   }
+
+  /* Normalize headings inside LLM output */
+  .thesis-chat .prose h3,
+  .thesis-chat .prose h4 {
+    @apply mt-3 mb-2;
+  }
+
+  /* Input + button inside ThesisAsk → “chat bar” vibe */
+  .thesis-chat input[type="text"],
+  .thesis-chat input:not([type]),
+  .thesis-chat textarea {
+    @apply w-full rounded-xl border border-skin-line/60 bg-transparent
+           px-3 py-2 outline-none focus:ring-2 focus:ring-skin-accent/50;
+  }
+
   .thesis-chat button {
-    @apply font-mono border border-skin-line rounded-none px-3 py-2 bg-transparent hover:underline;
-  }
-  .thesis-chat .prose p {
-    @apply leading-relaxed;
+    @apply rounded-xl border border-skin-line/60 bg-transparent
+           px-4 py-2 hover:bg-skin-line/10 transition;
   }
 
-  /* Optional: subtler look for the card edges on dark/light */
-  .thesis-chat,
-  .thesis-chat * {
-    text-shadow: none;
-    box-shadow: none;
+  /* Typical layout for an input row (if ThesisAsk uses a flex row) */
+  .thesis-chat .flex.gap-2,
+  .thesis-chat .flex.gap-3 {
+    @apply items-center;
   }
 
-  /* Tighter scrollbars for the abstract area (where supported) */
+  /* If ThesisAsk prints "Answer" and "Sources", space them nicely */
+  .thesis-chat h3,
+  .thesis-chat h4 {
+    @apply text-base font-semibold;
+  }
+  .thesis-chat ol {
+    @apply list-decimal pl-5;
+  }
+
+  /* Scrollbar for abstract (only where supported) */
   @supports selector(::-webkit-scrollbar) {
-    article [role="region"]::-webkit-scrollbar { width: 8px; }
-    article [role="region"]::-webkit-scrollbar-thumb {
+    section[aria-labelledby="abstract-heading"] [role="region"]::-webkit-scrollbar { width: 8px; }
+    section[aria-labelledby="abstract-heading"] [role="region"]::-webkit-scrollbar-thumb {
       background: color-mix(in oklab, currentColor 20%, transparent);
       border-radius: 8px;
     }

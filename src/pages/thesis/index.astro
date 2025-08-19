@@ -7,7 +7,7 @@ import ThesisAsk from "../../components/ThesisAsk.tsx";
   title="Doctoral Thesis"
   description="PhD thesis — details, abstract, and an interactive Q&A tool."
 >
-  <!-- LEFT: Metadata -->
+  <!-- Meta -->
   <Fragment slot="meta">
     <h2 class="text-lg sm:text-xl font-semibold mb-3">Thesis Details</h2>
 
@@ -40,14 +40,14 @@ import ThesisAsk from "../../components/ThesisAsk.tsx";
     </div>
   </Fragment>
 
-  <!-- RIGHT: Abstract -->
+  <!-- Abstract -->
   <Fragment slot="abstract">
     <p>
-      <!-- Paste your full abstract here. Long abstracts will scroll inside the card. -->
+      <!-- Paste your full abstract here; it will scroll inside the card if long. -->
     </p>
   </Fragment>
 
-  <!-- CHAT (retro-minimal) -->
+  <!-- Chat -->
   <Fragment slot="chat">
     <ThesisAsk client:load />
   </Fragment>
