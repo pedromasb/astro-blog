@@ -1,6 +1,5 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Main from "@layouts/Main.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Pagination from "@components/Pagination.astro";
@@ -26,7 +25,7 @@ const { page } = Astro.props;
         <Card href={`/software/${slug}/`} frontmatter={data} />
       ))}
     </ul>
-  </Main>
+  </main>
 
   <Pagination {page} />
   <Footer noMarginTop={page.lastPage > 1} />
