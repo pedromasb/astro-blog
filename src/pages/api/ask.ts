@@ -66,7 +66,7 @@ function trim(s = "", max = 900) {
 }
 
 function preview(text = "", max = 180) {
-  text = text.replace(/\s+/g, " ").trim(); // normalize whitespace
+  text = text.replace(/\s+/g, " ").trim();
   return text.length <= max ? text : text.slice(0, max) + "…";
 }
 
@@ -176,21 +176,20 @@ export const POST: APIRoute = async ({ request }) => {
       id: m.id,
       score: m.score,
       text: m.text,
-      preview: preview(m.text),
       metadata: m.meta,            // <-- normalize key for the client
       path: asPath(m.meta || {}),  // <-- optional convenience
+      preview: preview(m.text),
     }));
 
     return new Response(JSON.stringify({ answer, sources }), {
       headers: { "Content-Type": "application/json" },
     });
 
-  } catch (err: any) {
-    // ALWAYS return JSON on error
-    const msg = typeof err?.message === "string" ? err.message : String(err);
-    return new Response(JSON.stringify({ error: msg }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+    } catch (err: any) {
+      const detail = (err?.response && (await err.response.text?.()?.catch(()=>null))) || err?.message || String(err);
+      return new Response(JSON.stringify({ error: detail }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 };
