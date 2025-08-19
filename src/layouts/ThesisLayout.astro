@@ -21,10 +21,9 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
 <Layout title={`${pageTitle} | ${SITE.title}`} description={pageDesc}>
   <Header activeNav="thesis" />
 
-  <main id="main-content" class="mx-auto max-w-3xl px-4 sm:px-6 py-8 sm:py-12">
+  <main id="main-content" class="mx-auto max-w-3xl px-4 pb-12">
     <!-- Match site-wide title style -->
     <h1 class="text-3xl mt-5 font-semibold">{pageTitle}</h1>
-    {pageDesc && <p class="mt-2 opacity-80">{pageDesc}</p>}
 
     <!-- Meta (transparent “card”: only border) -->
     <section class="rounded-2xl border border-skin-line/40 shadow-none mb-8">
@@ -48,25 +47,29 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
       </div>
     </section>
 
-    <!-- Talk with my thesis (chat-like area) -->
-    <section class="rounded-2xl border border-skin-line/40 shadow-none">
-      <div class="p-0 sm:p-0">
-        <!-- Chat panel (no background, just border; input bar matches ChatGPT-ish styling) -->
-        <div class="thesis-chat flex flex-col">
-          <!-- Messages/output area -->
-          <div class="chat-body px-4 sm:px-5 py-4">
-            <slot name="chat" />
-          </div>
+    <section class="thesis-chat mt-12 max-w-2xl mx-auto">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-center">
+        Talk with my thesis
+      </h2>
 
-          <!-- Input bar container — your ThesisAsk renders its own input;
-               these styles make it look like a chat input row -->
-          <div class="chat-input sticky bottom-0 w-full border-t border-skin-line/40">
-            <div class="px-4 sm:px-5 py-3">
-              <!-- The ThesisAsk component’s input/button will sit here; styles below normalize it -->
-            </div>
-          </div>
-        </div>
-      </div>
+      <form class="flex gap-2 items-center">
+        <input
+          type="text"
+          name="query"
+          placeholder="Ask about J-PLUS, CARMENES, UCDs…"
+          class="flex-1 rounded-lg border border-skin-line px-3 py-2
+                text-sm sm:text-base focus:outline-none focus:border-gray-400
+                bg-transparent"
+        />
+        <button
+          type="submit"
+          class="rounded-lg border border-skin-line px-4 py-2
+                text-sm sm:text-base font-medium transition
+                hover:bg-gray-200/40 dark:hover:bg-gray-700/40"
+        >
+          Ask
+        </button>
+      </form>
     </section>
 
     <!-- Optional extra content below -->
