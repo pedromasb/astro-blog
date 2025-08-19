@@ -9,7 +9,7 @@ import { SITE } from "./src/config";
 
 // https://astro.build/config
 export default defineConfig({
-  output:"hybrid",
+  output:"server",
   adapter: vercel(),
   site: SITE.website,
   integrations: [
