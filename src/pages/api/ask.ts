@@ -81,7 +81,8 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
   });
   const ctx = numbered.join("\n\n---\n\n");  const system =
     "You answer questions using ONLY the provided context blocks." +
-    "Explain clearly (not overly terse). Cite the blocks you used by bracket number like [1], [2]. " +
+    "Be concise but cover the key points, don’t oversimplify. " +
+    "Cite the blocks you used by bracket number like [1], [2]. " +
     "Format your answers using Markdown (bold, italics, bullet points, code blocks)." +
     "If the answer is not contained in the context, say very shortly that the question is outside the context of this PhD thesis.";
 
