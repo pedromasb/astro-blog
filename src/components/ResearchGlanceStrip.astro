@@ -12,55 +12,46 @@ const researchCards = [
     description: "Peer-reviewed publications",
     icon: "file-text",
     link: "/publications/",
-    colorClass: "bg-skin-card hover:bg-skin-card-muted border-skin-accent text-skin-accent"
   },
   {
     title: "Software/Datasets", 
     description: "Open tools & datasets",
     icon: "database",
     link: "/software/",
-    colorClass: "bg-green-50 hover:bg-green-100 border-green-200 text-green-700 dark:bg-green-900/20 dark:hover:bg-green-900/30 dark:border-green-800 dark:text-green-400"
   },
   {
     title: "Doctoral Thesis",
     description: "Explore my doctoral thesis",
     icon: "presentation",
     link: "/thesis/",
-    colorClass: "bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-700 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 dark:border-purple-800 dark:text-purple-400"
   }
 ];
 ---
 
-<div class={`my-8 p-6 bg-skin-fill/50 rounded-xl border border-skin-line ${className}`}>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class={`my-6 ${className}`}>
+  <div class="flex flex-wrap justify-center gap-3 text-sm">
     {researchCards.map((card) => (
       <a
         href={card.link}
-        class={`${card.colorClass} border-2 rounded-lg p-4 transition-all duration-200 hover:shadow-md hover:scale-[1.02] block group focus:outline-none focus:ring-2 focus:ring-skin-accent focus:ring-offset-2`}
+        class="inline-flex items-center gap-2 px-4 py-2 bg-skin-card-0 hover:bg-skin-card border border-skin-line rounded-full transition-all duration-200 group hover:border-skin-accent/50 hover:scale-105"
         aria-label={`View ${card.title}`}
       >
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center space-x-2">
-            {card.icon === "file-text" && (
-              <svg class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-            )}
-            {card.icon === "database" && (
-              <svg class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-              </svg>
-            )}
-            {card.icon === "presentation" && (
-              <svg class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m0 0V3a1 1 0 011 1v1.586a1 1 0 01-.293.707L16 8H8l-1.707-1.707A1 1 0 016 5.586V4a1 1 0 011-1z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 21H8a2 2 0 01-2-2V9a2 2 0 012-2h8a2 2 0 012 2v4.5"></path>
-              </svg>
-            )}
-            <h3 class="font-medium text-skin-base text-sm">{card.title}</h3>
-          </div>
-        </div>
-        <p class="text-xs text-skin-base/70 leading-relaxed">{card.description}</p>
+        {card.icon === "file-text" && (
+          <svg class="w-5 h-5 text-skin-base/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        )}
+        {card.icon === "database" && (
+          <svg class="w-5 h-5 text-skin-base/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+          </svg>
+        )}
+        {card.icon === "presentation" && (
+          <svg class="w-5 h-5 text-skin-base/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+        )}
+        <span class="font-medium text-skin-base group-hover:text-skin-accent transition-colors">{card.title}</span>
       </a>
     ))}
   </div>
