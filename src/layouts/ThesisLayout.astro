@@ -3,6 +3,7 @@ import { SITE } from "@config";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
+import CitationBox from "../components/CitationBox.astro";
 
 export interface Props {
   title?: string;
@@ -16,6 +17,7 @@ export interface Props {
 const { title, description, frontmatter } = Astro.props;
 const pageTitle = (title ?? frontmatter?.title ?? "Doctoral Thesis");
 const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — details and abstract");
+const bibtex = "@ARTICLE{2025arXiv250807998M,author = {{Mas-Buitrago}, Pedro},title = {Virtual Observatory and machine learning for the study of low-mass objects in photometric and spectroscopic surveys},journal = {arXiv e-prints},keywords = {Solar and Stellar Astrophysics, Earth and Planetary Astrophysics, Astrophysics of Galaxies, Instrumentation and Methods for Astrophysics},year = 2025,month = aug,eid = {arXiv:2508.07998},doi = {10.48550/arXiv.2508.07998},archivePrefix = {arXiv},eprint = {2508.07998},primaryClass = {astro-ph.SR},adsurl = {https://ui.adsabs.harvard.edu/abs/2025arXiv250807998M},adsnote = {Provided by the SAO/NASA Astrophysics Data System}}"
 ---
 
 <Layout title={`${pageTitle} | ${SITE.title}`} description={pageDesc}>
@@ -38,16 +40,6 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl sm:text-2xl font-semibold">Full Thesis</h2>
           <div class="flex gap-2">
-            <button 
-              id="pdf-viewer-toggle"
-              class="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-skin-line 
-                     transition-all duration-200 transform hover:bg-gray-200/40 dark:hover:bg-gray-700/40 hover:scale-105"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              <span class="viewer-toggle-text">Read Online</span>
             </button>
             <a 
               href="/thesis.pdf" 
@@ -66,40 +58,40 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
         
         <!-- Quick access links to specific sections -->
         <div class="flex flex-wrap gap-2 mb-4">
-          <span class="text-sm text-skin-muted">Quick access:</span>
+          <span class="text-skin-muted">Quick access:</span>
           <a href="/thesis.pdf#page=9" target="_blank" 
-             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
-                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             Abstract
           </a>
           <a href="/thesis.pdf#page=11" target="_blank" 
-             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
-                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             Introduction
           </a>
           <a href="/thesis.pdf#page=31" target="_blank" 
-             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
-                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             Ultracool Dwarfs in J-PLUS
           </a>
           <a href="/thesis.pdf#page=57" target="_blank" 
-             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
-                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             Flaring M dwarfs
           </a>
           <a href="/thesis.pdf#page=57" target="_blank" 
-             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
-                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             DTL for M Dwarfs
           </a>
           <a href="/thesis.pdf#page=93" target="_blank" 
-             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
-                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             DTL for Ultracool Dwarfs
           </a>
           <a href="/thesis.pdf#page=101" target="_blank" 
-             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
-                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             Conclusions and Future Work
           </a>
         </div>
