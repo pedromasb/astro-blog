@@ -9,7 +9,7 @@ import Card from "@components/Card";
 import Socials from "@components/Socials.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import { SITE, SOCIALS } from "@config";
-import AtAGlance from "@components/AtAGlance.astro";
+import ResearchGlanceStrip from "@components/ResearchGlanceStrip.astro";
 
 const posts = await getCollection("blog");
 
@@ -65,7 +65,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       }
     </section>
 
-    <AtAGlance />
+    <ResearchGlanceStrip />
 
     <Hr />
 
