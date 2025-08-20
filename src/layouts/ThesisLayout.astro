@@ -32,6 +32,137 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
       </div>
     </section>
 
+    <!-- PDF Access Section -->
+    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-8">
+      <div class="p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl sm:text-2xl font-semibold">Full Thesis</h2>
+          <div class="flex gap-2">
+            <button 
+              id="pdf-viewer-toggle"
+              class="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-skin-line 
+                     transition-all duration-200 transform hover:bg-gray-200/40 dark:hover:bg-gray-700/40 hover:scale-105"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <span class="viewer-toggle-text">Read Online</span>
+            </button>
+            <a 
+              href="/thesis.pdf" 
+              download="Mas-Buitrago_PhD_Thesis.pdf"
+              class="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg bg-skin-accent text-skin-inverted
+                     transition-all duration-200 transform hover:opacity-90 hover:scale-105"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+              <span>Download PDF</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Quick access links to specific sections -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-sm text-skin-muted">Quick access:</span>
+          <a href="/thesis.pdf#page=9" target="_blank" 
+             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            Abstract
+          </a>
+          <a href="/thesis.pdf#page=11" target="_blank" 
+             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            Introduction
+          </a>
+          <a href="/thesis.pdf#page=31" target="_blank" 
+             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            Ultracool Dwarfs in J-PLUS
+          </a>
+          <a href="/thesis.pdf#page=57" target="_blank" 
+             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            Flaring M dwarfs
+          </a>
+          <a href="/thesis.pdf#page=57" target="_blank" 
+             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            DTL for M Dwarfs
+          </a>
+          <a href="/thesis.pdf#page=93" target="_blank" 
+             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            DTL for Ultracool Dwarfs
+          </a>
+          <a href="/thesis.pdf#page=101" target="_blank" 
+             class="px-2 py-0.5 text-xs rounded-full border border-skin-line/60 
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            Conclusions and Future Work
+          </a>
+        </div>
+        
+        <!-- Hidden PDF viewer that expands when "Read Online" is clicked -->
+        <div id="pdf-viewer-container" class="hidden">
+          <div class="relative">
+            <iframe 
+              id="thesis-pdf-frame"
+              src="/thesis.pdf#view=FitH&toolbar=1" 
+              class="w-full h-[600px] rounded-lg border border-skin-line mt-4"
+              title="PhD Thesis PDF Viewer"
+            >
+            </iframe>
+            <!-- Loading indicator -->
+            <div id="pdf-loading" class="absolute inset-0 flex items-center justify-center bg-skin-fill/50 rounded-lg mt-4">
+              <div class="text-skin-muted">Loading PDF...</div>
+            </div>
+          </div>
+          <p class="text-xs text-skin-muted mt-2">
+            Tip: Use your browser's zoom controls or the PDF toolbar for better reading experience.
+          </p>
+        </div>
+      </div>
+      
+      <script>
+        // Handle PDF viewer toggle
+        const pdfToggleBtn = document.getElementById('pdf-viewer-toggle');
+        const pdfContainer = document.getElementById('pdf-viewer-container');
+        const pdfFrame = document.getElementById('thesis-pdf-frame');
+        const pdfLoading = document.getElementById('pdf-loading');
+        const toggleText = pdfToggleBtn?.querySelector('.viewer-toggle-text');
+        
+        if (pdfToggleBtn && pdfContainer) {
+          let pdfLoaded = false;
+          
+          pdfToggleBtn.addEventListener('click', () => {
+            const isHidden = pdfContainer.classList.contains('hidden');
+            
+            if (isHidden) {
+              // Show the viewer
+              pdfContainer.classList.remove('hidden');
+              toggleText.textContent = 'Hide Viewer';
+              
+              // Load PDF if not already loaded
+              if (!pdfLoaded && pdfFrame) {
+                pdfFrame.addEventListener('load', () => {
+                  pdfLoading?.classList.add('hidden');
+                  pdfLoaded = true;
+                }, { once: true });
+              } else {
+                pdfLoading?.classList.add('hidden');
+              }
+            } else {
+              // Hide the viewer
+              pdfContainer.classList.add('hidden');
+              toggleText.textContent = 'Read Online';
+            }
+          });
+        }
+      </script>
+    </section>
+
     <section class="thesis-chat mb-10 max-w-2xl mx-auto">
       <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-center">
         Talk with my thesis
@@ -46,7 +177,7 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
           placeholder="Ask about J-PLUS, CARMENES, UCDs…"
           class="flex-1 rounded-lg border border-skin-line px-3 py-2
                 text-sm sm:text-base focus:outline-none focus:border-gray-400
-                bg-transparent placeholder:text-gray-600 dark:placeholder:text-gray-300"
+                bg-transparent placeholder:text-gray-500 dark:placeholder:text-gray-400"
         />
         <button
           type="submit"
@@ -122,119 +253,6 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
       </script>
     </section>
 
-    <!-- Collapsible Abstract (transparent "card": only border) -->
-    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-10" aria-labelledby="abstract-heading">
-      <div class="p-5 sm:p-6">
-        <div class="flex items-center justify-between mb-3">
-          <h2 id="abstract-heading" class="text-xl sm:text-2xl font-semibold">Abstract</h2>
-          <button
-            id="abstract-toggle"
-            class="flex items-center gap-2 rounded-lg border border-skin-line px-3 py-1.5
-                   text-sm font-medium transition-all duration-200 transform
-                   hover:bg-gray-200/40 dark:hover:bg-gray-700/40 hover:scale-105"
-            aria-expanded="false"
-            aria-controls="abstract-content"
-          >
-            <span class="toggle-text">Read abstract</span>
-            <svg
-              class="toggle-icon w-4 h-4 transition-transform duration-200"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
-        
-        <!-- Collapsible content area -->
-        <div
-          id="abstract-content"
-          role="region"
-          aria-label="Abstract content"
-          class="abstract-content"
-          aria-hidden="true"
-        >
-          <div class="abstract-inner font-serif leading-relaxed prose prose-neutral dark:prose-invert max-w-none">
-            <slot name="abstract" />
-          </div>
-        </div>
-      </div>
-
-      <script type="module">
-        // Handle abstract toggle
-        const toggleBtn = document.getElementById('abstract-toggle');
-        const abstractContent = document.getElementById('abstract-content');
-        const toggleText = toggleBtn?.querySelector('.toggle-text');
-        const toggleIcon = toggleBtn?.querySelector('.toggle-icon');
-        
-        if (toggleBtn && abstractContent && toggleText) {
-          // Set initial state (collapsed)
-          abstractContent.style.maxHeight = '0';
-          abstractContent.style.overflow = 'hidden';
-          abstractContent.style.transition = 'max-height 0.3s ease-in-out';
-          
-          toggleBtn.addEventListener('click', () => {
-            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-            
-            if (isExpanded) {
-              // Collapse
-              abstractContent.style.maxHeight = '0';
-              abstractContent.setAttribute('aria-hidden', 'true');
-              toggleBtn.setAttribute('aria-expanded', 'false');
-              toggleText.textContent = 'Read abstract';
-              toggleIcon?.classList.remove('rotate-180');
-            } else {
-              // Expand
-              abstractContent.style.maxHeight = abstractContent.scrollHeight + 'px';
-              abstractContent.setAttribute('aria-hidden', 'false');
-              toggleBtn.setAttribute('aria-expanded', 'true');
-              toggleText.textContent = 'Hide abstract';
-              toggleIcon?.classList.add('rotate-180');
-              
-              // After expansion completes, set to auto for responsive height
-              setTimeout(() => {
-                if (toggleBtn.getAttribute('aria-expanded') === 'true') {
-                  abstractContent.style.maxHeight = 'none';
-                  abstractContent.style.overflow = 'auto';
-                  abstractContent.classList.add('max-h-[28rem]', 'overflow-y-auto', 'pr-1');
-                }
-              }, 300);
-            }
-          });
-          
-          // Before collapsing, need to set explicit height
-          abstractContent.addEventListener('transitionstart', () => {
-            if (toggleBtn.getAttribute('aria-expanded') === 'false' && abstractContent.style.maxHeight === 'none') {
-              abstractContent.style.maxHeight = abstractContent.scrollHeight + 'px';
-              abstractContent.classList.remove('max-h-[28rem]', 'overflow-y-auto', 'pr-1');
-              abstractContent.style.overflow = 'hidden';
-              // Force reflow
-              abstractContent.offsetHeight;
-              abstractContent.style.maxHeight = '0';
-            }
-          });
-        }
-
-        // Markdown rendering for abstract content if needed
-        document.addEventListener('DOMContentLoaded', () => {
-          const abstractInner = document.querySelector('.abstract-inner');
-          if (abstractInner) {
-            // Check if content needs markdown parsing (if it contains markdown syntax)
-            const content = abstractInner.textContent || '';
-            if (content.includes('**') || content.includes('*') || content.includes('#') || content.includes('[')) {
-              import('https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.esm.js').then(({ marked }) => {
-                const html = marked.parse(content);
-                abstractInner.innerHTML = html;
-              });
-            }
-          }
-        });
-      </script>
-    </section>
-
     <!-- Optional extra content below -->
     <section class="prose prose-neutral dark:prose-invert max-w-none mt-10">
       <slot />
@@ -300,9 +318,9 @@ const pageDesc  = (description ?? frontmatter?.description ?? "PhD thesis — de
     transform: rotate(180deg);
   }
 
-  /* Abstract content animation */
+  /* Abstract content - no CSS transitions needed, using Web Animations API */
   .abstract-content {
-    transition: max-height 0.3s ease-in-out;
+    position: relative;
   }
 
   /* Scrollbar for abstract (only where supported) */
