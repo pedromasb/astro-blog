@@ -20,6 +20,7 @@
     "@pinecone-database/pinecone": "^6.1.2",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^4.15.6",
+    "astro-icon": "^1.1.5",
     "cohere-ai": "^7.18.1",
     "fuse.js": "^7.0.0",
     "lodash.kebabcase": "^4.1.1",
