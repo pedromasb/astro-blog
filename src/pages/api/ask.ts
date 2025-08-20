@@ -37,7 +37,8 @@ function getClients() {
 }
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
-const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "ch_in_emb";
+const PINECONE_NAMESPACE = "v1";
+// const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "ch_in_emb";
 
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
 async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
@@ -81,10 +82,10 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
   });
   const ctx = numbered.join("\n\n---\n\n");  const system =
     "You answer questions using ONLY the provided context blocks." +
-    "Be concise but cover the key points, don’t oversimplify. " +
+    "Be concise but don’t oversimplify. " +
     "Cite the blocks you used by bracket number like [1], [2]. " +
     "Format your answers using Markdown (bold, italics, bullet points, code blocks)." +
-    "If the answer is not contained in the context, say very shortly that the question is outside the context of this PhD thesis.";
+    "If the answer is not contained in the context, just say exactly that the question is outside the context of this PhD thesis.";
 
   const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
   return { system, user };
