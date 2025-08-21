@@ -3,6 +3,7 @@ import { SITE } from "@config";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
+import CitationBox from "../components/CitationBox.astro";
 
 export interface Props {
   title?: string;
@@ -45,7 +46,7 @@ const bibtex = "@ARTICLE{2025arXiv250807998M,author = {{Mas-Buitrago}, Pedro},ti
                        hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105"
                 title="Copy BibTeX"
               >
-                <span>Copy BibTeX</span>
+                <span>BibTeX</span>
               </button>
               <a 
                 href="https://doi.org/10.48550/arXiv.2508.07998"
@@ -184,7 +185,7 @@ archivePrefix = {arXiv},
             Flaring M dwarfs
           </button>
           <button 
-            onclick="window.open('/thesis.pdf#page=69', '_blank')"
+            onclick="window.open('/thesis.pdf#page=75', '_blank')"
             class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
                    hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
             DTL for M Dwarfs
@@ -202,54 +203,108 @@ archivePrefix = {arXiv},
             Conclusions and Future Work
           </button>
         </div>
+        
+   </section>
+
+    <section class="thesis-chat mb-10 max-w-2xl mx-auto relative">
+      <div class="chat-background">
+        <span class="star star-1"></span>
+        <span class="star star-2"></span>
+        <span class="star star-3"></span>
+        <span class="star star-4"></span>
+        <span class="star star-5"></span>
+      </div>
+      
+      <div class="chat-content">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-center flex items-center justify-center gap-3">
+          <span class="rocket-icon">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="rocket-body" d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a1.96 1.96 0 0 0-2.91-.09z" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path class="rocket-body" d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path class="rocket-window" d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle class="rocket-window" cx="16" cy="8" r="1.5" fill="currentColor"/>
+              <!-- Enhanced gradient flames -->
+              <defs>
+                <linearGradient id="flame-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:rgb(251, 191, 36);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:rgb(239, 68, 68);stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <path class="rocket-flame flame-1" d="M3 21c0-2 1-3 1-3" 
+                    stroke="url(#flame-gradient)" stroke-width="2" stroke-linecap="round" opacity="0"/>
+              <path class="rocket-flame flame-2" d="M1 21c0-2 1-4 1-4" 
+                    stroke="url(#flame-gradient)" stroke-width="2" stroke-linecap="round" opacity="0"/>
+              <path class="rocket-flame flame-3" d="M2 22c0-1 .5-2 .5-2" 
+                    stroke="url(#flame-gradient)" stroke-width="2" stroke-linecap="round" opacity="0"/>
+              <!-- Smoke particles -->
+              <circle class="smoke-particle smoke-1" cx="3" cy="22" r="0.5" fill="currentColor" opacity="0"/>
+              <circle class="smoke-particle smoke-2" cx="2" cy="23" r="0.7" fill="currentColor" opacity="0"/>
+              <circle class="smoke-particle smoke-3" cx="4" cy="23" r="0.4" fill="currentColor" opacity="0"/>
+            </svg>
+          </span>
+          Talk with my thesis
+          <span class="ai-pulse-dot"></span>
+        </h2>
+
+        <!-- Chat form with gradient border -->
+        <form id="thesis-form" class="flex gap-2 items-center">
+          <div class="input-wrapper flex-1 relative">
+            <input
+              type="text"
+              id="thesis-query"
+              name="query"
+              placeholder="Ask about J-PLUS, CARMENES, UCDs…"
+              class="w-full rounded-lg border-2 border-skin-line px-4 py-2.5
+                    text-sm sm:text-base focus:outline-none
+                    bg-transparent placeholder:text-gray-500 dark:placeholder:text-gray-400
+                    transition-all duration-300 relative z-10"
+            />
+          </div>
+          <button
+            type="submit"
+            id="ask-button"
+            class="rounded-lg bg-skin-accent text-skin px-5 py-2.5
+                  text-sm sm:text-base font-medium transition-all duration-200 transform
+                  hover:opacity-90 hover:scale-105 hover:shadow-lg
+                  disabled:opacity-50 disabled:cursor-not-allowed relative z-10"
+          >
+            Ask
+          </button>
+        </form>
+
+        <!-- Suggested questions -->
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span class="text text-skin-muted">Try asking:</span>
+          <button 
+            type="button"
+            onclick="document.getElementById('thesis-query').value = 'What are ultracool dwarfs?'; document.getElementById('thesis-form').dispatchEvent(new Event('submit'));"
+            class="text-sm px-3 py-1 rounded-full bg-skin-card border border-skin-line/30
+                   hover:bg-skin-accent hover:text-skin transition-all duration-200 hover:scale-105">
+            What are ultracool dwarfs?
+          </button>
+          <button 
+            type="button"
+            onclick="document.getElementById('thesis-query').value = 'What is the Virtual Observatory?'; document.getElementById('thesis-form').dispatchEvent(new Event('submit'));"
+            class="text-sm px-3 py-1 rounded-full bg-skin-card border border-skin-line/30
+                   hover:bg-skin-accent hover:text-skin transition-all duration-200 hover:scale-105">
+            The Virtual Observatory
+          </button>
+          <button 
+            type="button"
+            onclick="document.getElementById('thesis-query').value = 'What are the key characteristics of the J-PLUS survey?'; document.getElementById('thesis-form').dispatchEvent(new Event('submit'));"
+            class="text-sm px-3 py-1 rounded-full bg-skin-card border border-skin-line/30
+                   hover:bg-skin-accent hover:text-skin transition-all duration-200 hover:scale-105">
+            Key characteristics of J-PLUS
+          </button>
+        </div>
+
+        <!-- Answer container -->
+        <div id="thesis-answer" class="mt-6 text-base leading-relaxed"></div>
+      </div>
     </section>
-
-    <section class="thesis-chat mb-10 max-w-2xl mx-auto">
-      <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-center flex items-center justify-center gap-3">
-        <span class="rocket-icon">
-          <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path class="rocket-body" d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a1.96 1.96 0 0 0-2.91-.09z" 
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path class="rocket-body" d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" 
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path class="rocket-window" d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" 
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle class="rocket-window" cx="16" cy="8" r="1.5" fill="currentColor"/>
-            <path class="rocket-flame flame-1" d="M3 21c0-2 1-3 1-3" 
-                  stroke="rgb(251, 146, 60)" stroke-width="2" stroke-linecap="round" opacity="0"/>
-            <path class="rocket-flame flame-2" d="M1 21c0-2 1-4 1-4" 
-                  stroke="rgb(251, 191, 36)" stroke-width="2" stroke-linecap="round" opacity="0"/>
-            <path class="rocket-flame flame-3" d="M2 22c0-1 .5-2 .5-2" 
-                  stroke="rgb(239, 68, 68)" stroke-width="2" stroke-linecap="round" opacity="0"/>
-          </svg>
-        </span>
-        Talk with my thesis
-        <span class="ai-pulse-dot"></span>
-      </h2>
-
-      <!-- Chat form -->
-      <form id="thesis-form" class="flex gap-2 items-center">
-        <input
-          type="text"
-          id="thesis-query"
-          name="query"
-          placeholder="Ask about J-PLUS, CARMENES, UCDs…"
-          class="flex-1 rounded-lg border border-skin-line px-3 py-2
-                text-sm sm:text-base focus:outline-none focus:border-gray-400
-                bg-transparent placeholder:text-gray-500 dark:placeholder:text-gray-400"
-        />
-        <button
-          type="submit"
-          class="rounded-lg border border-skin-line px-4 py-2
-                text-sm sm:text-base font-medium transition-all duration-200 transform
-                hover:bg-gray-200/40 dark:hover:bg-gray-700/40 hover:scale-105"
-        >
-          Ask
-        </button>
-      </form>
-
-      <!-- Answer container -->
-      <div id="thesis-answer" class="mt-6 text-base leading-relaxed"></div>
 
       <script type="module">
         import { marked } from "https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.esm.js";
@@ -271,7 +326,21 @@ archivePrefix = {arXiv},
           if (!query) return;
 
           // reset UI
-          answerBox.innerHTML = `<div class="text-skin-muted">Thinking…</div>`;
+          answerBox.innerHTML = `
+            <div class="typing-indicator-wrapper">
+              <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span class="text-skin-muted ml-2">AI is thinking...</span>
+            </div>
+          `;
+
+          // Add particle effect on send
+          const button = document.getElementById('ask-button');
+          button.classList.add('particle-burst');
+          setTimeout(() => button.classList.remove('particle-burst'), 1000);
 
           try {
             const resp = await fetch("/api/ask", {
@@ -324,10 +393,140 @@ archivePrefix = {arXiv},
 <style>
   /* Make ThesisAsk look like a chat box without changing its JSX */
   .thesis-chat {
-    /* no background; border already on parent section */
+    position: relative;
+    background: rgba(var(--color-fill), 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--color-border), 0.2);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   }
 
-  /* Rocket Launch Animation */
+  .chat-content {
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+  }
+
+  /* Parallax stars background */
+  .chat-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle-star 3s ease-in-out infinite;
+  }
+
+  .star-1 { top: 20%; left: 10%; animation-delay: 0s; }
+  .star-2 { top: 40%; left: 80%; animation-delay: 0.5s; }
+  .star-3 { top: 60%; left: 30%; animation-delay: 1s; }
+  .star-4 { top: 80%; left: 70%; animation-delay: 1.5s; }
+  .star-5 { top: 30%; left: 50%; animation-delay: 2s; }
+
+  @keyframes twinkle-star {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 0.8; transform: scale(1.2); }
+  }
+
+  /* Animated gradient border on focus */
+  .input-wrapper {
+    position: relative;
+  }
+
+  .input-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 0.5rem;
+    padding: 2px;
+    background: linear-gradient(45deg, 
+      rgb(var(--color-accent)), 
+      rgb(var(--color-accent-2, var(--color-accent))), 
+      rgb(var(--color-accent))
+    );
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: gradient-border 3s ease infinite;
+  }
+
+  .input-wrapper:focus-within::before {
+    opacity: 1;
+  }
+
+  @keyframes gradient-border {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Typing indicator */
+  .typing-indicator-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .typing-indicator {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .typing-indicator span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgb(var(--color-accent));
+    animation: typing-bounce 1.4s ease-in-out infinite;
+  }
+
+  .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+  .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0; }
+
+  @keyframes typing-bounce {
+    0%, 80%, 100% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Particle burst effect */
+  @keyframes particle-burst {
+    0% {
+      box-shadow: 0 0 0 0 rgba(var(--color-accent), 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(var(--color-accent), 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(var(--color-accent), 0);
+    }
+  }
+
+  .particle-burst {
+    animation: particle-burst 0.5s ease-out;
+  }
+
+  /* Enhanced Rocket Launch Animation with smoke */
   .rocket-icon {
     display: inline-flex;
     animation: rocket-hover 3s ease-in-out infinite;
@@ -355,6 +554,33 @@ archivePrefix = {arXiv},
   
   .flame-3 {
     animation: flame-flicker 0.3s ease-in-out infinite 0.2s;
+  }
+
+  /* Smoke particles */
+  .smoke-particle {
+    transform-origin: center;
+  }
+
+  .rocket-icon:hover .smoke-particle {
+    animation: smoke-rise 1s ease-out forwards;
+  }
+
+  .smoke-1 { animation-delay: 0s; }
+  .smoke-2 { animation-delay: 0.2s; }
+  .smoke-3 { animation-delay: 0.4s; }
+
+  @keyframes smoke-rise {
+    0% {
+      opacity: 0;
+      transform: translateY(0) scale(0.5);
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-10px) translateX(5px) scale(1.5);
+    }
   }
   
   @keyframes rocket-hover {
