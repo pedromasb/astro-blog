@@ -23,12 +23,14 @@ const bibtex = "@ARTICLE{2025arXiv250807998M,author = {{Mas-Buitrago}, Pedro},ti
 <Layout title={`${pageTitle} | ${SITE.title}`} description={pageDesc}>
   <Header activeNav="thesis" />
 
-  <main id="main-content" class="mx-auto max-w-3xl px-4 pb-12">
-    <!-- Match site-wide title style -->
-    <h1 class="text-3xl mt-5 mb-8 font-semibold">{pageTitle}</h1>
+  <main id="main-content" class="mx-auto px-4 pb-12">
 
+    <section id="about" class="prose max-w-3xl mb-8 prose-img:border-0">
+      <h1 class="text-2xl mt-5 tracking-wider sm:text-3xl">{pageTitle}</h1>
+    </section>
+    
     <!-- Meta (transparent "card": only border) -->
-    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-8">
+    <section class="rounded-2xl border border-skin-line/40 shadow-none">
       <div class="p-5 sm:p-6">
         <slot name="meta" />
         
@@ -137,7 +139,7 @@ archivePrefix = {arXiv},
     </section>
 
     <!-- PDF Access Section -->
-    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-8">
+    <section class="rounded-2xl border border-skin-line/40 shadow-none mb-12">
       <div class="p-5 sm:p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl sm:text-2xl font-semibold">Full Thesis</h2>

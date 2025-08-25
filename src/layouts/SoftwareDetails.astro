@@ -2,7 +2,6 @@
 import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import Tag from "@components/Tag.astro";
 import Datetime from "@components/Datetime";
 import ShareLinks from "@components/ShareLinks.astro";
 import { slugifyStr } from "@utils/slugify";
@@ -25,7 +24,6 @@ const {
   canonicalURL,
   pubDatetime,
   modDatetime,
-  tags = [],
   repo,
   docs,
   demo,
@@ -87,31 +85,70 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
     <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} size="lg" className="my-2" />
 
     <!-- Action links (top) -->
+    <!-- Action links (top) -->
     <div class="mt-3 mb-2 flex flex-wrap items-center gap-2">
-      {repo && <a class="paper-btn rounded border border-gray-600 dark:border-gray-100 px-3 py-1" href={repo} target="_blank" rel="noopener">Repository</a>}
-      {docs && <a class="paper-btn rounded border border-gray-600 dark:border-gray-100 px-3 py-1" href={docs} target="_blank" rel="noopener">Docs</a>}
-      {demo && <a class="paper-btn rounded border border-gray-600 dark:border-gray-100 px-3 py-1" href={demo} target="_blank" rel="noopener">Demo</a>}
+      {repo && (
+        <a 
+          href={repo}
+          target="_blank"
+          rel="noopener"
+          class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                 hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105"
+          title="Open repository"
+        >
+          Repository
+        </a>
+      )}
+
+
+      {demo && (
+        <a 
+          href={demo}
+          target="_blank"
+          rel="noopener"
+          class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                 hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105"
+          title="Open live demo"
+        >
+          Demo
+        </a>
+      )}
+
       {pypi && (
         <a
-          class="paper-btn rounded border px-3 py-1"
+          class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                 hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105"
           href={pypi.startsWith?.('http') ? pypi : `https://pypi.org/project/${pypi}/`}
           target="_blank"
           rel="noopener"
-        >PyPI</a>
+        >
+          PyPI
+        </a>
       )}
-      {npm && <a class="paper-btn rounded border px-3 py-1" href={`https://www.npmjs.com/package/${npm}`} target="_blank" rel="noopener">npm</a>}
-      {license && <span class="paper-btn rounded border px-3 py-1">{license}</span>}
+
+      {npm && (
+        <a 
+          href={`https://www.npmjs.com/package/${npm}`}
+          target="_blank"
+          rel="noopener"
+          class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                 hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105"
+        >
+          npm
+        </a>
+      )}
+
+      {license && (
+        <span class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60">
+          {license}
+        </span>
+      )}
     </div>
+
 
     <article id="article" class="prose mx-auto mt-6 max-w-3xl">
       <Content />
     </article>
-
-    {tags?.length > 0 && (
-      <ul class="my-8">
-        {tags.map((tag: string) => <Tag tag={slugifyStr(tag)} />)}
-      </ul>
-    )}
 
     <!-- Prev / Next -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mt-6">

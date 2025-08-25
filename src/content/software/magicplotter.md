@@ -5,8 +5,6 @@ title: "MagicPlotter: A tool developed to help the user create and share interac
 slug: magicplotter
 featured: false
 draft: false
-tags:
-  - Data Visualization
 description: Streamlit web application
 repo: "https://github.com/pedromasb/magicplotter"
 demo: "https://magicplotter.streamlit.app/"
