@@ -1,4 +1,3 @@
-# AstroPaper 📄
 ## 🔥 Features
 
 - [x] type-safe markdown
