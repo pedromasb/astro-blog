@@ -363,7 +363,7 @@ archivePrefix = {arXiv},
             const sources = Array.isArray(data.sources) ? data.sources : [];
             const listItems = sources.map((s, i) => {
               const label = s.path || asPath(s.meta ?? s.metadata ?? {}) || "(no path)";
-              return `<li class="mb-2">[${i + 1}] ${label}${snippet}</li>`;
+              return `<li class="mb-2">[${i + 1}] ${label}</li>`;
             }).join("");
 
             const sourcesHtml = sources.length
