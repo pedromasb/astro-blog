@@ -3,7 +3,6 @@ import { SITE } from "@config";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
-import CitationBox from "../components/CitationBox.astro";
 
 export interface Props {
   title?: string;
@@ -364,13 +363,12 @@ archivePrefix = {arXiv},
             const sources = Array.isArray(data.sources) ? data.sources : [];
             const listItems = sources.map((s, i) => {
               const label = s.path || asPath(s.meta ?? s.metadata ?? {}) || "(no path)";
-              const snippet = s.preview ? `<div class="text-skin-muted italic">${s.preview}</div>` : "";
               return `<li class="mb-2">[${i + 1}] ${label}${snippet}</li>`;
             }).join("");
 
             const sourcesHtml = sources.length
               ? `<div class="mt-4">
-                  <div class="text-sm font-semibold mb-1">Sources</div>
+                  <div class="text-sm font-semibold mb-1">Sources - chunks of text used as context were extracted from:</div>
                   <ol class="list-decimal pl-5 text-sm leading-relaxed">${listItems}</ol>
                 </div>`
               : "";

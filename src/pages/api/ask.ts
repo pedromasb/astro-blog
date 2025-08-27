@@ -180,10 +180,8 @@ export const POST: APIRoute = async ({ request }) => {
     const sources = top.map(m => ({
       id: m.id,
       score: m.score,
-      text: m.text,
       metadata: m.meta,            // <-- normalize key for the client
       path: asPath(m.meta || {}),  // <-- optional convenience
-      preview: preview(m.text),
     }));
 
     return new Response(JSON.stringify({ answer, sources }), {
