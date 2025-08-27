@@ -37,8 +37,7 @@ function getClients() {
 }
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
-const PINECONE_NAMESPACE = "v1";
-// const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "ch_in_emb";
+const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "v1";
 
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
 async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
