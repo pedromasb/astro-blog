@@ -27,11 +27,8 @@ const bib = bibtexOverride ?? toBibTeX({
   <div class="text-sm mt-1 text-gray-700 dark:text-gray-300">
     {authors?.map((a:any)=>a.name).join(", ")} et al. ({year}). 
     <em>{title}.</em>
-    {journal ? `${journal}` : ""}
-    {volume ? `, ${volume}` : ""}
-    {pages ? `:${pages}` : ""}
-    {doi ? `. doi:${doi}` : ""}.
-    {arxiv ? `arXiv:${arxiv}` : ""}.
+    {journal ? `${journal}` : ""},
+    {volume ? `${volume}` : ""}.
   </div>
 
   <div class="mt-3 flex gap-2">
@@ -42,8 +39,8 @@ const bib = bibtexOverride ?? toBibTeX({
                  hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105" href={`https://arxiv.org/abs/${arxiv}`} rel="noopener" target="_blank">arXiv</a>}
     
     <!-- Copy BibTeX with tooltip -->
-    <button type="button" class="copy-bib-btn px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
-                 hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105">
+    <button type="button" class="copy-bib-btn px-3 py-1.5 text-sm text-skin-inverted rounded-full bg-skin-accent/80 border border-skin-line/60 
+                 hover:bg-skin-card dark:hover:bg-gray-800 hover:text-skin-accent transition-colors hover:scale-105">
       Copy BibTeX
     </button>
   </div>
