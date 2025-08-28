@@ -16,6 +16,7 @@ draft: false
 tags:
   - Astro
   - Low-mass
+  - Euclid
 description: Contributing author of one of the first 10 Euclid early release observations journal articles, accepted in Astronomy & Astrophysics
 bibtex: |
       @ARTICLE{2025A&A...697A...7M,

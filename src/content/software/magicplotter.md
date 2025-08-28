@@ -3,7 +3,7 @@ author: Pedro Mas
 pubDatetime: 2024-06-12T00:00:00
 title: "MagicPlotter: A tool developed to help the user create and share interactive visualizations"
 slug: magicplotter
-featured: false
+featured: true
 draft: false
 description: Streamlit web application
 repo: "https://github.com/pedromasb/magicplotter"

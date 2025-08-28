@@ -12,10 +12,31 @@ import { SITE, SOCIALS } from "@config";
 import ResearchGlanceStrip from "@components/ResearchGlanceStrip.astro";
 
 const posts = await getCollection("blog");
+const software = await getCollection("software");
 
 const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
+
+// Get featured software items
+const sortedSoftware = software
+  .filter(({ data }) => !data.draft)
+  .sort((a, b) => {
+    const dateA = new Date(a.data.pubDatetime);
+    const dateB = new Date(b.data.pubDatetime);
+    return dateB.getTime() - dateA.getTime();
+  });
+const featuredSoftware = sortedSoftware.filter(({ data }) => data.featured);
+
+// Combine featured posts and software for the featured section
+const allFeaturedItems = [
+  ...featuredPosts.map(item => ({ ...item, type: 'post' })),
+  ...featuredSoftware.map(item => ({ ...item, type: 'software' }))
+].sort((a, b) => {
+  const dateA = new Date(a.data.pubDatetime);
+  const dateB = new Date(b.data.pubDatetime);
+  return dateB.getTime() - dateA.getTime();
+});
 
 const socialCount = SOCIALS.filter(social => social.active).length;
 ---
@@ -50,7 +71,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
         I am a postdoctoral researcher in the Astrophysics department @CAB, currently working on a project for ESA focused on exploiting the recent Euclid mission.
       </p>
       <p>
-        In this repository, you can delve deeper into my research, catalogues, and software developments.
+        In this repository, you can delve deeper into my research, catalogues, and software developments. You can also <a href="/thesis" class="inline-link font-bold text-skin-accent">interact with my doctoral thesis</a> through an AI-powered chat system that answers questions about my research directly from the thesis content.
       </p>
       {
         // only display if at least one social link is enabled
@@ -68,15 +89,15 @@ const socialCount = SOCIALS.filter(social => social.active).length;
     <Hr />
 
     {
-      featuredPosts.length > 0 && (
+      allFeaturedItems.length > 0 && (
         <>
           <section id="featured">
             <h2>Featured</h2>
             <ul>
-              {featuredPosts.map(({ data, slug }) => (
+              {allFeaturedItems.map((item) => (
                 <Card
-                  href={`/posts/${slug}/`}
-                  frontmatter={data}
+                  href={item.type === 'post' ? `/posts/${item.slug}/` : `/software/${item.slug}/`}
+                  frontmatter={item.data}
                   secHeading={false}
                 />
               ))}
@@ -86,38 +107,6 @@ const socialCount = SOCIALS.filter(social => social.active).length;
         </>
       )
     }
-
-    {
-      recentPosts.length > 0 && (
-        <section id="recent-posts">
-          <h2>Recent Posts</h2>
-          <ul>
-            {recentPosts.map(
-              ({ data, slug }, index) =>
-                index < SITE.postPerIndex && (
-                  <Card
-                    href={`/posts/${slug}/`}
-                    frontmatter={data}
-                    secHeading={false}
-                  />
-                )
-            )}
-          </ul>
-        </section>
-      )
-    }
-
-    <div class="all-posts-btn-wrapper">
-      <LinkButton href="/posts/">
-        All Posts
-        <svg xmlns="http://www.w3.org/2000/svg"
-          ><path
-            d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z"
-          ></path>
-        </svg>
-      </LinkButton>
-    </div>
-  </main>
 
   <Footer />
 </Layout>
