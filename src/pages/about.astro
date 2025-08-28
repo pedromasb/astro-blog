@@ -1,0 +1,62 @@
+---
+import { SITE } from "@config";
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import CareerTimelineWrapper from "@components/CareerTimelineWrapper.astro";
+import SkillsGalaxyWrapper from "@components/SkillsGalaxyWrapper.astro";
+
+const layoutProps = {
+  title: `About | ${SITE.title}`,
+  description: "Learn about my research in stellar astrophysics, machine learning, and astronomical data analysis",
+};
+---
+
+<Layout {...layoutProps}>
+  <Header activeNav="about" />
+  <main id="main-content">
+    <section id="about" class="prose max-w-3xl prose-img:border-0">
+      
+      <h2 class="text-2xl mt-5 tracking-wider sm:text-3xl"> Career & Research Focus</h2>
+
+      <p>I am a postdoctoral researcher specialized in the use of machine and deep learning techniques for the exploitation of large astronomical datasets.
+         I hold a PhD in Astrophysics from the Universidad Complutense de Madrid (Spain) and currently work at the Centro de Astrobiología (CAB) as 
+         a postdoctoral researcher for the European Space Agency (ESA).</p>
+        
+      <p>My research focuses on three main areas:</p>
+
+      <ul>
+
+        <li><strong>M dwarfs and ultracool dwarfs parameter determination</strong>: Developing deep transfer learning approaches using autoencoder neural 
+          networks to estimate atmospheric parameters (effective temperature, surface gravity, metallicity, and rotational velocity) of M dwarfs from 
+          high-resolution CARMENES spectra, bridging the gap between synthetic models and observed data. Applying the same methodology to low-resolution spectroscopy
+          to determine the effective temperature of ultracool dwarfs.</li>
+
+        <li><strong>Detailed morphology of galaxies in clusters</strong>: Using visual morphology classifications, obtained with the <a href="https://zoobot.readthedocs.io/en/latest/">
+          Zoobot</a> deep learning classifier, to study the evolution of different galaxy morphologies in high density environments in the Euclid survey.</li>
+
+
+        <li><strong>Identification and characterisation of low-mass objects</strong>: Enabling Virtual Observatory methodologies to efficiently identify 
+          ultracool dwarf candidates in wide-field surveys.</li>
+
+      </ul>
+
+      <p>My work demonstrates how data-driven approaches, combining Virtual Observatory infrastructure with artificial intelligence, can transform astronomical 
+        research by enabling the automated analysis of vast datasets from current and future surveys.</p>
+
+    </section>
+
+    <!-- Interactive Career Timeline -->
+    <CareerTimelineWrapper />
+
+    <!-- 3D Skills Galaxy -->
+    <!-- <SkillsGalaxyWrapper /> -->
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  main {
+    @apply mx-auto w-full max-w-5xl px-4 pb-12;
+  }
+</style>

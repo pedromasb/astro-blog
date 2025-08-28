@@ -1,0 +1,29 @@
+---
+import CareerTimeline from "./CareerTimeline";
+---
+
+<section class="career-timeline-section mt-8">
+  <div class="section-header">
+    <h2 class="section-title">My Academic Journey</h2>
+    <p class="section-subtitle">Interactive timeline of my research milestones and achievements</p>
+  </div>
+  <CareerTimeline client:load />
+</section>
+
+<style>
+  .career-timeline-section {
+    @apply mb-16;
+  }
+  
+  .section-header {
+    @apply text-center mb-12;
+  }
+  
+  .section-title {
+    @apply text-3xl font-bold text-skin-accent mb-4;
+  }
+  
+  .section-subtitle {
+    @apply text-skin-base/80 max-w-2xl mx-auto;
+  }
+</style>

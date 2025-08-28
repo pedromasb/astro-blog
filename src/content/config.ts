@@ -60,10 +60,11 @@ const software = defineCollection({
       canonicalURL: z.string().optional(),
       repo: z.string().url().optional(),
       docs: z.string().url().optional(),
-      demo: z.string().url().optional(),
+      demo: z.string().url().or(z.literal("")).optional(),
       pypi: z.string().optional(),
       npm: z.string().optional(),
       license: z.string().optional(),
+      catalogue: z.string().optional(),
     }),
 });
 

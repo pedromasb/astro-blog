@@ -8,6 +8,7 @@ import { slugifyStr } from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import { SITE } from "@config";
+import CsvPreviewWrapper from "@components/CsvPreviewWrapper.astro";
 
 export interface Props {
   project: CollectionEntry<"software">;
@@ -29,7 +30,14 @@ const {
   pypi,
   npm,
   license,
+  catalogue,
 } = project.data as any;
+
+// Check if this is a catalogue - hide demo for catalogues
+const isCatalogue = title.toLowerCase().includes('catalog') || title.toLowerCase().includes('catalogue');
+
+// Check if there's a catalogue path specified to show CSV preview
+const hasCatalogue = catalogue && catalogue.trim() !== "";
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
@@ -100,7 +108,7 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
       )}
 
 
-      {demo && (
+      {demo && demo.trim() !== "" && !isCatalogue && (
         <a 
           href={demo}
           target="_blank"
@@ -147,6 +155,17 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
 
     <article id="article" class="prose mx-auto mt-6 max-w-3xl">
       <Content />
+      
+      {hasCatalogue && (
+        <div class="not-prose mt-8">
+          <CsvPreviewWrapper 
+            csvPath={catalogue}
+            title={`${title} - Dataset Preview`}
+            maxRows={15}
+            height="500px"
+          />
+        </div>
+      )}
     </article>
 
     <!-- Prev / Next -->

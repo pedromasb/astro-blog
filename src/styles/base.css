@@ -2,6 +2,437 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ultra-Modern CSV Preview Component */
+@layer components {
+  /* Main Container */
+  .csv-modern-container {
+    @apply relative rounded-2xl overflow-hidden shadow-2xl 
+           border border-skin-line backdrop-blur-sm my-8;
+    background: linear-gradient(135deg, rgb(var(--color-fill)) 0%, rgba(var(--color-card), 0.2) 100%);
+    box-shadow: 0 25px 50px -12px rgba(var(--color-accent), 0.05);
+  }
+
+  /* Header Section */
+  .csv-modern-header {
+    @apply relative backdrop-blur-md border-b border-skin-line px-6 py-4;
+    background: linear-gradient(90deg, 
+      rgba(var(--color-card), 0.4) 0%, 
+      rgba(var(--color-card-muted), 0.3) 50%, 
+      rgba(var(--color-card), 0.4) 100%);
+  }
+
+  .csv-title-section {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3;
+  }
+
+  .csv-modern-title {
+    @apply text-xl font-bold m-0 leading-tight;
+    background: linear-gradient(90deg, rgb(var(--color-accent)) 0%, rgba(var(--color-accent), 0.7) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .csv-modern-badge {
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium
+           text-skin-accent border backdrop-blur-sm font-mono;
+    background-color: rgba(var(--color-accent), 0.1);
+    border-color: rgba(var(--color-accent), 0.2);
+  }
+
+  /* Viewport */
+  .csv-modern-viewport {
+    @apply relative overflow-hidden;
+  }
+
+  .csv-modern-table-wrapper {
+    @apply overflow-auto;
+  }
+
+  /* Table Styles */
+  .csv-modern-table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .csv-modern-thead {
+    @apply sticky top-0 z-10 backdrop-blur-md;
+    background: linear-gradient(90deg, 
+      rgba(var(--color-card), 0.3) 0%, 
+      rgba(var(--color-card), 0.2) 100%);
+  }
+
+  .csv-modern-th {
+    @apply px-4 py-3 text-left font-semibold text-skin-accent 
+           border-b-2 whitespace-nowrap;
+    border-bottom-color: rgba(var(--color-accent), 0.2);
+  }
+
+  .csv-header-content {
+    @apply flex items-center gap-2;
+  }
+
+  .csv-header-text {
+    @apply font-mono text-sm;
+  }
+
+  /* Table Body */
+  .csv-modern-tbody {
+    @apply divide-y;
+    border-color: rgba(var(--color-border), 0.1);
+  }
+
+  .csv-modern-row {
+    @apply transition-all duration-200 hover:shadow-sm hover:scale-[1.001];
+  }
+  
+  .csv-modern-row:hover {
+    background-color: rgba(var(--color-accent), 0.05);
+  }
+
+  .csv-modern-cell {
+    @apply px-4 py-3 whitespace-nowrap transition-colors duration-200;
+    color: rgba(var(--color-text-base), 0.9);
+  }
+  
+  .csv-modern-row:hover .csv-modern-cell {
+    color: rgb(var(--color-text-base));
+  }
+
+  .csv-cell-content {
+    @apply font-mono text-sm;
+  }
+
+  /* Fade Indicator */
+  .csv-fade-indicator {
+    @apply absolute bottom-0 left-0 right-0 pointer-events-none;
+  }
+
+  .fade-gradient {
+    @apply h-16;
+    background: linear-gradient(to top, 
+      rgba(var(--color-fill), 0.9) 0%, 
+      rgba(var(--color-fill), 0.6) 50%, 
+      transparent 100%);
+  }
+
+  .more-rows-text {
+    @apply absolute bottom-2 left-1/2 transform -translate-x-1/2 
+           text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm border;
+    color: rgba(var(--color-text-base), 0.6);
+    background-color: rgba(var(--color-card), 0.8);
+    border-color: rgba(var(--color-border), 0.2);
+  }
+
+  /* Loading States */
+  .csv-modern-loading {
+    @apply flex flex-col items-center justify-center p-12 gap-4;
+  }
+
+  .loading-modern-spinner {
+    @apply w-8 h-8 border-2 rounded-full animate-spin;
+    border-color: rgba(var(--color-border), 0.2);
+    border-top-color: rgb(var(--color-accent));
+  }
+
+  .loading-text {
+    @apply font-medium;
+    color: rgba(var(--color-text-base), 0.7);
+  }
+
+  /* Error States */
+  .csv-modern-error {
+    @apply flex items-center justify-center gap-3 p-8 text-red-500 dark:text-red-400;
+  }
+
+  .error-icon {
+    @apply text-xl;
+  }
+
+  /* Scrollbar Styling */
+  .csv-modern-table-wrapper::-webkit-scrollbar {
+    @apply w-1 h-1;
+  }
+
+  .csv-modern-table-wrapper::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .csv-modern-table-wrapper::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background-color: rgba(var(--color-accent), 0.2);
+  }
+
+  .csv-modern-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(var(--color-accent), 0.4);
+  }
+
+  /* Interactive Career Timeline */
+  .career-timeline {
+    @apply relative py-12 px-4;
+  }
+
+  .timeline-container {
+    @apply relative max-w-4xl mx-auto;
+  }
+
+  .timeline-line {
+    @apply absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b;
+    background: linear-gradient(to bottom,
+      rgba(var(--color-accent), 0.8) 0%,
+      rgba(var(--color-accent), 0.4) 50%,
+      rgba(var(--color-accent), 0.8) 100%);
+  }
+
+  .timeline-item {
+    @apply relative mb-16 flex items-center;
+  }
+
+  .timeline-item:nth-child(odd) {
+    @apply flex-row;
+  }
+
+  .timeline-item:nth-child(even) {
+    @apply flex-row-reverse;
+  }
+
+  .timeline-marker {
+    @apply absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10;
+  }
+
+  .marker-dot {
+    @apply w-6 h-6 rounded-full border-4 border-skin-accent;
+    background: linear-gradient(135deg, rgb(var(--color-accent)), rgba(var(--color-accent), 0.8));
+    box-shadow: 0 0 20px rgba(var(--color-accent), 0.6);
+  }
+
+  .marker-year {
+    @apply mt-2 px-3 py-1 rounded-full text-xs font-bold text-skin-accent border border-skin-accent;
+    background: rgba(var(--color-fill), 0.9);
+    backdrop-filter: blur(10px);
+  }
+
+  .timeline-content {
+    @apply w-5/12 p-6 rounded-xl border border-skin-line cursor-pointer transition-all duration-300;
+    background: linear-gradient(135deg, 
+      rgba(var(--color-card), 0.8) 0%,
+      rgba(var(--color-card-muted), 0.4) 100%);
+    backdrop-filter: blur(10px);
+  }
+
+  .timeline-content:hover {
+    @apply scale-105 shadow-2xl;
+    box-shadow: 0 20px 40px rgba(var(--color-accent), 0.2);
+  }
+
+  .timeline-item:nth-child(even) .timeline-content {
+    @apply ml-auto;
+  }
+
+  .timeline-header h3 {
+    @apply text-xl font-bold text-skin-accent mb-2;
+  }
+
+  .timeline-institution {
+    @apply text-skin-base font-medium mb-1;
+  }
+
+  .timeline-degree {
+    @apply text-sm mb-3;
+    color: rgba(var(--color-text-base), 0.7);
+  }
+
+  .timeline-description {
+    @apply mb-4;
+    color: rgba(var(--color-text-base), 0.9);
+  }
+
+  .timeline-expanded {
+    @apply max-h-0 overflow-hidden transition-all duration-500;
+  }
+
+  .timeline-expanded.show {
+    @apply max-h-screen;
+  }
+
+  .achievements-section,
+  .stats-section,
+  .projects-section {
+    @apply mb-6;
+  }
+
+  .achievements-section h4,
+  .stats-section h4,
+  .projects-section h4 {
+    @apply text-lg font-semibold text-skin-accent mb-3;
+  }
+
+  .achievements-list {
+    @apply space-y-2;
+  }
+
+  .achievements-list li {
+    @apply flex items-start;
+    color: rgba(var(--color-text-base), 0.9);
+  }
+
+  .achievements-list li::before {
+    @apply mr-2 text-skin-accent;
+    content: "▸";
+  }
+
+  .stats-grid {
+    @apply grid grid-cols-2 gap-4;
+  }
+  
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .stat-item {
+    @apply text-center p-3 rounded-lg border;
+    background: rgba(var(--color-card), 0.3);
+    border-color: rgba(var(--color-border), 0.5);
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold text-skin-accent;
+  }
+
+  .stat-label {
+    @apply text-sm mt-1;
+    color: rgba(var(--color-text-base), 0.7);
+  }
+
+  .projects-grid {
+    @apply grid grid-cols-1 gap-4;
+  }
+  
+  @media (min-width: 768px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .project-card {
+    @apply flex gap-3 p-3 rounded-lg border transition-colors;
+    background: rgba(var(--color-card), 0.2);
+    border-color: rgba(var(--color-border), 0.5);
+  }
+  
+  .project-card:hover {
+    border-color: rgba(var(--color-accent), 0.5);
+  }
+
+  .project-image {
+    @apply w-16 h-16 rounded-lg overflow-hidden flex-shrink-0;
+  }
+
+  .project-image img {
+    @apply w-full h-full object-cover;
+  }
+
+  .project-info h5 {
+    @apply font-semibold text-skin-accent text-sm mb-1;
+  }
+
+  .project-info p {
+    @apply text-xs;
+    color: rgba(var(--color-text-base), 0.8);
+  }
+
+  /* Skills Galaxy */
+  .skills-galaxy {
+    @apply relative w-full h-screen bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden;
+  }
+
+  .galaxy-container {
+    @apply relative w-full h-full;
+  }
+
+  .galaxy-canvas {
+    @apply w-full h-full cursor-pointer;
+  }
+
+  .galaxy-controls {
+    @apply absolute top-4 right-4 flex gap-2;
+  }
+
+  .zoom-btn {
+    @apply px-4 py-2 bg-skin-accent text-skin-inverted rounded-lg font-medium transition-colors;
+  }
+  
+  .zoom-btn:hover {
+    background-color: rgba(var(--color-accent), 0.8);
+  }
+
+  .skill-info-panel {
+    @apply absolute top-1/2 left-4 transform -translate-y-1/2 w-80 p-6 rounded-xl;
+    @apply backdrop-blur-lg border border-skin-line shadow-2xl;
+    background-color: rgba(var(--color-card), 0.9);
+  }
+
+  .skill-info-panel h3 {
+    @apply text-xl font-bold text-skin-accent mb-2;
+  }
+
+  .skill-category {
+    @apply text-sm font-medium mb-3 px-2 py-1 rounded-full inline-block;
+    background-color: rgba(var(--color-accent), 0.1);
+    color: rgb(var(--color-accent));
+  }
+
+  .skill-description {
+    @apply mb-4;
+    color: rgba(var(--color-text-base), 0.9);
+  }
+
+  .skill-connections h4 {
+    @apply text-sm font-semibold text-skin-accent mb-2;
+  }
+
+  .connections-list {
+    @apply flex flex-wrap gap-1;
+  }
+
+  .connection-tag {
+    @apply px-2 py-1 text-xs rounded-full text-skin-accent;
+    background-color: rgba(var(--color-accent), 0.2);
+  }
+
+  .close-panel {
+    @apply absolute top-2 right-2 w-8 h-8 flex items-center justify-center transition-colors;
+    color: rgba(var(--color-text-base), 0.6);
+  }
+  
+  .close-panel:hover {
+    @apply text-skin-accent;
+  }
+
+  .galaxy-legend {
+    @apply absolute bottom-4 left-4 p-4 rounded-xl backdrop-blur-lg border border-skin-line;
+    background-color: rgba(var(--color-card), 0.9);
+  }
+
+  .galaxy-legend h4 {
+    @apply text-sm font-semibold text-skin-accent mb-3;
+  }
+
+  .legend-items {
+    @apply space-y-2;
+  }
+
+  .legend-item {
+    @apply flex items-center gap-2 text-sm;
+    color: rgba(var(--color-text-base), 0.9);
+  }
+
+  .legend-color {
+    @apply w-3 h-3 rounded-full;
+  }
+}
+
 /* Lobster
 :root,
 html[data-theme="light"] {
