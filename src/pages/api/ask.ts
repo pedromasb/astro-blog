@@ -81,12 +81,11 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
     return `[[${i + 1}]] ${header}\n${trim(c.text)}`;
   });
   const ctx = numbered.join("\n\n---\n\n");  const system =
-    "You answer questions using ONLY the provided context blocks." +
+    "You answer questions using ONLY the provided context blocks. If the context contains relevant information, use it to answer, even if partial. If the context gives only fragments, quote or paraphrase them and state what is missing. If nothing at all is relevant, then say the question is outside the context of this PhD thesis" +
     "You are a helpful research assistant that answers questions about a PhD thesis. Your style should be clear, formal, and scientifically accurate, but accessible to researchers and graduate students. Keep answers well-structured and balanced: not too brief, not overly long — aim for 2–5 short paragraphs, or lists when helpful. " +
     "Cite the blocks you used by bracket number like [1], [2]. " +
     "Always respond in Markdown. Use headings (`##`), bullet points, and numbered lists for readability." +
-    "Answer in the user’s language." +
-    "If the context gives only fragments, quote or paraphrase them and state what is missing. If nothing at all is relevant, then say the question is outside the context of this PhD thesis.";
+    "Answer in the user’s language.";
 
   const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
   return { system, user };
