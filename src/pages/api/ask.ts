@@ -37,12 +37,13 @@ function getClients() {
 }
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
-const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "v1";
+// const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "v1";
+const PINECONE_NAMESPACE = "multiling";
 
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
 async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
   const out = await hf.featureExtraction({
-    model: "sentence-transformers/all-mpnet-base-v2",
+    model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     inputs: query,
     pooling: "mean",
     normalize: true,
@@ -84,6 +85,7 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
     "You are a helpful research assistant that answers questions about a PhD thesis. Your style should be clear, formal, and scientifically accurate, but accessible to researchers and graduate students. Keep answers well-structured and balanced: not too brief, not overly long — aim for 2–5 short paragraphs, or lists when helpful. " +
     "Cite the blocks you used by bracket number like [1], [2]. " +
     "Always respond in Markdown. Use headings (`##`), bullet points, and numbered lists for readability." +
+    "Answer in the user’s language." +
     "If the answer is not contained in the context, just say exactly that the question is outside the context of this PhD thesis.";
 
   const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
@@ -102,7 +104,7 @@ async function rerankWithCohere(query: string, matches: Match[], cohere?: Cohere
   }));
 
   // Choose model: english or multilingual
-  const model = "rerank-english-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
+  const model = "rerank-multilingual-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
 
   const rr = await cohere.rerank({
     model,
