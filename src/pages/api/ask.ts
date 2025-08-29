@@ -43,8 +43,8 @@ const PINECONE_NAMESPACE = "v1";
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
 async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
   const out = await hf.featureExtraction({
-    // model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    model: "sentence-transformers/all-mpnet-base-v2",
+    model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    // model: "sentence-transformers/all-mpnet-base-v2",
     inputs: query,
     pooling: "mean",
     normalize: true,
@@ -104,7 +104,7 @@ async function rerankWithCohere(query: string, matches: Match[], cohere?: Cohere
   }));
 
   // Choose model: english or multilingual
-  const model = "rerank-english-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
+  const model = "rerank-multilingual-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
 
   const rr = await cohere.rerank({
     model,
