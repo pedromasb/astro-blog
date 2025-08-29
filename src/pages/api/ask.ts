@@ -38,12 +38,13 @@ function getClients() {
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
 // const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "v1";
-const PINECONE_NAMESPACE = "multiling";
+const PINECONE_NAMESPACE = "v1";
 
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
 async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
   const out = await hf.featureExtraction({
-    model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    // model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    model: "sentence-transformers/all-mpnet-base-v2",
     inputs: query,
     pooling: "mean",
     normalize: true,
@@ -81,7 +82,7 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
     return `[[${i + 1}]] ${header}\n${trim(c.text)}`;
   });
   const ctx = numbered.join("\n\n---\n\n");  const system =
-    "You answer questions using ONLY the provided context blocks. If the context contains relevant information, use it to answer, even if partial. If the context gives only fragments, quote or paraphrase them and state what is missing. If nothing at all is relevant, then say the question is outside the context of this PhD thesis" +
+    "You answer questions using ONLY the provided context blocks. If the context contains relevant information, use it to answer, even if partial, and do not state what is missing. If the context gives only fragments, quote or paraphrase them and state what is missing. If nothing at all is relevant, then say the question is outside the context of this PhD thesis" +
     "You are a helpful research assistant that answers questions about a PhD thesis. Your style should be clear, formal, and scientifically accurate, but accessible to researchers and graduate students. Keep answers well-structured and balanced: not too brief, not overly long — aim for 2–5 short paragraphs, or lists when helpful. " +
     "Cite the blocks you used by bracket number like [1], [2]. " +
     "Always respond in Markdown. Use headings (`##`), bullet points, and numbered lists for readability." +
@@ -103,7 +104,7 @@ async function rerankWithCohere(query: string, matches: Match[], cohere?: Cohere
   }));
 
   // Choose model: english or multilingual
-  const model = "rerank-multilingual-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
+  const model = "rerank-english-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
 
   const rr = await cohere.rerank({
     model,
