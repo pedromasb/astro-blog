@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Milestone {
   id: string;
@@ -18,7 +18,7 @@ const timelineData: Milestone[] = [
     institution: "Centro de Astrobiología (CSIC-INTA)",
     institution2: "",
     degree: "",
-    description: "Postdoctoral researcher for the European Space Agency @ESAC. Exploring the detailed mophology of galaxies in clusters using deep learning classifications in the Euclid survey.",
+    description: "Postdoctoral researcher at Centro de Astrobiología for the European Space Agency @ESAC. Exploring the detailed mophology of galaxies in clusters using deep learning classifications in the Euclid survey.",
   },
     {
     id: "ucsd",
@@ -60,52 +60,17 @@ const timelineData: Milestone[] = [
 
 export default function CareerTimeline() {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [scrollY, setScrollY] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const AnimatedNumber = ({ value, isActive }: { value: string; isActive: boolean }) => {
-    const [displayValue, setDisplayValue] = useState("0");
-    
-    useEffect(() => {
-      if (isActive) {
-        const numericValue = parseInt(value.replace(/\D/g, ''));
-        let current = 0;
-        const increment = numericValue / 30;
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= numericValue) {
-            setDisplayValue(value);
-            clearInterval(timer);
-          } else {
-            setDisplayValue(Math.floor(current) + value.replace(/\d/g, '').substring(1));
-          }
-        }, 50);
-        return () => clearInterval(timer);
-      }
-    }, [isActive, value]);
-
-    return <span>{displayValue}</span>;
-  };
 
   return (
     <div className="career-timeline">
       <div className="timeline-container">
-        <div className="timeline-line" 
-             style={{ transform: `translateX(${scrollY * 0.1}px)` }}>
-        </div>
+        <div className="timeline-line"></div>
         
-        {timelineData.map((milestone, index) => (
+        {timelineData.map((milestone) => (
           <div
             key={milestone.id}
             className={`timeline-item ${activeId === milestone.id ? 'active' : ''}`}
-            style={{
-              transform: `translateX(${scrollY * (index % 2 === 0 ? -0.05 : 0.05)}px)`
-            }}
           >
             <div className="timeline-marker">
               <div className="marker-dot"></div>
