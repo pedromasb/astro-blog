@@ -170,7 +170,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 4) LLM
     const completion = await openai.chat.completions.create({
-      model: "gpt-5-mini",           // valid model
+      model: "gpt-5-nano",           // valid model
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
