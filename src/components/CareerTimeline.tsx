@@ -19,13 +19,13 @@ const timelineData: Milestone[] = [
     institution: "Centro de Astrobiología (CSIC-INTA)",
     institution2: "",
     degree: "",
-    description: "Postdoctoral researcher at Centro de Astrobiología for the European Space Agency @ESAC. Exploring the detailed mophology of galaxies in clusters using deep learning classifications in the Euclid survey.",
+    description: "Postdoctoral researcher at Centro de Astrobiología for the European Space Agency @ESAC. Exploring the detailed morphology of galaxies in clusters using deep learning classifications in the Euclid survey.",
     celestialType: "galaxy"
   },
     {
     id: "ucsd",
     year: "Sep 2024 - Dec 2024",
-    title: "Reserch project at the University of California San Diego",
+    title: "Research project at the University of California San Diego",
     institution: "University of California San Diego (UCSD)",
     institution2: "",
     degree: "",
