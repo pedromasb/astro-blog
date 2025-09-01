@@ -38,7 +38,7 @@ function getClients() {
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
 // const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || "v1";
-const PINECONE_NAMESPACE = "v1";
+const PINECONE_NAMESPACE = "vf";
 
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
 async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
@@ -86,6 +86,7 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
     "You are a helpful research assistant that answers questions about a PhD thesis. Your style should be clear, formal, and scientifically accurate, but accessible to researchers and graduate students. Keep answers well-structured and balanced: not too brief, not overly long — aim for 2–5 short paragraphs, or lists when helpful. " +
     "Cite the blocks you used by bracket number like [1], [2]. " +
     "Always respond in Markdown. Use headings (`##`), bullet points, and numbered lists for readability." +
+    "Take into account that temperature values will appear with the unit ,K in the context" + 
     "Answer in the user’s language.";
 
   const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
