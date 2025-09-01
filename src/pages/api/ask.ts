@@ -66,15 +66,11 @@ function asPath(md: any) {
   return parts.join(" | ");
 }
 
-function trim(s = "", max = 900) {
+function trim(s = "", max = 5000) {
   s = s.trim();
   return s.length <= max ? s : s.slice(0, max) + " …";
 }
 
-function preview(text = "", max = 180) {
-  text = text.replace(/\s+/g, " ").trim();
-  return text.length <= max ? text : text.slice(0, max) + "…";
-}
 
 function buildPrompt(question: string, contexts: { text: string; meta: any }[]) {
   const numbered = contexts.map((c, i) => {
