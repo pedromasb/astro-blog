@@ -62,7 +62,7 @@ function asPath(md: any) {
   return parts.join(" | ");
 }
 
-function trim(s = "", max = 2000) {
+function trim(s = "", max = 1000) {
   s = s.trim();
   return s.length <= max ? s : s.slice(0, max) + " …";
 }
@@ -89,107 +89,182 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
 
 
 export const POST: APIRoute = async ({ request }) => {
+  console.log('API /ask endpoint called');
+  
   try {
-    const body = await request.json().catch(() => ({}));
+    // Parse request body
+    let body;
+    try {
+      const rawBody = await request.text();
+      console.log('Raw request body:', rawBody);
+      body = JSON.parse(rawBody);
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError);
+      return new Response(
+        JSON.stringify({ error: "Invalid request body - must be valid JSON" }), 
+        { 
+          status: 400, 
+          headers: { "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
     const query = body?.query;
     if (!query || typeof query !== "string") {
-      return new Response(JSON.stringify({ error: "Missing 'query' string" }), { 
-        status: 400, 
-        headers: { "Content-Type": "application/json" } 
-      });
+      return new Response(
+        JSON.stringify({ error: "Missing 'query' string in request body" }), 
+        { 
+          status: 400, 
+          headers: { "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
+    console.log('Processing query:', query);
+
+    // Initialize clients
+    let pc, openai, hf;
+    try {
+      const clients = getClients();
+      pc = clients.pc;
+      openai = clients.openai;
+      hf = clients.hf;
+      console.log('Clients initialized successfully');
+    } catch (clientError) {
+      console.error('Failed to initialize clients:', clientError);
+      return new Response(
+        JSON.stringify({ error: `Failed to initialize services: ${clientError.message}` }), 
+        { 
+          status: 500, 
+          headers: { "Content-Type": "application/json" } 
+        }
+      );
     }
 
-    const { pc, openai, hf } = getClients();
     const index = pc.Index(PINECONE_INDEX);
 
-    // 1) embed
-    const qvec = await embedQueryHF(hf, query);
+    // 1) Generate embedding
+    let qvec;
+    try {
+      console.log('Generating embedding...');
+      qvec = await embedQueryHF(hf, query);
+      console.log('Embedding generated, dimension:', qvec.length);
+    } catch (embedError) {
+      console.error('Embedding generation failed:', embedError);
+      return new Response(
+        JSON.stringify({ error: `Failed to generate embedding: ${embedError.message}` }), 
+        { 
+          status: 500, 
+          headers: { "Content-Type": "application/json" } 
+        }
+      );
+    }
 
-    // 2) vector search (namespace via chaining for SDKs that require it)
-    const res = await index.namespace(PINECONE_NAMESPACE).query({
-      vector: qvec,
-      topK: 6,
-      includeMetadata: true,
-    });
+    // 2) Vector search
+    let matches;
+    try {
+      console.log('Performing vector search...');
+      const res = await index.namespace(PINECONE_NAMESPACE).query({
+        vector: qvec,
+        topK: 6,
+        includeMetadata: true,
+      });
+      
+      matches = (res.matches || []).map((m: any) => ({
+        id: m.id,
+        text: m.metadata?.text || "",
+        meta: m.metadata || {},
+        score: m.score,
+      }));
+      
+      console.log('Vector search complete, found', matches.length, 'matches');
+    } catch (searchError) {
+      console.error('Vector search failed:', searchError);
+      return new Response(
+        JSON.stringify({ error: `Vector search failed: ${searchError.message}` }), 
+        { 
+          status: 500, 
+          headers: { "Content-Type": "application/json" } 
+        }
+      );
+    }
 
-    const matches = (res.matches || []).map((m: any) => ({
-      id: m.id,
-      text: m.metadata?.text || "",
-      meta: m.metadata || {},
-      score: m.score, // vector sim score (pre-rerank)
-    }));
-
-    // Use top 6 results from vector search directly
+    // Use top 6 results
     const top = matches.slice(0, 6);
 
-    // 3) prompt
+    // 3) Build prompt
     const { system, user } = buildPrompt(query, top);
+    console.log('Prompt built, sending to OpenAI...');
 
-    // 4) LLM with better error handling
+    // 4) Call OpenAI
     let completion;
     try {
       completion = await openai.chat.completions.create({
-        model: "gpt-4-nano",
+        model: "gpt-5-mini",
         messages: [
           { role: "system", content: system },
           { role: "user", content: user },
         ]
       });
+      console.log('OpenAI response received');
     } catch (openaiError: any) {
-      console.error('OpenAI API Error:', openaiError);
+      console.error('OpenAI API call failed:', openaiError);
       
-      // Handle OpenAI-specific errors
-      if (openaiError?.response) {
-        const status = openaiError.response.status;
-        const errorBody = await openaiError.response.text().catch(() => null);
-        
-        console.error('OpenAI Response Status:', status);
-        console.error('OpenAI Response Body:', errorBody);
-        
-        if (status === 401) {
-          throw new Error("OpenAI API authentication failed. Please check your API key.");
-        } else if (status === 429) {
-          throw new Error("OpenAI API rate limit exceeded. Please try again later.");
-        } else if (status === 500 || status === 502 || status === 503) {
-          throw new Error("OpenAI service is temporarily unavailable. Please try again.");
-        } else {
-          throw new Error(`OpenAI API error (${status}): ${errorBody || 'Unknown error'}`);
-        }
+      // Check if it's an OpenAI SDK error
+      if (openaiError?.error) {
+        console.error('OpenAI error details:', openaiError.error);
+        return new Response(
+          JSON.stringify({ 
+            error: `OpenAI API error: ${openaiError.error?.message || openaiError.message}`,
+            code: openaiError.error?.code,
+            type: openaiError.error?.type
+          }), 
+          { 
+            status: 500, 
+            headers: { "Content-Type": "application/json" } 
+          }
+        );
       }
       
-      // If it's not a response error, it might be a network or other error
-      throw new Error(`Failed to connect to OpenAI: ${openaiError?.message || 'Unknown error'}`);
+      // Generic error
+      return new Response(
+        JSON.stringify({ error: `Failed to generate response: ${openaiError.message || 'Unknown error'}` }), 
+        { 
+          status: 500, 
+          headers: { "Content-Type": "application/json" } 
+        }
+      );
     }
 
-    const answer = completion.choices?.[0]?.message?.content ?? "No answer.";
+    const answer = completion.choices?.[0]?.message?.content ?? "No answer generated.";
 
     const sources = top.map(m => ({
       id: m.id,
       score: m.score,
-      metadata: m.meta,            // <-- normalize key for the client
-      path: asPath(m.meta || {}),  // <-- optional convenience
+      metadata: m.meta,
+      path: asPath(m.meta || {}),
     }));
 
-    return new Response(JSON.stringify({ answer, sources }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-
-  } catch (err: any) {
-    console.error('API Error Details:', {
-      message: err?.message,
-      stack: err?.stack,
-      name: err?.name,
-      cause: err?.cause
-    });
-    
-    // Return a properly formatted error response
-    const errorMessage = err?.message || "An unexpected error occurred";
+    console.log('Sending successful response');
     
     return new Response(
+      JSON.stringify({ answer, sources }), 
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+  } catch (unexpectedError: any) {
+    console.error('Unexpected error in API handler:', unexpectedError);
+    console.error('Error stack:', unexpectedError?.stack);
+    
+    // Always return valid JSON
+    return new Response(
       JSON.stringify({ 
-        error: errorMessage,
-        details: process.env.NODE_ENV === 'development' ? err?.stack : undefined 
+        error: "An unexpected error occurred. Please check server logs.",
+        message: unexpectedError?.message || 'Unknown error',
+        details: process.env.NODE_ENV === 'development' ? unexpectedError?.stack : undefined 
       }), 
       {
         status: 500,
