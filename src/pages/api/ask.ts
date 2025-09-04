@@ -2,6 +2,7 @@
 import type { APIRoute } from "astro";
 import { Pinecone } from "@pinecone-database/pinecone";
 import OpenAI from "openai";
+import { CohereClient } from "cohere-ai";
 
 export const prerender = false;
 export const runtime = 'node'; // ensure Node runtime on Vercel
@@ -10,6 +11,7 @@ export const runtime = 'node'; // ensure Node runtime on Vercel
 // --- Lazy singletons (initialized on first call only)
 let _pc: Pinecone | null = null;
 let _openai: OpenAI | null = null;
+let _cohere: CohereClient | null = null;
 
 function requireEnv(name: string): string {
   const v = (import.meta as any).env?.[name];
@@ -21,11 +23,13 @@ function getClients() {
   // Validate env inside the handler so errors are caught and serialized to JSON
   const PINECONE_API_KEY = process.env.PINECONE_API_KEY!;
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
+  const COHERE_API_KEY   = (import.meta as any).env?.COHERE_API_KEY; // optional
 
   if (!_pc) _pc = new Pinecone({ apiKey: PINECONE_API_KEY });
   if (!_openai) _openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+  if (!_cohere && COHERE_API_KEY) _cohere = new CohereClient({ token: COHERE_API_KEY });
 
-  return { pc: _pc!, openai: _openai!};
+  return { pc: _pc!, openai: _openai!, cohere: _cohere};
 }
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
@@ -75,188 +79,124 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
   return { system, user };
 }
 
+type Match = { id: string; text: string; meta: any; score: number };
+
+async function rerankWithCohere(query: string, matches: Match[], cohere?: CohereClient, keep = 8) {
+  if (!cohere || matches.length === 0) return matches.slice(0, keep);
+
+  // Prepare docs for Cohere
+  const documents = matches.map((m, i) => ({
+    id: String(i),            // we’ll map back by this
+    text: m.text || "",
+  }));
+
+  // Choose model: english or multilingual
+  const model = "rerank-multilingual-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
+
+  const rr = await cohere.rerank({
+    model,
+    query,
+    documents,
+    topN: Math.min(keep, documents.length),
+  });
+
+  // Reorder matches by Cohere’s result indices
+  const order = rr.results
+    .sort((a, b) => (b.relevanceScore ?? 0) - (a.relevanceScore ?? 0))
+    .map(r => Number(r.index));
+
+  const re = order.map(i => ({
+    ...matches[i],
+    rerankScore: rr.results.find(r => Number(r.index) === i)?.relevanceScore ?? null,
+  }));
+
+  return re;
+}
 
 export const POST: APIRoute = async ({ request }) => {
-  console.log('API /ask endpoint called');
-  
   try {
-    // Parse request body
-    let body;
-    try {
-      const rawBody = await request.text();
-      console.log('Raw request body:', rawBody);
-      body = JSON.parse(rawBody);
-    } catch (parseError) {
-      console.error('Failed to parse request body:', parseError);
-      return new Response(
-        JSON.stringify({ error: "Invalid request body - must be valid JSON" }), 
-        { 
-          status: 400, 
-          headers: { "Content-Type": "application/json" } 
-        }
-      );
-    }
-    
+    const body = await request.json().catch(() => ({}));
     const query = body?.query;
     if (!query || typeof query !== "string") {
-      return new Response(
-        JSON.stringify({ error: "Missing 'query' string in request body" }), 
-        { 
-          status: 400, 
-          headers: { "Content-Type": "application/json" } 
-        }
-      );
-    }
-    
-    console.log('Processing query:', query);
-
-    // Initialize clients
-    let pc, openai;
-    try {
-      const clients = getClients();
-      pc = clients.pc;
-      openai = clients.openai;
-      console.log('Clients initialized successfully');
-    } catch (clientError) {
-      console.error('Failed to initialize clients:', clientError);
-      return new Response(
-        JSON.stringify({ error: `Failed to initialize services: ${clientError.message}` }), 
-        { 
-          status: 500, 
-          headers: { "Content-Type": "application/json" } 
-        }
-      );
+      return new Response(JSON.stringify({ error: "Missing 'query' string" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
 
+    const { pc, openai } = getClients();
     const index = pc.Index(PINECONE_INDEX);
 
-    // 1) Generate embedding
-    let qvec;
+    // 1) embed
+    const qvec = await embedQueryOpenAI(openai, query);
+
+    // 2) vector search (namespace via chaining for SDKs that require it)
+    const res = await index.namespace(PINECONE_NAMESPACE).query({
+      vector: qvec,
+      topK: 25,
+      includeMetadata: true,
+    });
+
+    const matches = (res.matches || []).map((m: any) => ({
+      id: m.id,
+      text: m.metadata?.text || "",
+      meta: m.metadata || {},
+      score: m.score, // vector sim score (pre-rerank)
+    }));
+
+    const topK = 6;
+    const { cohere } = getClients();
+    let top: Match[];
+
     try {
-      console.log('Generating embedding...');
-      qvec = await embedQueryOpenAI(openai, query);
-      console.log('Embedding generated, dimension:', qvec.length);
-    } catch (embedError) {
-      console.error('Embedding generation failed:', embedError);
-      return new Response(
-        JSON.stringify({ error: `Failed to generate embedding: ${embedError.message}` }), 
-        { 
-          status: 500, 
-          headers: { "Content-Type": "application/json" } 
-        }
-      );
+      top = await rerankWithCohere(query, matches, cohere ?? undefined, topK);
+    } catch (e) {
+      // Fail open: if rerank errors, fall back to vector order
+      top = matches.slice(0, topK);
     }
 
-    // 2) Vector search
-    let matches;
-    try {
-      console.log('Performing vector search...');
-      const res = await index.namespace(PINECONE_NAMESPACE).query({
-        vector: qvec,
-        topK: 6,
-        includeMetadata: true,
-      });
-      
-      matches = (res.matches || []).map((m: any) => ({
-        id: m.id,
-        text: m.metadata?.text || "",
-        meta: m.metadata || {},
-        score: m.score,
-      }));
-      
-      console.log('Vector search complete, found', matches.length, 'matches');
-    } catch (searchError) {
-      console.error('Vector search failed:', searchError);
-      return new Response(
-        JSON.stringify({ error: `Vector search failed: ${searchError.message}` }), 
-        { 
-          status: 500, 
-          headers: { "Content-Type": "application/json" } 
-        }
-      );
-    }
-
-    // Use top 6 results
-    const top = matches.slice(0, 6);
-
-    // 3) Build prompt
+    // 3) prompt
     const { system, user } = buildPrompt(query, top);
-    console.log('Prompt built, sending to OpenAI...');
 
-    // 4) Call OpenAI
-    let completion;
-    try {
-      completion = await openai.chat.completions.create({
-        model: "gpt-5-mini",
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user },
-        ]
-      });
-      console.log('OpenAI response received');
-    } catch (openaiError: any) {
-      console.error('OpenAI API call failed:', openaiError);
-      
-      // Check if it's an OpenAI SDK error
-      if (openaiError?.error) {
-        console.error('OpenAI error details:', openaiError.error);
-        return new Response(
-          JSON.stringify({ 
-            error: `OpenAI API error: ${openaiError.error?.message || openaiError.message}`,
-            code: openaiError.error?.code,
-            type: openaiError.error?.type
-          }), 
-          { 
-            status: 500, 
-            headers: { "Content-Type": "application/json" } 
-          }
-        );
-      }
-      
-      // Generic error
-      return new Response(
-        JSON.stringify({ error: `Failed to generate response: ${openaiError.message || 'Unknown error'}` }), 
-        { 
-          status: 500, 
-          headers: { "Content-Type": "application/json" } 
-        }
-      );
-    }
+    // 4) LLM
+    const completion = await openai.chat.completions.create({
+      model: "gpt-5-mini",           // valid model
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+    });
 
-    const answer = completion.choices?.[0]?.message?.content ?? "No answer generated.";
+    const answer = completion.choices?.[0]?.message?.content ?? "No answer.";
 
     const sources = top.map(m => ({
       id: m.id,
       score: m.score,
-      metadata: m.meta,
-      path: asPath(m.meta || {}),
+      metadata: m.meta,            // <-- normalize key for the client
+      path: asPath(m.meta || {}),  // <-- optional convenience
     }));
 
-    console.log('Sending successful response');
-    
-    return new Response(
-      JSON.stringify({ answer, sources }), 
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ answer, sources }), {
+      headers: { "Content-Type": "application/json" },
+    });
 
-  } catch (unexpectedError: any) {
-    console.error('Unexpected error in API handler:', unexpectedError);
-    console.error('Error stack:', unexpectedError?.stack);
-    
-    // Always return valid JSON
-    return new Response(
-      JSON.stringify({ 
-        error: "An unexpected error occurred. Please check server logs.",
-        message: unexpectedError?.message || 'Unknown error',
-        details: process.env.NODE_ENV === 'development' ? unexpectedError?.stack : undefined 
-      }), 
-      {
+    } catch (err: any) {
+      const detail = (err?.response && (await err.response.text?.()?.catch(()=>null))) || err?.message || String(err);
+      return new Response(JSON.stringify({ error: detail }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
+      });
+    }
 };
+
+export const GET: APIRoute = async () =>
+  new Response(JSON.stringify({ ok: true, hint: "Use POST { query }" }), {
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+  });
+
+  export const OPTIONS: APIRoute = async () =>
+  new Response(null, {
+    status: 204,
+    headers: {
+      Allow: "GET, POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "content-type, authorization",
+    },
+  });
