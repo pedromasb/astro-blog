@@ -50,7 +50,7 @@ function asPath(md: any) {
   return parts.join(" | ");
 }
 
-function trim(s = "", max = 1000) {
+function trim(s = "", max = 5000) {
   s = s.trim();
   return s.length <= max ? s : s.slice(0, max) + " …";
 }
@@ -111,7 +111,7 @@ export const POST: APIRoute = async ({ request }) => {
     console.log('Processing query:', query);
 
     // Initialize clients
-    let pc, openai, hf;
+    let pc, openai;
     try {
       const clients = getClients();
       pc = clients.pc;
