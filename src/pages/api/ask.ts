@@ -2,7 +2,6 @@
 import type { APIRoute } from "astro";
 import { Pinecone } from "@pinecone-database/pinecone";
 import OpenAI from "openai";
-import { InferenceClient } from "@huggingface/inference";
 
 export const prerender = false;
 export const runtime = 'node'; // ensure Node runtime on Vercel
@@ -11,7 +10,6 @@ export const runtime = 'node'; // ensure Node runtime on Vercel
 // --- Lazy singletons (initialized on first call only)
 let _pc: Pinecone | null = null;
 let _openai: OpenAI | null = null;
-let _hf: InferenceClient | null = null;
 
 function requireEnv(name: string): string {
   const v = (import.meta as any).env?.[name];
@@ -23,13 +21,11 @@ function getClients() {
   // Validate env inside the handler so errors are caught and serialized to JSON
   const PINECONE_API_KEY = process.env.PINECONE_API_KEY!;
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
-  const HF_TOKEN = requireEnv("HF_TOKEN");
 
   if (!_pc) _pc = new Pinecone({ apiKey: PINECONE_API_KEY });
   if (!_openai) _openai = new OpenAI({ apiKey: OPENAI_API_KEY });
-  if (!_hf) _hf = new InferenceClient(HF_TOKEN);
 
-  return { pc: _pc!, openai: _openai!, hf: _hf! };
+  return { pc: _pc!, openai: _openai!};
 }
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
@@ -37,20 +33,12 @@ const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
 const PINECONE_NAMESPACE = "vf";
 
 // Embeddings with HF feature-extraction (SDK picks correct endpoint)
-async function embedQueryHF(hf: InferenceClient, query: string): Promise<number[]> {
-  const out = await hf.featureExtraction({
-    // model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    model: "sentence-transformers/all-mpnet-base-v2",
-    inputs: query,
-    pooling: "mean",
-    normalize: true,
-    wait_for_model: true,
+async function embedQueryOpenAI(openai: OpenAI, query: string): Promise<number[]> {
+  const resp = await openai.embeddings.create({
+    model: "text-embedding-3-small",
+    input: query,
   });
-  const vec = Array.isArray((out as number[] | number[][])[0])
-    ? (out as number[][])[0]
-    : (out as number[]);
-  if (!Array.isArray(vec) || vec.length === 0) throw new Error("HF returned empty embedding");
-  return vec;
+  return resp.data[0].embedding as unknown as number[];
 }
 
 function asPath(md: any) {
@@ -128,7 +116,6 @@ export const POST: APIRoute = async ({ request }) => {
       const clients = getClients();
       pc = clients.pc;
       openai = clients.openai;
-      hf = clients.hf;
       console.log('Clients initialized successfully');
     } catch (clientError) {
       console.error('Failed to initialize clients:', clientError);
@@ -147,7 +134,7 @@ export const POST: APIRoute = async ({ request }) => {
     let qvec;
     try {
       console.log('Generating embedding...');
-      qvec = await embedQueryHF(hf, query);
+      qvec = await embedQueryOpenAI(openai, query);
       console.log('Embedding generated, dimension:', qvec.length);
     } catch (embedError) {
       console.error('Embedding generation failed:', embedError);
