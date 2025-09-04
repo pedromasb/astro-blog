@@ -62,7 +62,7 @@ function asPath(md: any) {
   return parts.join(" | ");
 }
 
-function trim(s = "", max = 5000) {
+function trim(s = "", max = 2000) {
   s = s.trim();
   return s.length <= max ? s : s.slice(0, max) + " …";
 }
@@ -86,8 +86,6 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
   const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
   return { system, user };
 }
-
-type Match = { id: string; text: string; meta: any; score: number };
 
 
 export const POST: APIRoute = async ({ request }) => {
@@ -131,13 +129,11 @@ export const POST: APIRoute = async ({ request }) => {
     let completion;
     try {
       completion = await openai.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-4-nano",
         messages: [
           { role: "system", content: system },
           { role: "user", content: user },
-        ],
-        temperature: 0.7,
-        max_tokens: 1000,
+        ]
       });
     } catch (openaiError: any) {
       console.error('OpenAI API Error:', openaiError);
