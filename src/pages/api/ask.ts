@@ -3,7 +3,6 @@ import type { APIRoute } from "astro";
 import { Pinecone } from "@pinecone-database/pinecone";
 import OpenAI from "openai";
 import { InferenceClient } from "@huggingface/inference";
-import { CohereClient } from "cohere-ai";
 
 export const prerender = false;
 export const runtime = 'node'; // ensure Node runtime on Vercel
@@ -13,7 +12,6 @@ export const runtime = 'node'; // ensure Node runtime on Vercel
 let _pc: Pinecone | null = null;
 let _openai: OpenAI | null = null;
 let _hf: InferenceClient | null = null;
-let _cohere: CohereClient | null = null;
 
 function requireEnv(name: string): string {
   const v = (import.meta as any).env?.[name];
@@ -26,14 +24,12 @@ function getClients() {
   const PINECONE_API_KEY = process.env.PINECONE_API_KEY!;
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
   const HF_TOKEN = requireEnv("HF_TOKEN");
-  const COHERE_API_KEY   = (import.meta as any).env?.COHERE_API_KEY; // optional
 
   if (!_pc) _pc = new Pinecone({ apiKey: PINECONE_API_KEY });
   if (!_openai) _openai = new OpenAI({ apiKey: OPENAI_API_KEY });
   if (!_hf) _hf = new InferenceClient(HF_TOKEN);
-  if (!_cohere && COHERE_API_KEY) _cohere = new CohereClient({ token: COHERE_API_KEY });
 
-  return { pc: _pc!, openai: _openai!, hf: _hf!, cohere: _cohere};
+  return { pc: _pc!, openai: _openai!, hf: _hf! };
 }
 
 const PINECONE_INDEX = process.env.PINECONE_INDEX     || "thesis-chat";
@@ -91,37 +87,6 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
 
 type Match = { id: string; text: string; meta: any; score: number };
 
-async function rerankWithCohere(query: string, matches: Match[], cohere?: CohereClient, keep = 8) {
-  if (!cohere || matches.length === 0) return matches.slice(0, keep);
-
-  // Prepare docs for Cohere
-  const documents = matches.map((m, i) => ({
-    id: String(i),            // we’ll map back by this
-    text: m.text || "",
-  }));
-
-  // Choose model: english or multilingual
-  const model = "rerank-english-v3.0"; // or "rerank-multilingual-v3.0" if you expect ES content
-
-  const rr = await cohere.rerank({
-    model,
-    query,
-    documents,
-    topN: Math.min(keep, documents.length),
-  });
-
-  // Reorder matches by Cohere’s result indices
-  const order = rr.results
-    .sort((a, b) => (b.relevanceScore ?? 0) - (a.relevanceScore ?? 0))
-    .map(r => Number(r.index));
-
-  const re = order.map(i => ({
-    ...matches[i],
-    rerankScore: rr.results.find(r => Number(r.index) === i)?.relevanceScore ?? null,
-  }));
-
-  return re;
-}
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -140,7 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
     // 2) vector search (namespace via chaining for SDKs that require it)
     const res = await index.namespace(PINECONE_NAMESPACE).query({
       vector: qvec,
-      topK: 25,
+      topK: 6,
       includeMetadata: true,
     });
 
@@ -151,16 +116,8 @@ export const POST: APIRoute = async ({ request }) => {
       score: m.score, // vector sim score (pre-rerank)
     }));
 
-    const topK = 6;
-    const { cohere } = getClients();
-    let top: Match[];
-
-    try {
-      top = await rerankWithCohere(query, matches, cohere ?? undefined, topK);
-    } catch (e) {
-      // Fail open: if rerank errors, fall back to vector order
-      top = matches.slice(0, topK);
-    }
+    // Use top 6 results from vector search directly
+    const top = matches.slice(0, 6);
 
     // 3) prompt
     const { system, user } = buildPrompt(query, top);
