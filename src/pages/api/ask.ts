@@ -73,13 +73,15 @@ function buildPrompt(question: string, contexts: { text: string; meta: any }[]) 
     const header = asPath(c.meta);
     return `[[${i + 1}]] ${header}\n${trim(c.text)}`;
   });
-  const ctx = numbered.join("\n\n---\n\n");  const system =
-    "You answer questions using ONLY the provided context blocks. If the context contains relevant information, use it to answer, even if partial, and do not state what is missing or give any notes about the text. If the context provides related information (e.g. mentions a person, concept, or tool), summarize what the context says about it, even if it does not fully answer the question. If the context gives only fragments, quote or paraphrase them. If nothing at all is relevant, then say the question is outside the context of this PhD thesis" +
+  const ctx = numbered.join("\n\n---\n\n");
+  
+  const system =
+    "You answer questions using ONLY the provided context blocks. If the context contains relevant information, use it to answer, even if partial, and do not state what is missing or give any notes about the text. If the context provides related information (e.g. mentions a person, concept, or tool), summarize what the context says about it, even if it does not fully answer the question. If the context gives only fragments, quote or paraphrase them. If nothing at all is relevant, then say the question is outside the context of this PhD thesis. " +
     "You are a helpful research assistant that answers questions about a PhD thesis. Your style should be clear, formal, and scientifically accurate, but accessible to researchers and graduate students. Keep answers well-structured and balanced: not too brief, not overly long — aim for 2–5 short paragraphs, or lists when helpful. " +
     "Cite the blocks you used by bracket number like [1], [2]. " +
-    "Always respond in Markdown. Use headings (`##`), bullet points, and numbered lists for readability." +
-    "Take into account that temperature values will appear with the unit ,K in the context" + 
-    "Answer in the user’s language.";
+    "Always respond in Markdown. Use headings (`##`), bullet points, and numbered lists for readability. " +
+    "Take into account that temperature values will appear with the unit ,K in the context. " + 
+    "Answer in the user's language.";
 
   const user = `Question: ${question}\n\nContext:\n${ctx}\n\nWrite the answer with bracketed citations to the blocks you used (e.g., [1], [2]).`;
   return { system, user };
@@ -93,7 +95,10 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.json().catch(() => ({}));
     const query = body?.query;
     if (!query || typeof query !== "string") {
-      return new Response(JSON.stringify({ error: "Missing 'query' string" }), { status: 400, headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Missing 'query' string" }), { 
+        status: 400, 
+        headers: { "Content-Type": "application/json" } 
+      });
     }
 
     const { pc, openai, hf } = getClients();
@@ -122,14 +127,43 @@ export const POST: APIRoute = async ({ request }) => {
     // 3) prompt
     const { system, user } = buildPrompt(query, top);
 
-    // 4) LLM
-    const completion = await openai.chat.completions.create({
-      model: "gpt-5-mini",           // valid model
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
-    });
+    // 4) LLM with better error handling
+    let completion;
+    try {
+      completion = await openai.chat.completions.create({
+        model: "gpt-5-mini",
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      });
+    } catch (openaiError: any) {
+      console.error('OpenAI API Error:', openaiError);
+      
+      // Handle OpenAI-specific errors
+      if (openaiError?.response) {
+        const status = openaiError.response.status;
+        const errorBody = await openaiError.response.text().catch(() => null);
+        
+        console.error('OpenAI Response Status:', status);
+        console.error('OpenAI Response Body:', errorBody);
+        
+        if (status === 401) {
+          throw new Error("OpenAI API authentication failed. Please check your API key.");
+        } else if (status === 429) {
+          throw new Error("OpenAI API rate limit exceeded. Please try again later.");
+        } else if (status === 500 || status === 502 || status === 503) {
+          throw new Error("OpenAI service is temporarily unavailable. Please try again.");
+        } else {
+          throw new Error(`OpenAI API error (${status}): ${errorBody || 'Unknown error'}`);
+        }
+      }
+      
+      // If it's not a response error, it might be a network or other error
+      throw new Error(`Failed to connect to OpenAI: ${openaiError?.message || 'Unknown error'}`);
+    }
 
     const answer = completion.choices?.[0]?.message?.content ?? "No answer.";
 
@@ -141,29 +175,30 @@ export const POST: APIRoute = async ({ request }) => {
     }));
 
     return new Response(JSON.stringify({ answer, sources }), {
+      status: 200,
       headers: { "Content-Type": "application/json" },
     });
 
-    } catch (err: any) {
-      const detail = (err?.response && (await err.response.text?.()?.catch(()=>null))) || err?.message || String(err);
-      return new Response(JSON.stringify({ error: detail }), {
+  } catch (err: any) {
+    console.error('API Error Details:', {
+      message: err?.message,
+      stack: err?.stack,
+      name: err?.name,
+      cause: err?.cause
+    });
+    
+    // Return a properly formatted error response
+    const errorMessage = err?.message || "An unexpected error occurred";
+    
+    return new Response(
+      JSON.stringify({ 
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? err?.stack : undefined 
+      }), 
+      {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      });
-    }
+      }
+    );
+  }
 };
-
-export const GET: APIRoute = async () =>
-  new Response(JSON.stringify({ ok: true, hint: "Use POST { query }" }), {
-    headers: { "Content-Type": "application/json; charset=utf-8" },
-  });
-
-  export const OPTIONS: APIRoute = async () =>
-  new Response(null, {
-    status: 204,
-    headers: {
-      Allow: "GET, POST, OPTIONS",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "content-type, authorization",
-    },
-  });
