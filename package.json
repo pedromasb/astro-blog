@@ -19,6 +19,8 @@
     "@huggingface/inference": "^4.7.1",
     "@pinecone-database/pinecone": "^6.1.2",
     "@resvg/resvg-js": "^2.6.2",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "astro": "^4.15.6",
     "astro-icon": "^1.1.5",
     "cohere-ai": "^7.18.1",
