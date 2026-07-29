@@ -1,13 +1,13 @@
 ---
 authors:
   - { name: "Dominguez-Tagle"}
-journal: "arXiv"
-volume: "submitted to ApJ"
+journal: "A&A"
+volume: "991"
 isPaper: true
-doi: ""
-arxiv: "arXiv:2503.22442"
+doi: "10.3847/1538-4357/adf72d"
+arxiv: "2503.22442"
 
-pubDatetime: 2025-03-24T00:00:00
+pubDatetime: 2025-09-24T00:00:00
 title: "Euclid Quick Data Release (Q1) -- Spectroscopic search, classification and analysis of ultracool dwarfs in the Deep Fields"
 slug: euclid-spec
 featured: false
@@ -18,22 +18,24 @@ tags:
   - Euclid
 description: ""
 bibtex: |
-    @ARTICLE{2025arXiv250322442D,
-        author = {{Dominguez-Tagle}, C. and {{\v{Z}}erjal}, M. and {Sedighi}, N. and {Mas-Buitrago}, P. and {Mart{\'\i}n}, E.~L. and {Zhang}, J. -Y. and {Vitas}, N. and {B{\'e}jar}, V.~J.~S. and {Tsilia}, S. and {Mu{\~n}oz Torres}, S. and {Lodieu}, N. and {Barrado}, D. and {Solano}, E. and {Cruz}, P. and {Tata}, R. and {Phan-Bao}, N. and {Burgasser}, A.},
-            title = "{Euclid Quick Data Release (Q1) -- Spectroscopic search, classification and analysis of ultracool dwarfs in the Deep Fields}",
-        journal = {arXiv e-prints},
-        keywords = {Solar and Stellar Astrophysics, Earth and Planetary Astrophysics, Astrophysics of Galaxies},
-            year = 2025,
-            month = mar,
-            eid = {arXiv:2503.22442},
-            pages = {arXiv:2503.22442},
-            doi = {10.48550/arXiv.2503.22442},
-    archivePrefix = {arXiv},
-        eprint = {2503.22442},
-    primaryClass = {astro-ph.SR},
-        adsurl = {https://ui.adsabs.harvard.edu/abs/2025arXiv250322442D},
-        adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-    }
+ @ARTICLE{2025ApJ...991...84D,
+       author = {{Dominguez-Tagle}, C. and {{\v{Z}}erjal}, M. and {Sedighi}, N. and {Mas-Buitrago}, P. and {Martin}, E.~L. and {Zhang}, J.-Y. and {Vitas}, N. and {B{\'e}jar}, V.~J.~S. and {Tsilia}, S. and {Mu{\~n}oz Torres}, S. and {Lodieu}, N. and {Barrado}, D. and {Solano}, E. and {Cruz}, P. and {Tata}, R. and {Phan-Bao}, N. and {Burgasser}, A.},
+        title = "{Euclid Quick Data Release (Q1){\textemdash}Spectroscopic Search, Classification, and Analysis of Ultracool Dwarfs in the Deep Fields}",
+      journal = {\apj},
+     keywords = {T dwarfs, Late-type dwarf stars, Brown dwarfs, Surveys, 1679, 906, 185, 1671, Solar and Stellar Astrophysics, Earth and Planetary Astrophysics, Astrophysics of Galaxies},
+         year = 2025,
+        month = sep,
+       volume = {991},
+       number = {1},
+          eid = {84},
+        pages = {84},
+          doi = {10.3847/1538-4357/adf72d},
+        archivePrefix = {arXiv},
+            eprint = {2503.22442},
+        primaryClass = {astro-ph.SR},
+            adsurl = {https://ui.adsabs.harvard.edu/abs/2025ApJ...991...84D},
+            adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+        }
 
 
 ---
