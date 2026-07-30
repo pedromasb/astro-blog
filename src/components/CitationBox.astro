@@ -32,10 +32,10 @@ const bib = bibtexOverride ?? toBibTeX({
   </div>
 
   <div class="mt-3 flex gap-2">
-    {doi && <a class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+    {doi && <a class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 no-underline
                  hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105" href={`https://doi.org/${doi}`} rel="noopener" target="_blank">DOI</a>}
-    
-    {arxiv && <a class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+
+    {arxiv && <a class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 no-underline
                  hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105" href={`https://arxiv.org/abs/${arxiv}`} rel="noopener" target="_blank">arXiv</a>}
     
     <!-- Copy BibTeX with tooltip -->

@@ -87,4 +87,11 @@ export const SOCIALS: SocialObjects = [
     linkTitle: `Visit ESA Faculty profile`,
     active: true,
   },
+  {
+    name: "CV",
+    href: "/cv.pdf",
+    linkTitle: `Download ${SITE.title} CV`,
+    active: true,
+    download: true,
+  },
 ];

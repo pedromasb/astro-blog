@@ -18,4 +18,5 @@ export type SocialObjects = {
   href: string;
   active: boolean;
   linkTitle: string;
+  download?: boolean;
 }[];
