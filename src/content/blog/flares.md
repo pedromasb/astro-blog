@@ -40,7 +40,6 @@ bibtex: |
 
 In this work, published in Astronomy & Astrophysics, we exploit the characteristics of multi-filter photometric surveys to detect strong episodes of line emission in M dwarfs, specifically in the H $_{\alpha}$ and Ca II H and K lines. Using collected low-resolution spectra and two-minute cadence calibrated TESS light curves, we perform a thorough analysis of our sample.
 
-&nbsp;
 
 ![image](@assets/images/spectra_red.png)
 
