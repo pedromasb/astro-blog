@@ -35,10 +35,10 @@ const byYear = papers.reduce((acc, p) => {
       <section class="mt-8">
         <h2 class="text-2xl font-semibold">{y}</h2>
         <ul class="mt-4 space-y-5">
-          {byYear[Number(y)].map(({ data, slug }) => (
+          {byYear[Number(y)].map(({ data, id }) => (
             <li class="border-l-2 border-gray-400 dark:border-gray-100 pl-3">
               <div class="text-base">
-                <a href={`/posts/${slug}/`} class="font-medium hover:underline">{data.title}</a>
+                <a href={`/posts/${id}/`} class="font-medium hover:underline">{data.title}</a>
               </div>
               <div class="text-sm mt-0.5">
                 {data.authors?.map((a:any)=>a.name).join(", ")} et al.
@@ -55,7 +55,7 @@ const byYear = papers.reduce((acc, p) => {
                          hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105" target="_blank" rel="noopener" href={`https://arxiv.org/abs/${data.arxiv}`}>arXiv</a>
                 )}
                 <a class="paper-btn px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
-                       hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105" href={`/posts/${slug}/#article`}>Full post</a>
+                       hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105" href={`/posts/${id}/#article`}>Full post</a>
               </div>
             </li>
           ))}
