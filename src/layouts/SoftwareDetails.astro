@@ -6,7 +6,7 @@ import Datetime from "@components/Datetime";
 import ShareLinks from "@components/ShareLinks.astro";
 import { slugifyStr } from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { SITE } from "@config";
 import CsvPreviewWrapper from "@components/CsvPreviewWrapper.astro";
 
@@ -15,7 +15,7 @@ export interface Props {
 }
 
 const { project } = Astro.props;
-const { Content } = await project.render();
+const { Content } = await render(project);
 
 const {
   title,
@@ -60,13 +60,13 @@ const layoutProps = {
 const all = await getCollection("software", ({ data }) => !data.draft);
 const sorted = all
   .map(p => ({
-    slug: p.slug,
+    id: p.id,
     title: p.data.title,
     date: p.data.pubDatetime instanceof Date ? p.data.pubDatetime.getTime() : new Date(p.data.pubDatetime).getTime(),
   }))
   .sort((a, b) => b.date - a.date);
 
-const currentIndex = sorted.findIndex(p => p.slug === project.slug);
+const currentIndex = sorted.findIndex(p => p.id === project.id);
 const prevItem = currentIndex > 0 ? sorted[currentIndex - 1] : null;
 const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
 ---
@@ -171,7 +171,7 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
     <!-- Prev / Next -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mt-6">
       {prevItem && (
-        <a href={`/software/${prevItem.slug}`} class="flex w-full gap-1 hover:opacity-75">
+        <a href={`/software/${prevItem.id}`} class="flex w-full gap-1 hover:opacity-75">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M15 6l-6 6l6 6" />
@@ -183,7 +183,7 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
         </a>
       )}
       {nextItem && (
-        <a href={`/software/${nextItem.slug}`} class="flex w-full justify-end gap-1 text-right hover:opacity-75 sm:col-start-2">
+        <a href={`/software/${nextItem.id}`} class="flex w-full justify-end gap-1 text-right hover:opacity-75 sm:col-start-2">
           <div>
             <span>Next Software</span>
             <div class="text-sm text-skin-accent/85">{nextItem.title}</div>

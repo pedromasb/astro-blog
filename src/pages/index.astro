@@ -96,7 +96,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
             <ul>
               {allFeaturedItems.map((item) => (
                 <Card
-                  href={item.type === 'post' ? `/posts/${item.slug}/` : `/software/${item.slug}/`}
+                  href={item.type === 'post' ? `/posts/${item.id}/` : `/software/${item.id}/`}
                   frontmatter={item.data}
                   secHeading={false}
                 />
