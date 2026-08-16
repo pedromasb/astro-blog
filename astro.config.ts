@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import vercel from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel";
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import remarkToc from "remark-toc";
@@ -12,7 +12,7 @@ import icon from "astro-icon";
 
 // https://astro.build/config
 export default defineConfig({
-  output:"hybrid",
+  output: "static",
   adapter: vercel(),
   site: SITE.website,
   integrations: [
@@ -47,7 +47,4 @@ export default defineConfig({
     },
   },
   scopedStyleStrategy: "where",
-  experimental: {
-    contentLayer: true,
-  },
 });
