@@ -8,8 +8,7 @@ doi: "10.1051/0004-6361/202450793"
 arxiv: "arXiv:2405.13497"
 
 pubDatetime: 2024-05-24T00:00:00
-title: "Euclid: Early Release Observations – A glance at free-floating
-new-born planets in the σ Orionis cluster"
+title: "Euclid: Early Release Observations – A glance at free-floating new-born planets in the σ Orionis cluster"
 slug: euclid-ero
 featured: false
 draft: false
