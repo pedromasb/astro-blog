@@ -1,0 +1,175 @@
+---
+/**
+ * Embeds a Streamlit app that runs entirely in the visitor's browser, via
+ * stlite (Streamlit compiled to WebAssembly on Pyodide). No server is
+ * involved: the Python source listed in the manifest is fetched as static
+ * files and executed client-side.
+ *
+ * The runtime is a large download, so nothing is loaded until the visitor
+ * clicks Launch.
+ */
+export interface Props {
+  /** Path to a manifest JSON: { entrypoint, requirements, files[] }. */
+  manifest: string;
+  title?: string;
+  height?: string;
+  /** Optional link to a full server-hosted version, shown in the footnote. */
+  fullAppUrl?: string;
+}
+
+const {
+  manifest,
+  title = "Live app",
+  height = "900px",
+  fullAppUrl,
+} = Astro.props;
+
+const STLITE_VERSION = "1.12.1";
+---
+
+<div class="not-prose my-8">
+  <div class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+    <h2 class="text-lg font-semibold text-skin-accent">{title}</h2>
+    <span class="text-xs opacity-70">Runs in your browser &middot; your data is never uploaded</span>
+  </div>
+
+  <div
+    class="stlite-embed relative overflow-hidden rounded-lg border border-skin-line/60"
+    style={`min-height:${height}`}
+    data-manifest={manifest}
+    data-stlite-version={STLITE_VERSION}
+    data-full-app={fullAppUrl}
+  >
+    <!-- Placeholder: replaced by the app once the visitor opts in -->
+    <div class="stlite-gate flex h-full flex-col items-center justify-center gap-4 px-6 py-20 text-center" style={`min-height:${height}`}>
+      <p class="max-w-md text-sm opacity-80">
+        This loads a full Python environment (Pyodide, pandas and Plotly) into your
+        browser, around 30&ndash;60&nbsp;seconds on a first visit. Nothing you open or
+        upload leaves your computer.
+      </p>
+      <button
+        type="button"
+        class="stlite-launch rounded-full border border-skin-line/60 px-5 py-2 text-sm transition-colors hover:bg-skin-card hover:scale-105 dark:hover:bg-gray-800"
+      >
+        Launch {title}
+      </button>
+      {fullAppUrl && (
+        <a href={fullAppUrl} target="_blank" rel="noopener" class="text-xs underline opacity-70 hover:opacity-100">
+          or open the hosted version instead
+        </a>
+      )}
+    </div>
+
+    <div class="stlite-status hidden px-6 py-20 text-center text-sm opacity-80"></div>
+    <div class="stlite-root hidden h-full w-full" style={`min-height:${height}`}></div>
+  </div>
+</div>
+
+<!--
+  is:inline keeps this out of the Vite pipeline. The stlite runtime must be
+  imported from the CDN at runtime; a bundled dynamic import gets rewritten
+  and pulls in Vite's preload helper, which is not defined on the page.
+-->
+<script is:inline>
+  (function () {
+    function statusEl(box) {
+      return box.querySelector(".stlite-status");
+    }
+
+    function setStatus(box, msg) {
+      const el = statusEl(box);
+      if (el) {
+        el.textContent = msg;
+        el.classList.remove("hidden");
+      }
+    }
+
+    async function boot(box) {
+      const gate = box.querySelector(".stlite-gate");
+      const root = box.querySelector(".stlite-root");
+      const manifestUrl = box.dataset.manifest;
+      const version = box.dataset.stliteVersion;
+      if (!gate || !root || !manifestUrl || !version) return;
+
+      gate.classList.add("hidden");
+      setStatus(box, "Loading the Python runtime\u2026 this takes a moment on a first visit.");
+
+      try {
+        const base = manifestUrl.replace(/[^/]+$/, "");
+        const res = await fetch(manifestUrl);
+        if (!res.ok) throw new Error("manifest " + res.status);
+        const manifest = await res.json();
+
+        // stlite fetches each file itself, so the Python source is never
+        // bundled into the page.
+        const files = {};
+        manifest.files.forEach(function (name) {
+          files[name] = { url: base + name };
+        });
+
+        const cdn = "https://cdn.jsdelivr.net/npm/@stlite/browser@" + version + "/build/";
+
+        // stlite.css carries Streamlit's styles AND the Material Symbols
+        // @font-face. Without it the UI renders icon ligatures as raw text
+        // ("keyboard_double_arrow_right" instead of an arrow).
+        await new Promise(function (resolve) {
+          if (document.querySelector('link[data-stlite-css="' + version + '"]')) return resolve();
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = cdn + "stlite.css";
+          link.setAttribute("data-stlite-css", version);
+          link.onload = resolve;
+          link.onerror = resolve; // a missing stylesheet should not block the app
+          document.head.appendChild(link);
+        });
+
+        const mod = await import(cdn + "stlite.js");
+
+        setStatus(box, "Starting the app\u2026");
+        root.classList.remove("hidden");
+
+        mod.mount(
+          {
+            entrypoint: manifest.entrypoint,
+            requirements: manifest.requirements || [],
+            files: files,
+            streamlitConfig: {
+              "client.toolbarMode": "minimal",
+            },
+          },
+          root
+        );
+
+        const el = statusEl(box);
+        if (el) el.classList.add("hidden");
+      } catch (err) {
+        console.error("[stlite] failed to start", err);
+        const full = box.dataset.fullApp;
+        setStatus(
+          box,
+          "The in-browser app could not start in this browser." +
+            (full ? " You can open the hosted version at " + full : "")
+        );
+        root.classList.add("hidden");
+      }
+    }
+
+    document.querySelectorAll(".stlite-embed").forEach(function (box) {
+      const btn = box.querySelector(".stlite-launch");
+      if (btn) btn.addEventListener("click", function () { boot(box); }, { once: true });
+    });
+  })();
+</script>
+
+<style is:global>
+  /* stlite ships Streamlit's own stylesheet; keep it inside the embed box. */
+  .stlite-embed .stlite-root > iframe,
+  .stlite-embed .stlite-root > div {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .stlite-embed [data-testid="stAppViewContainer"] {
+    background: transparent;
+  }
+</style>

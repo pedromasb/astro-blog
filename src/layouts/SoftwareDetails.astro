@@ -9,6 +9,7 @@ import type { CollectionEntry } from "astro:content";
 import { getCollection, render } from "astro:content";
 import { SITE } from "@config";
 import CsvPreviewWrapper from "@components/CsvPreviewWrapper.astro";
+import StliteApp from "@components/StliteApp.astro";
 
 export interface Props {
   project: CollectionEntry<"software">;
@@ -31,6 +32,7 @@ const {
   npm,
   license,
   catalogue,
+  app,
 } = project.data as any;
 
 // Check if this is a catalogue - hide demo for catalogues
@@ -38,6 +40,9 @@ const isCatalogue = title.toLowerCase().includes('catalog') || title.toLowerCase
 
 // Check if there's a catalogue path specified to show CSV preview
 const hasCatalogue = catalogue && catalogue.trim() !== "";
+
+// An in-browser (stlite) build of the app, run on this page.
+const hasApp = app && app.trim() !== "";
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
@@ -166,7 +171,19 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
           />
         </div>
       )}
+
     </article>
+
+    {hasApp && (
+      <div class="mx-auto mt-10 w-screen max-w-6xl px-4 relative left-1/2 -translate-x-1/2">
+        <StliteApp
+          manifest={app}
+          title="Try it here"
+          height="900px"
+          fullAppUrl={demo}
+        />
+      </div>
+    )}
 
     <!-- Prev / Next -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mt-6">
