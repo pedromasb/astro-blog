@@ -172,4 +172,13 @@ const STLITE_VERSION = "1.12.1";
   .stlite-embed [data-testid="stAppViewContainer"] {
     background: transparent;
   }
+
+  /* base.css applies `svg { h-6 w-6 }` globally so the site's icons are 24px.
+     That also hits every SVG the embedded app draws, collapsing Plotly's
+     chart canvas to a 24x24 square. Inside the embed, let each SVG size
+     itself from its own width/height attributes again. */
+  .stlite-embed svg {
+    width: auto;
+    height: auto;
+  }
 </style>
