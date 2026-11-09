@@ -9,6 +9,7 @@ tags:
   - software
   - Chrome extension
 website: "https://get-rummage.com/"
+chromeWebStore: "https://chromewebstore.google.com/detail/rummage-%E2%80%94-semantic-search/jpblfmdnooafplankpcmapllpikhipep"
 ---
 
 Rummage is a Chrome extension that makes the bookmarks you already have searchable by
@@ -41,4 +42,5 @@ The free version is the whole product, not a trial: the same search, with no tim
 for your 50 most recent bookmarks. A one-time payment of $34.99 lifts that limit to your
 whole library. There is no subscription.
 
-Get it at [get-rummage.com](https://get-rummage.com/).
+Install it from the [Chrome Web Store](https://chromewebstore.google.com/detail/rummage-%E2%80%94-semantic-search/jpblfmdnooafplankpcmapllpikhipep), or read more at
+[get-rummage.com](https://get-rummage.com/).

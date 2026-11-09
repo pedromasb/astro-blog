@@ -31,6 +31,7 @@ const {
   demo,
   pypi,
   npm,
+  chromeWebStore,
   license,
   catalogue,
   app,
@@ -110,6 +111,19 @@ const nextItem = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : n
           title="Open website"
         >
           Website
+        </a>
+      )}
+
+      {chromeWebStore && (
+        <a
+          href={chromeWebStore}
+          target="_blank"
+          rel="noopener"
+          class="px-3 py-1.5 text-sm rounded-full border border-skin-line/60 
+                 hover:bg-skin-card dark:hover:bg-gray-800 transition-colors hover:scale-105"
+          title="Install from the Chrome Web Store"
+        >
+          Chrome Web Store
         </a>
       )}
 
