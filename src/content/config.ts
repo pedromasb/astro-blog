@@ -57,10 +57,14 @@ const software = defineCollection({
       description: z.string(),
       canonicalURL: z.string().optional(),
       repo: z.string().url().optional(),
+      // Product or project homepage, shown as a "Website" button.
+      website: z.string().url().optional(),
       docs: z.string().url().optional(),
       demo: z.string().url().or(z.literal("")).optional(),
       pypi: z.string().optional(),
       npm: z.string().optional(),
+      // Chrome Web Store listing URL, shown as a "Chrome Web Store" button.
+      chromeWebStore: z.string().url().optional(),
       license: z.string().optional(),
       catalogue: z.string().optional(),
       // Path to an stlite manifest, to run the app in the browser on its page.
