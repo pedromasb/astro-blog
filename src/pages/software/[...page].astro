@@ -8,7 +8,7 @@ import getSortedSoftware from "@utils/getSortedSoftware";
 export const getStaticPaths = (async ({ paginate }) => {
   const allSoftware = await getCollection("software");
   const sortedSoftware = getSortedSoftware(allSoftware);
-  return paginate(sortedSoftware, { pageSize: SITE.postPerPage });
+  return paginate(sortedSoftware, { pageSize: SITE.softwarePerPage });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;

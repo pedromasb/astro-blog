@@ -10,6 +10,7 @@ export type Site = {
   lightAndDarkMode: boolean;
   postPerIndex: number;
   postPerPage: number;
+  softwarePerPage: number;
   scheduledPostMargin: number;
 };
 
