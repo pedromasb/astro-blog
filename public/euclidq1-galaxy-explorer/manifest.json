@@ -1,0 +1,19 @@
+{
+  "name": "Euclid Q1 Galaxy Explorer",
+  "entrypoint": "Home.py",
+  "requirements": [
+    "plotly>=6.1"
+  ],
+  "source": {
+    "repo": "https://github.com/pedromasb/euclidQ1-galaxy-explorer",
+    "commit": "3a135540cac00b9d4f76fc091f4cd70932be0c81",
+    "note": "Vendored copy. common.py loads the catalogue by relative path instead of the absolute one upstream, and the gallery page explains itself when no cutout images are present."
+  },
+  "files": [
+    "Home.py",
+    "common.py",
+    "pages/1_Cutout_Explorer.py",
+    "pages/2_Scatter_Plot.py",
+    "catalogue_st.csv"
+  ]
+}
