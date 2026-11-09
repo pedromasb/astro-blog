@@ -57,6 +57,8 @@ const software = defineCollection({
       description: z.string(),
       canonicalURL: z.string().optional(),
       repo: z.string().url().optional(),
+      // Product or project homepage, shown as a "Website" button.
+      website: z.string().url().optional(),
       docs: z.string().url().optional(),
       demo: z.string().url().or(z.literal("")).optional(),
       pypi: z.string().optional(),
