@@ -1,0 +1,78 @@
+import sys
+
+import streamlit as st
+
+# See mp_core.IS_WASM: this copy also runs in the browser via stlite/Pyodide.
+IS_WASM = sys.platform == "emscripten"
+
+st.set_page_config(
+    page_title="MagicPlotter",
+    page_icon="🚀",
+    layout="centered")
+
+st.title('MagicPlotter')
+st.subheader('by Pedro Mas Buitrago &nbsp; [![pedro](https://img.shields.io/badge/%20Click_me!-red?style=social&logo=github&label=pedromasb&labelColor=grey)](https://pedromasb.github.io/)')
+
+st.markdown('''
+            ---
+            #### Welcome! 
+
+            **MagicPlotter** is a tool developed to help the user create and share interactive visualizations
+            in record time and without the need to write any code.
+
+            1. Choose the desired type of figure you want to create in the left sidebar.
+            2. Import your data from a `csv` or `txt` file without effort.
+            3. Play with the plethora of different options and create the perfect visualization.
+            4. Export your figure in a static or interactive way.
+
+            With **MagicPlotter**, you will save up to **500 lines of code per visualization**. Interactive data-sharing has never been easier!
+
+            Submit any feature request here &nbsp; [![badge](https://img.shields.io/badge/Issues-red?logo=github&label=MagicPlotter&labelColor=d74f4d&color=c3afad)](https://github.com/pedromasb/magicplotter/issues)
+
+            ''')
+
+tab1, tab2 = st.tabs(["Open", "Closed"])
+with tab1:
+    st.markdown('''
+            ![badge](https://img.shields.io/github/issues/pedromasb/magicplotter?style=for-the-badge)
+            ''')
+    
+with tab2: 
+    st.markdown('''
+            ![badge](https://img.shields.io/github/issues-closed/pedromasb/magicplotter?style=for-the-badge)
+            ''')
+    
+st.markdown('&nbsp;')
+
+if IS_WASM:
+    st.success('''
+            **Your data never leaves your computer**
+
+            This copy of MagicPlotter runs entirely inside your browser, compiled to WebAssembly.
+            There is no server: the Python code, your uploaded file and every chart you build stay
+            on your own machine, and nothing is transmitted anywhere.
+
+            PDF and PNG export is the one feature that needs a server. Use the camera icon above any
+            chart to save a high-resolution SVG instead, or open the
+            [full app](https://magicplotter.streamlit.app/).
+
+            ''')
+else:
+    st.info(''' 
+                **Streamlit Data Privacy**          
+              
+                Streamlit Cloud is [SOC 2 Type 1 compliant](https://blog.streamlit.io/streamlit-cloud-is-now-soc-2-type-1-compliant/), which means they have been audited and
+                found to have appropriate systems in place to ensure the security of the system (protecting against unauthorized access) and the confidentiality of the information 
+                processed by the system (ensuring that sensitive data is accessed only by authorized individuals) at a specific point in time.
+    
+                Streamlit has a server-client structure. The server executes the Python code and the client is a browser, typically on a different computer from the server.
+                When you upload a file to the app, the data is sent from the client to the server and contained in a BytesIO buffer in Python memory (i.e. RAM, not disk).
+                As files are stored in memory, they get deleted immediately as soon as they're not needed anymore. This means Streamlit removes a file from memory when:
+    
+                - The user uploads another file, replacing the original one.
+                - The user clears the file uploader.
+                - The user closes the browser tab where they uploaded the file.
+    
+                Additional details can be found in their [Trust and Security](https://docs.streamlit.io/deploy/streamlit-community-cloud/get-started/trust-and-security) policy.
+                        
+                ''')

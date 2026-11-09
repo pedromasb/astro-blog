@@ -1,0 +1,21 @@
+{
+  "name": "MagicPlotter",
+  "entrypoint": "Hello.py",
+  "requirements": ["plotly>=6.1"],
+  "source": {
+    "repo": "https://github.com/pedromasb/magicplotter",
+    "commit": "fa68bd8303f255553b89f642d1dccf26310e13e7",
+    "note": "Vendored copy. Only mp_core.py and Hello.py differ from upstream, guarded by IS_WASM (sys.platform == 'emscripten')."
+  },
+  "files": [
+    "Hello.py",
+    "mp_core.py",
+    "pages/1_Scatter_Plot.py",
+    "pages/2_Line_Plot.py",
+    "pages/3_Histogram.py",
+    "pages/4_Violin_Plot.py",
+    "pages/5_Bar_Chart.py",
+    "data/example_data.csv",
+    "data/example_data_red.csv"
+  ]
+}

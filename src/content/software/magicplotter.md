@@ -8,6 +8,7 @@ draft: false
 description: Streamlit web application
 repo: "https://github.com/pedromasb/magicplotter"
 demo: "https://magicplotter.streamlit.app/"
+app: "/magicplotter/manifest.json"
 
 ---
 
@@ -15,6 +16,6 @@ MagicPlotter is a Streamlit web appplication that allows the user to create and 
 
  After surveying several colleagues in the astronomical community, the results were that most people are interested in this subject, but lack the time to acquire the necessary technical background for it. MagicPlotter solves this bottleneck by providing an interface between the user and the Python code needed to create the interactive visualisations, allowing the creation of plots without the need to write any code. 
 
-You can use MagicPlotter [here](https://magicplotter.streamlit.app/).
+You can run MagicPlotter right on this page — it executes entirely inside your browser, so your data never leaves your computer — or open the [hosted version](https://magicplotter.streamlit.app/), which additionally supports PDF and PNG export.
 
 ![image](@assets/images/video_magicplotter_reduced.gif)

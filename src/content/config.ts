@@ -63,6 +63,8 @@ const software = defineCollection({
       npm: z.string().optional(),
       license: z.string().optional(),
       catalogue: z.string().optional(),
+      // Path to an stlite manifest, to run the app in the browser on its page.
+      app: z.string().optional(),
     }),
 });
 
