@@ -1,7 +1,6 @@
 # pedromasbuitrago.com
 
-Source for my research site — publications, software, and an AI-powered chat over my
-doctoral thesis.
+My personal blog for all my scientific and software research.
 
 **Live:** [www.pedromasbuitrago.com](https://www.pedromasbuitrago.com/)
 
