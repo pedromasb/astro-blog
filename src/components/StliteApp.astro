@@ -27,10 +27,19 @@ const {
 const STLITE_VERSION = "1.12.1";
 ---
 
-<div class="not-prose my-8">
+<div class="stlite-shell not-prose my-8 bg-skin-fill">
   <div class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
     <h2 class="text-lg font-semibold text-skin-accent">{title}</h2>
-    <span class="text-xs opacity-70">Runs in your browser &middot; your data is never uploaded</span>
+    <div class="flex items-center gap-3">
+      <span class="text-xs opacity-70">Runs in your browser &middot; your data is never uploaded</span>
+      <button
+        type="button"
+        class="stlite-fullpage-btn hidden rounded-full border border-skin-line/60 px-3 py-1 text-xs transition-colors hover:bg-skin-card dark:hover:bg-gray-800"
+        aria-pressed="false"
+      >
+        Full page
+      </button>
+    </div>
   </div>
 
   <div
@@ -142,6 +151,11 @@ const STLITE_VERSION = "1.12.1";
 
         const el = statusEl(box);
         if (el) el.classList.add("hidden");
+
+        // the button lives in the header, a sibling of the embed box
+        const shell = box.closest(".stlite-shell");
+        const fsBtn = shell && shell.querySelector(".stlite-fullpage-btn");
+        if (fsBtn) fsBtn.classList.remove("hidden");
       } catch (err) {
         console.error("[stlite] failed to start", err);
         const full = box.dataset.fullApp;
@@ -153,6 +167,36 @@ const STLITE_VERSION = "1.12.1";
         root.classList.add("hidden");
       }
     }
+
+    // Full page: the shell (header included, so the exit control stays
+    // reachable) is pinned over the viewport. This only toggles classes, so
+    // the running app is never torn down and reloaded.
+    function setFullPage(shell, on) {
+      shell.classList.toggle("stlite-fullpage", on);
+      document.documentElement.classList.toggle("stlite-fullpage-open", on);
+      const btn = shell.querySelector(".stlite-fullpage-btn");
+      if (btn) {
+        btn.textContent = on ? "Exit full page" : "Full page";
+        btn.setAttribute("aria-pressed", String(on));
+      }
+      // Streamlit and Plotly re-lay out on resize.
+      window.dispatchEvent(new Event("resize"));
+    }
+
+    document.querySelectorAll(".stlite-shell").forEach(function (shell) {
+      const btn = shell.querySelector(".stlite-fullpage-btn");
+      if (btn) {
+        btn.addEventListener("click", function () {
+          setFullPage(shell, !shell.classList.contains("stlite-fullpage"));
+        });
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      const open = document.querySelector(".stlite-shell.stlite-fullpage");
+      if (open) setFullPage(open, false);
+    });
 
     document.querySelectorAll(".stlite-embed").forEach(function (box) {
       const btn = box.querySelector(".stlite-launch");
@@ -180,5 +224,40 @@ const STLITE_VERSION = "1.12.1";
   .stlite-embed svg {
     width: auto;
     height: auto;
+  }
+
+  /* base.css also sets `section, footer { mx-auto max-w-3xl px-4 }`. Streamlit's
+     main area is a <section>, so that clamped the app to 768px and silently
+     undid its own wide layout. The sidebar keeps the cap Streamlit gives it. */
+  .stlite-embed section:not([data-testid="stSidebar"]),
+  .stlite-embed footer {
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Full page. The inline min-height on the box must be overridden, hence the
+     !important, and 100dvh keeps mobile browser chrome from clipping it. */
+  html.stlite-fullpage-open,
+  html.stlite-fullpage-open body {
+    overflow: hidden;
+  }
+  .stlite-shell.stlite-fullpage {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0.75rem 0;
+  }
+  .stlite-shell.stlite-fullpage .stlite-embed {
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    border-radius: 0;
+  }
+  .stlite-shell.stlite-fullpage .stlite-root {
+    min-height: 0 !important;
+    height: 100%;
   }
 </style>

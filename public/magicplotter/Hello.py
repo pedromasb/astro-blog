@@ -8,7 +8,9 @@ IS_WASM = sys.platform == "emscripten"
 st.set_page_config(
     page_title="MagicPlotter",
     page_icon="🚀",
-    layout="centered")
+    # Embedded in a page, the tool gets the full width it needs for the
+    # sidebar controls and the chart side by side.
+    layout="wide" if IS_WASM else "centered")
 
 st.title('MagicPlotter')
 st.subheader('by Pedro Mas Buitrago &nbsp; [![pedro](https://img.shields.io/badge/%20Click_me!-red?style=social&logo=github&label=pedromasb&labelColor=grey)](https://pedromasb.github.io/)')
@@ -76,3 +78,11 @@ else:
                 Additional details can be found in their [Trust and Security](https://docs.streamlit.io/deploy/streamlit-community-cloud/get-started/trust-and-security) policy.
                         
                 ''')
+
+
+if IS_WASM:
+    # Importing pandas and plotly into Pyodide takes a few seconds, and that
+    # cost would otherwise land on the first click of a chart page. This runs
+    # after the content above has already been rendered, so it is paid while
+    # the welcome page is on screen instead.
+    import mp_core  # noqa: F401

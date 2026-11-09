@@ -1,7 +1,9 @@
 {
   "name": "MagicPlotter",
   "entrypoint": "Hello.py",
-  "requirements": ["plotly>=6.1"],
+  "requirements": [
+    "plotly>=6.1"
+  ],
   "source": {
     "repo": "https://github.com/pedromasb/magicplotter",
     "commit": "fa68bd8303f255553b89f642d1dccf26310e13e7",
