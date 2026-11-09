@@ -6,7 +6,10 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from common import load_data, get_esasky_url, cutout_url, ZOOBOT_DISPLAY, PHYSICAL_DISPLAY
+from common import (
+    load_data, get_esasky_url, cutout_url, slider_bounds, in_range,
+    ZOOBOT_DISPLAY, PHYSICAL_DISPLAY,
+)
 
 st.set_page_config(layout="wide", page_title="Scatter Explorer")
 
@@ -50,10 +53,10 @@ def main():
             col_data = df[col].dropna()
             if len(col_data) == 0:
                 continue
-            cmin, cmax = float(col_data.min()), float(col_data.max())
-            if cmin >= cmax:
+            if col_data.min() >= col_data.max():
                 continue
-            step = spec.get("step", (cmax - cmin) / 100)
+            step = spec.get("step", (col_data.max() - col_data.min()) / 100)
+            cmin, cmax = slider_bounds(col_data, step)
             fmt = spec.get("format", "%.2f")
             target = [fcol1, fcol2, fcol3][i % 3]
             with target:
@@ -63,7 +66,7 @@ def main():
                 )
             slider_untouched = (vmin <= cmin + step * 0.5) and (vmax >= cmax - step * 0.5)
             if not slider_untouched:
-                mask &= (df[col].fillna(-np.inf) >= vmin) & (df[col].fillna(np.inf) <= vmax)
+                mask &= in_range(df[col], vmin, vmax, step)
         plot_df = df[mask].copy()
 
     st.caption(f"{len(plot_df):,} galaxies in plot after pre-filters.")
