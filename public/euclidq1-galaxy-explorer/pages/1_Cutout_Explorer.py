@@ -1,37 +1,18 @@
 """
 Page 1 — Cutout Explorer
-Filter cluster members by physical properties and Zoobot morphology fractions.
-Cutouts are prioritised (sorted) by a parameter of your choice.
 """
-
-from typing import Optional
 
 import streamlit as st
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import base64
-from common import load_data, get_esasky_url, ZOOBOT_DISPLAY, PHYSICAL_DISPLAY
+from common import load_data, get_esasky_url, cutout_url, ZOOBOT_DISPLAY, PHYSICAL_DISPLAY
 
 st.set_page_config(layout="wide", page_title="Cutout Explorer")
 
 
-# ── helpers ──────────────────────────────────────────────────────────────────
-
-def img_to_base64(path: str) -> Optional[str]:
-    """Read a local JPG and return a base64 data-URI string."""
-    p = Path(path)
-    if not p.exists():
-        return None
-    data = p.read_bytes()
-    return f"data:image/jpeg;base64,{base64.b64encode(data).decode()}"
-
-
 def build_sidebar_filters(df):
-    """Build sliders in the sidebar. Returns a boolean mask over df."""
     mask = np.ones(len(df), dtype=bool)
 
-    # ── Physical property filters ────────────────────────────────────────
     st.sidebar.markdown("## Physical properties")
     for label, spec in PHYSICAL_DISPLAY.items():
         col = spec["col"]
@@ -50,12 +31,10 @@ def build_sidebar_filters(df):
             label, cmin, cmax, (cmin, cmax),
             step=step, format=fmt, key=f"phys_{col}",
         )
-        # If slider untouched (full range), keep all rows including NaN
         slider_untouched = (vmin <= cmin + step * 0.5) and (vmax >= cmax - step * 0.5)
         if not slider_untouched:
             mask &= (df[col].fillna(-np.inf) >= vmin) & (df[col].fillna(np.inf) <= vmax)
 
-    # ── Zoobot morphology filters ────────────────────────────────────────
     st.sidebar.markdown("## Zoobot morphology")
     for label, spec in ZOOBOT_DISPLAY.items():
         col = spec["col"]
@@ -73,13 +52,13 @@ def build_sidebar_filters(df):
 
 
 def display_gallery(df):
-    """Render cutouts as an HTML gallery from local files."""
     css = """
     <style>
     .gallery { display:flex; flex-wrap:wrap; justify-content:center; gap:14px; padding:10px 0; }
     .gcard { text-align:center; width:215px; }
     .gcard img { width:200px; height:200px; object-fit:cover; border-radius:6px;
-                 border:2px solid transparent; transition:border-color .2s; }
+                 border:2px solid transparent; transition:border-color .2s;
+                 background:#111; }
     .gcard img:hover { border-color:#FF4B4B; }
     .gcard .cbtn { display:inline-block; margin-top:4px; padding:2px 8px;
                    background:#262730; color:#FAFAFA; border-radius:4px;
@@ -93,34 +72,22 @@ def display_gallery(df):
 
     cards = ""
     for _, row in df.iterrows():
-        b64 = img_to_base64(row["jpg_loc_gz_arcsinh_vis_y"])
-        if b64 is None:
+        fname = row.get("jpg_loc_gz_arcsinh_vis_y")
+        if not fname or pd.isna(fname):
             continue
+        url = cutout_url(fname)
         esasky = get_esasky_url(row["right_ascension"], row["declination"])
         oid = row["object_id"]
         ra, dec = row["right_ascension"], row["declination"]
         cards += f"""
         <div class="gcard">
-            <img src="{b64}" alt="{oid}" loading="lazy">
+            <img src="{url}" alt="{oid}" loading="lazy">
             <div class="olbl" title="{oid}">{oid}</div>
             <a class="cbtn" href="{esasky}" target="_blank">{ra:.4f}, {dec:.4f}</a>
         </div>"""
 
-    if not cards:
-        # jpg_loc_gz_arcsinh_vis_y holds absolute paths to cutouts that only
-        # exist on the machine the catalogue was built on. Say so, instead of
-        # rendering an empty gallery that just looks broken.
-        st.info(
-            "Cutout images are not bundled with this catalogue, so the gallery "
-            "is empty here. The filters and the **Scatter Plot** page work on "
-            "the full catalogue, and each galaxy's coordinates open in ESASky."
-        )
-        return
-
     st.markdown(f'<div class="gallery">{cards}</div>', unsafe_allow_html=True)
 
-
-# ── main ─────────────────────────────────────────────────────────────────────
 
 def main():
     df = load_data()
@@ -135,9 +102,7 @@ def main():
     mask = build_sidebar_filters(df)
     n_match = int(mask.sum())
 
-    # ── sort / display options ───────────────────────────────────────────
     col1, col2 = st.columns([2, 1])
-
     all_sortable = {**PHYSICAL_DISPLAY, **ZOOBOT_DISPLAY}
     sort_labels = list(all_sortable.keys())
 
@@ -164,7 +129,6 @@ def main():
     else:
         display_gallery(selected)
 
-        # ── Table with properties of displayed galaxies ──────────────────
         st.markdown("### Properties of displayed galaxies")
         table_cols = [
             "object_id", "right_ascension", "declination",
@@ -189,7 +153,6 @@ def main():
             "p_bar": "p_bar",
         })
 
-
         st.dataframe(table_df, use_container_width=True, hide_index=True)
 
         csv_data = table_df.to_csv(index=False).encode("utf-8")
@@ -199,5 +162,6 @@ def main():
             file_name="cluster_members_selection.csv",
             mime="text/csv",
         )
+
 
 main()

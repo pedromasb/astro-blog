@@ -7,7 +7,7 @@
   "source": {
     "repo": "https://github.com/pedromasb/euclidQ1-galaxy-explorer",
     "commit": "3a135540cac00b9d4f76fc091f4cd70932be0c81",
-    "note": "Vendored copy. common.py loads the catalogue by relative path instead of the absolute one upstream, and the gallery page explains itself when no cutout images are present."
+    "note": "Vendored copy, AHEAD of the commit above: the Python files were supplied directly and load cutouts from the Hugging Face dataset pmb17/euclid-cluster-cutouts. Re-sync from the repo only once that version is pushed. The sole local change is the IS_WASM (sys.platform == 'emscripten') warm-up import at the end of Home.py, which pre-loads numpy/pandas/plotly so the first page click is not slow."
   },
   "files": [
     "Home.py",

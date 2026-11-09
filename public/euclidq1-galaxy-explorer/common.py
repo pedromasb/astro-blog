@@ -1,79 +1,53 @@
 """
 common.py — Shared configuration and utilities for both pages.
-Edit the paths and column definitions here.
 """
 
 import streamlit as st
 import pandas as pd
+from pathlib import Path
 
 # ============================================================================
-# CONFIG — Edit these to match your setup
+# CONFIG
 # ============================================================================
 
-# Path to your cluster members catalogue (CSV or TSV)
-# The catalogue ships next to this file, so load it by relative path.
-# (Upstream points at an absolute path on the author's machine.)
-CATALOGUE_PATH = "catalogue_st.csv"
-CATALOGUE_SEP = ","  # change to "\t" for TSV
+CATALOGUE_PATH = "catalogue_st.csv"   # relative path in the repo
+CATALOGUE_SEP = ","
+
+# Public HF dataset where cutouts live
+CUTOUT_BASE_URL = (
+    "https://huggingface.co/datasets/pmb17/euclid-cluster-cutouts/"
+    "resolve/main/cutouts"
+)
 
 # ============================================================================
 # Column definitions
 # ============================================================================
 
-# Physical property filters (sidebar sliders on Gallery page, expander on Scatter page)
 PHYSICAL_DISPLAY = {
     "Ph. Redshift": {
-        "col": "phz_median",
-        "step": 0.005,
-        "format": "%.3f",
+        "col": "phz_median", "step": 0.005, "format": "%.3f",
     },
     "Stellar Mass (log M☉)": {
-        "col": "phz_pp_median_stellarmass",
-        "step": 0.1,
-        "format": "%.1f",
+        "col": "phz_pp_median_stellarmass", "step": 0.1, "format": "%.1f",
     },
     "r / r500": {
-        "col": "r_r500",
-        "step": 0.05,
-        "format": "%.2f",
+        "col": "r_r500", "step": 0.05, "format": "%.2f",
     },
     "Local projected density": {
-        "col": "sigma_4_5_log",
-        "step": 0.1,
-        "format": "%.1f",
+        "col": "sigma_4_5_log", "step": 0.1, "format": "%.1f",
     },
 }
 
-# Zoobot morphology columns (used as scatter axes and gallery filters)
-# "col" is the actual CSV column; for p_bar we compute 1 - bar_no_fraction
 ZOOBOT_DISPLAY = {
-    "Smooth fraction": {
-        "col": "smooth-or-featured_smooth_fraction",
-    },
-    "Featured fraction": {
-        "col": "smooth-or-featured_featured-or-disk_fraction",
-    },
-    "Bar probability (p_bar)": {
-        "col": "p_bar",  # derived column, see load_data()
-    },
-    "Bar strong fraction": {
-        "col": "bar_strong_fraction",
-    },
-    "Bar weak fraction": {
-        "col": "bar_weak_fraction",
-    },
-    "Edge-on fraction": {
-        "col": "disk-edge-on_yes_fraction",
-    },
-    "Has spiral arms": {
-        "col": "has-spiral-arms_yes_fraction",
-    },
-    "Bulge size (dominant)": {
-        "col": "bulge-size_dominant_fraction",
-    },
-    "Merging fraction": {
-        "col": "merging_merger_fraction",
-    },
+    "Smooth fraction":         {"col": "smooth-or-featured_smooth_fraction"},
+    "Featured fraction":       {"col": "smooth-or-featured_featured-or-disk_fraction"},
+    "Bar probability (p_bar)": {"col": "p_bar"},
+    "Bar strong fraction":     {"col": "bar_strong_fraction"},
+    "Bar weak fraction":       {"col": "bar_weak_fraction"},
+    "Edge-on fraction":        {"col": "disk-edge-on_yes_fraction"},
+    "Has spiral arms":         {"col": "has-spiral-arms_yes_fraction"},
+    "Bulge size (dominant)":   {"col": "bulge-size_dominant_fraction"},
+    "Merging fraction":        {"col": "merging_merger_fraction"},
 }
 
 
@@ -83,11 +57,16 @@ ZOOBOT_DISPLAY = {
 
 @st.cache_data
 def load_data() -> pd.DataFrame:
-    df = pd.read_csv(CATALOGUE_PATH, sep=CATALOGUE_SEP,dtype={"object_id": str})
+    df = pd.read_csv(CATALOGUE_PATH, sep=CATALOGUE_SEP, dtype={"object_id": str})
 
-    # Derived column: bar probability = 1 - bar_no_fraction
     if "bar_no_fraction" in df.columns:
         df["p_bar"] = 1.0 - df["bar_no_fraction"]
+
+    # Normalise cutout column to just the filename (robust to any absolute paths still in CSV)
+    if "jpg_loc_gz_arcsinh_vis_y" in df.columns:
+        df["jpg_loc_gz_arcsinh_vis_y"] = (
+            df["jpg_loc_gz_arcsinh_vis_y"].astype(str).apply(lambda p: Path(p).name)
+        )
 
     return df
 
@@ -96,8 +75,12 @@ def load_data() -> pd.DataFrame:
 # Shared utilities
 # ============================================================================
 
+def cutout_url(filename: str) -> str:
+    """Return the public HF URL for a cutout JPG filename."""
+    return f"{CUTOUT_BASE_URL}/{filename}"
+
+
 def get_esasky_url(ra: float, dec: float) -> str:
-    """ESASky link — adjust the HiPS layer as needed."""
     return (
         f"https://sky.esa.int/esasky/?hide_welcome=true&hide_banner_info=true"
         f"&target={ra}%20{dec}"
