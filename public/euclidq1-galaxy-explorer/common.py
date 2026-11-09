@@ -2,9 +2,12 @@
 common.py — Shared configuration and utilities for both pages.
 """
 
-import streamlit as st
-import pandas as pd
+import math
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import streamlit as st
 
 # ============================================================================
 # CONFIG
@@ -69,6 +72,41 @@ def load_data() -> pd.DataFrame:
         )
 
     return df
+
+
+# ============================================================================
+# Slider helpers
+# ============================================================================
+#
+# The catalogue stores single-precision floats, so a redshift of 0.14 arrives
+# as 0.1400000005960464 and 0.59 as 0.5899999737739563. Both helpers below
+# exist to stop that representation leaking into the filters.
+
+def slider_bounds(values: pd.Series, step: float) -> tuple[float, float]:
+    """Slider range for `values`, widened outward onto the `step` grid.
+
+    Raw float32 extremes sit just off the step grid. Used directly as slider
+    bounds, the slider ends up holding values outside its own range, and
+    dragging the upper handle does not update the page until some other
+    widget is touched. Rounding outward keeps every galaxy inside the default
+    range.
+    """
+    lo = math.floor(values.min() / step) * step
+    hi = math.ceil(values.max() / step) * step
+    return round(lo, 10), round(hi, 10)
+
+
+def in_range(values: pd.Series, vmin: float, vmax: float, step: float) -> pd.Series:
+    """Mask of `values` inside [vmin, vmax], tolerant of float32 rounding.
+
+    Redshifts sit on a 0.01 grid, so a slider handle lands exactly on a bin.
+    A galaxy shown as z = 0.35 is stored as 0.34999999403953552, and a plain
+    `>= 0.35` would drop that whole bin. The tolerance is a thousandth of a
+    step: far above float32 noise, far below anything that could admit a
+    neighbouring value. Missing values are always excluded.
+    """
+    tol = step * 1e-3
+    return (values.fillna(-np.inf) >= vmin - tol) & (values.fillna(np.inf) <= vmax + tol)
 
 
 # ============================================================================
