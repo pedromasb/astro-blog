@@ -3,7 +3,7 @@ import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import CareerTimelineWrapper from "@components/CareerTimelineWrapper.astro";
+import CareerTimeline from "@components/CareerTimeline.astro";
 
 const layoutProps = {
   title: `About | ${SITE.title}`,
@@ -46,8 +46,7 @@ const layoutProps = {
 
     </section>
 
-    <!-- Interactive Career Timeline -->
-    <CareerTimelineWrapper />
+    <CareerTimeline />
 
   </main>
   <Footer />

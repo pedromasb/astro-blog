@@ -526,6 +526,23 @@ archivePrefix = {arXiv},
     animation: particle-burst 0.5s ease-out;
   }
 
+  /* The rocket's size, colour and glow. These came from the old About-page
+     timeline's global CSS, which shared the .rocket-icon/.rocket-body class
+     names; they live here now that the timeline is gone. */
+  .rocket-icon {
+    @apply h-16 w-12 text-skin-accent;
+    filter: drop-shadow(0 0 12px rgba(var(--color-accent), 0.6));
+  }
+  @media (min-width: 768px) {
+    .rocket-icon {
+      @apply h-20 w-16;
+      filter: drop-shadow(0 0 16px rgba(var(--color-accent), 0.8));
+    }
+  }
+  .rocket-body {
+    color: rgba(var(--color-accent), 0.9);
+  }
+
   /* Enhanced Rocket Launch Animation with smoke */
   .rocket-icon {
     display: inline-flex;
