@@ -111,6 +111,26 @@ const STLITE_VERSION = "1.12.1";
       }
     }
 
+    // Streamlit's multipage navigation writes its own URLs (.../Scatter_Plot)
+    // into the page's history. Embedded, that takes the page over: the "Go
+    // back" button and the browser's Back step through app pages instead of
+    // leaving, and the rewritten URL 404s on refresh because no such page
+    // exists on the site. So the page's URL and history stay as they are:
+    // Streamlit's writes are dropped and its new entries become in-place
+    // updates. Navigation inside the app still works, because Streamlit
+    // switches pages by rerunning the script, not by loading the URL.
+    function pinHistory() {
+      if (window.__stliteHistoryPinned) return;
+      // Pages using Astro's router need real history entries to navigate.
+      // App pages render without it (see SoftwareDetails), so this applies
+      // there; anywhere else, leave history alone.
+      if (document.querySelector('meta[name="astro-view-transitions-enabled"]')) return;
+      window.__stliteHistoryPinned = true;
+      const replace = history.replaceState.bind(history);
+      history.pushState = function (state, title) { replace(state, title); };
+      history.replaceState = function (state, title) { replace(state, title); };
+    }
+
     async function boot(box) {
       const gate = box.querySelector(".stlite-gate");
       const root = box.querySelector(".stlite-root");
@@ -157,6 +177,8 @@ const STLITE_VERSION = "1.12.1";
 
         // The visitor may have navigated away while the runtime downloaded.
         if (!box.isConnected) return;
+
+        pinHistory();
 
         const app = mod.mount(
           {
