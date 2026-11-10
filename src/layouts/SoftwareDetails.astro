@@ -61,6 +61,12 @@ const layoutProps = {
   canonicalURL,
   ogImage: ogUrl,
   scrollSmooth: true,
+  // An in-browser app must start in a fresh document. stlite injects its
+  // styles into <head> once, when its module first loads; client-side
+  // navigation strips them and the cached module never adds them back, so
+  // a relaunched app's loading toast could never animate out and stayed
+  // over the app. Without the router, every visit here is a full load.
+  clientRouter: !hasApp,
 };
 
 /** ========= Prev / Next (sorted by pubDatetime desc) ========= */
