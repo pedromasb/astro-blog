@@ -1,0 +1,746 @@
+---
+/**
+ * Academic journey timeline for the About page.
+ *
+ * A trail of light runs down the timeline and fills as the visitor scrolls,
+ * with a comet at its tip that lights each milestone it reaches; cards ease
+ * in as they enter the viewport, and the current position carries a slowly
+ * sweeping aurora border.
+ *
+ * Built to stay fluid: everything that moves animates only `transform` or
+ * `opacity`, which the browser composites on the GPU without repainting, and
+ * only two things animate continuously, each a single small element. The
+ * timeline it replaces ran 17 infinite animations, several of them on
+ * `filter` and SVG strokes, which repaint on every frame.
+ */
+
+type Kind = "postdoc" | "visit" | "phd" | "degree";
+
+interface Milestone {
+  period: string;
+  title: string;
+  org: string;
+  role?: string;
+  lead?: string;
+  description?: string;
+  kind: Kind;
+  current?: boolean;
+  link?: { href: string; label: string };
+}
+
+// Newest first.
+const milestones: Milestone[] = [
+  {
+    period: "Sep 2026 – Present",
+    title: "Postdoctoral Researcher for the Spanish Virtual Observatory",
+    org: "Centro de Astrobiología (CAB-INTA/CSIC), ESAC, Madrid",
+    description:
+      "Member of the Spanish Virtual Observatory team. Leading a project focused on developing novel deep learning methods for the automatic analysis of spectroscopic data in the Euclid mission. Responsible for developing scientific tools for the analysis and visualisation of astronomical data.",
+    kind: "postdoc",
+    current: true,
+  },
+  {
+    period: "Feb 2025 – Sep 2026",
+    title: "Postdoctoral Researcher for ESA",
+    org: "Centro de Astrobiología (CAB-INTA/CSIC), ESAC, Madrid",
+    description:
+      "Member of a European Space Agency project applying deep learning methods (the Zoobot foundation model) to the Euclid large-scale dataset. Leading a Euclid project on the effects of environment on detailed visual galaxy morphologies in clusters, and member of the Euclid team building the DR1 visual morphology catalogue. Creation and exploitation of galaxy morphology catalogues for the scientific community. Member of the Euclid Consortium.",
+    kind: "postdoc",
+  },
+  {
+    period: "Sep 2024 – Dec 2024",
+    title: "Research project at the University of California San Diego",
+    org: "University of California San Diego (UCSD)",
+    description:
+      "Research collaboration focused on developing a deep transfer learning methodology to determine the effective temperature of ultracool dwarfs from low-resolution spectra.",
+    kind: "visit",
+  },
+  {
+    period: "Feb 2021 – Feb 2025",
+    title: "PhD in Astrophysics",
+    org: "Universidad Complutense de Madrid · Centro de Astrobiología (CSIC-INTA)",
+    role: "Predoctoral Researcher at INTA",
+    lead: "Virtual Observatory and Machine Learning for the study of low-mass objects in photometric and spectroscopic surveys.",
+    description:
+      "Development of deep transfer learning techniques for atmospheric parameter estimation from high-resolution and low-resolution spectroscopic data. Exploitation of large astronomical surveys (J-PLUS, CARMENES, Euclid) using machine learning and Virtual Observatory tools.",
+    kind: "phd",
+    link: { href: "/thesis/", label: "Explore the thesis" },
+  },
+  {
+    period: "2018 – 2019",
+    title: "MSc in Astrophysics",
+    org: "Universidad Complutense de Madrid",
+    kind: "degree",
+  },
+  {
+    period: "2014 – 2018",
+    title: "BSc in Physics",
+    org: "Universidad Complutense de Madrid",
+    kind: "degree",
+  },
+];
+
+const kindLabel: Record<Kind, string> = {
+  postdoc: "Postdoctoral position",
+  visit: "Research stay",
+  phd: "Doctorate",
+  degree: "Degree",
+};
+---
+
+<section class="journey" aria-labelledby="journey-title">
+  <header class="head">
+    <h2 id="journey-title" class="heading">My Academic Journey</h2>
+    <p class="sub">Timeline of my research milestones and achievements</p>
+  </header>
+
+  <div class="track" data-journey>
+    <div class="spine" aria-hidden="true">
+      <div class="spine-fill"></div>
+      <div class="spine-comet"></div>
+    </div>
+
+    <ol class="milestones">
+      {
+        milestones.map((m, i) => (
+          <li
+            class:list={[
+              "milestone",
+              i % 2 === 0 ? "is-left" : "is-right",
+              m.current && "is-current",
+            ]}
+          >
+            <span class="node" aria-hidden="true" />
+            <article class="card">
+              <div class="meta">
+                <span class="kind" title={kindLabel[m.kind]}>
+                  <span class="sr-only">{kindLabel[m.kind]}</span>
+                  {m.kind === "postdoc" && (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3.2" />
+                      <ellipse
+                        cx="12"
+                        cy="12"
+                        rx="9.5"
+                        ry="3.6"
+                        transform="rotate(-24 12 12)"
+                      />
+                    </svg>
+                  )}
+                  {m.kind === "visit" && (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="8.5" />
+                      <path d="M3.5 12h17M12 3.5c2.6 2.4 3.9 5.2 3.9 8.5s-1.3 6.1-3.9 8.5c-2.6-2.4-3.9-5.2-3.9-8.5s1.3-6.1 3.9-8.5z" />
+                    </svg>
+                  )}
+                  {m.kind === "phd" && (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2.5 9 12 4.5 21.5 9 12 13.5z" />
+                      <path d="M6.5 11v4.6c0 1.4 2.5 2.9 5.5 2.9s5.5-1.5 5.5-2.9V11M21.5 9v5" />
+                    </svg>
+                  )}
+                  {m.kind === "degree" && (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M3 5.5h6a3 3 0 0 1 3 3V19a2 2 0 0 0-2-2H3z" />
+                      <path d="M21 5.5h-6a3 3 0 0 0-3 3V19a2 2 0 0 1 2-2h7z" />
+                    </svg>
+                  )}
+                </span>
+                <span class="period">{m.period}</span>
+                {m.current && <span class="now">Now</span>}
+              </div>
+
+              <h3 class="title">{m.title}</h3>
+              <p class="org">{m.org}</p>
+              {m.role && <p class="role">{m.role}</p>}
+              {m.lead && <p class="lead">{m.lead}</p>}
+              {m.description && <p class="desc">{m.description}</p>}
+              {m.link && (
+                <a class="more" href={m.link.href}>
+                  {m.link.label}
+                  <span class="arrow" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+              )}
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<script>
+  // Drives the light trail and the reveals. Per scroll frame it does one
+  // layout read (the track's position) and then only writes transforms, so
+  // it never forces layout mid-frame; node positions are measured once and
+  // re-measured only when the track resizes.
+
+  function initJourney() {
+    const track = document.querySelector<HTMLElement>("[data-journey]");
+    if (!track || track.dataset.live) return;
+    track.dataset.live = "true";
+
+    const items = Array.from(track.querySelectorAll<HTMLElement>(".milestone"));
+    const spine = track.querySelector<HTMLElement>(".spine");
+    const fill = track.querySelector<HTMLElement>(".spine-fill");
+    const comet = track.querySelector<HTMLElement>(".spine-comet");
+    if (!items.length || !spine || !fill || !comet) return;
+
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reduce || !("IntersectionObserver" in window)) {
+      // Static: everything visible and lit, the trail drawn in full.
+      items.forEach(li => li.classList.add("is-visible", "is-lit"));
+      return;
+    }
+
+    track.classList.add("is-live");
+
+    // Cards ease in once, as they come into view.
+    const io = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-visible");
+          io.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.12 }
+    );
+    items.forEach(li => io.observe(li));
+
+    // Node centres relative to the track, and the spine running between the
+    // first and the last of them.
+    let marks: number[] = [];
+    let start = 0;
+    let length = 1;
+    const lit = items.map(() => false);
+    let cometShown = false;
+
+    function measure() {
+      marks = items.map(li => {
+        const node = li.querySelector<HTMLElement>(".node");
+        return li.offsetTop + (node ? node.offsetTop : 0);
+      });
+      start = marks[0];
+      length = Math.max(1, marks[marks.length - 1] - start);
+      spine!.style.top = `${start}px`;
+      spine!.style.height = `${length}px`;
+    }
+
+    let frame = 0;
+    function update() {
+      frame = 0;
+      const rect = track!.getBoundingClientRect();
+      // The trail is drawn down to 60% of the way down the viewport. Near the
+      // end of the page that point could never reach the last milestone,
+      // since nothing below it can scroll up that far, so over the final
+      // stretch it slides to the viewport's bottom edge and the journey
+      // always completes.
+      const vh = window.innerHeight;
+      const remaining = Math.max(
+        0,
+        document.documentElement.scrollHeight - vh - window.scrollY
+      );
+      const focus = vh * 0.6 + Math.max(0, vh * 0.4 - remaining);
+      const progress = Math.min(
+        1,
+        Math.max(0, (focus - rect.top - start) / length)
+      );
+      const head = progress * length;
+
+      fill!.style.transform = `scaleY(${progress})`;
+      comet!.style.transform = `translateY(${head}px)`;
+
+      const show = progress > 0.002 && progress < 0.998;
+      if (show !== cometShown) {
+        cometShown = show;
+        comet!.classList.toggle("is-shown", show);
+      }
+
+      for (let i = 0; i < items.length; i++) {
+        const on = head >= marks[i] - start - 1;
+        if (on !== lit[i]) {
+          lit[i] = on;
+          items[i].classList.toggle("is-lit", on);
+        }
+      }
+    }
+
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const ro = new ResizeObserver(() => {
+      measure();
+      schedule();
+    });
+
+    measure();
+    update();
+    ro.observe(track);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+
+    // The site navigates client-side, so stop listening when the page swaps.
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        io.disconnect();
+        ro.disconnect();
+        window.removeEventListener("scroll", schedule);
+        window.removeEventListener("resize", schedule);
+        if (frame) cancelAnimationFrame(frame);
+      },
+      { once: true }
+    );
+  }
+
+  // Bundled scripts run once per session; astro:page-load fires on the first
+  // load and after every client-side navigation, so returning to the page
+  // sets the fresh markup up again.
+  initJourney();
+  document.addEventListener("astro:page-load", initJourney);
+</script>
+
+<style>
+  /* base.css styles every <section> and <svg> site-wide for the blog layout;
+     undo what would cramp this one. */
+  .journey {
+    --spine-x: 0.95rem;
+    --node-y: 2.05rem;
+    --radius: 1rem;
+    @apply mx-auto mb-16 mt-12;
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  .head {
+    @apply mb-12 text-center;
+  }
+  .heading {
+    @apply text-2xl font-semibold tracking-wider text-skin-accent sm:text-3xl;
+  }
+  .sub {
+    @apply mx-auto mt-3 max-w-2xl;
+    color: rgba(var(--color-text-base), 0.75);
+  }
+
+  .track {
+    position: relative;
+  }
+
+  /* A soft, static glow behind the start of the trail. */
+  .track::before {
+    content: "";
+    position: absolute;
+    top: -3rem;
+    left: var(--spine-x);
+    width: 22rem;
+    height: 22rem;
+    translate: -50% 0;
+    background: radial-gradient(
+      closest-side,
+      rgba(var(--color-accent), 0.1),
+      transparent
+    );
+    pointer-events: none;
+    opacity: 0;
+  }
+  /* An orange glow suits the navy theme; on cream it reads as a smudge. */
+  :global(html[data-theme="dark"]) .track::before {
+    opacity: 1;
+  }
+
+  /* ---------------------------------------------------------------- spine */
+
+  .spine {
+    position: absolute;
+    top: var(--node-y);
+    bottom: 0;
+    left: var(--spine-x);
+    width: 2px;
+    translate: -50% 0;
+    border-radius: 2px;
+    background: rgba(var(--color-accent), 0.14);
+  }
+
+  .spine-fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transform-origin: top;
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--color-accent), 0.25),
+      rgba(var(--color-accent), 0.9)
+    );
+    will-change: transform;
+  }
+  .track.is-live .spine-fill {
+    transform: scaleY(0);
+  }
+
+  .spine-comet {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 11px;
+    height: 11px;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: rgb(var(--color-accent));
+    box-shadow:
+      0 0 0 3px rgba(var(--color-accent), 0.16),
+      0 0 16px 3px rgba(var(--color-accent), 0.55);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    will-change: transform;
+  }
+  .spine-comet::before {
+    /* the bright tail just behind the head */
+    content: "";
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 2px;
+    height: 72px;
+    translate: -50% 0;
+    background: linear-gradient(
+      to top,
+      rgba(var(--color-accent), 0.9),
+      transparent
+    );
+  }
+  .spine-comet.is-shown {
+    opacity: 1;
+  }
+
+  /* ----------------------------------------------------------- milestones */
+
+  .milestones {
+    position: relative;
+  }
+
+  .milestone {
+    position: relative;
+    padding-left: calc(var(--spine-x) + 1.6rem);
+    padding-bottom: 1.5rem;
+  }
+  .milestone:last-child {
+    padding-bottom: 0;
+  }
+
+  /* the short arm from the trail to the card */
+  .milestone::before {
+    content: "";
+    position: absolute;
+    top: var(--node-y);
+    left: var(--spine-x);
+    width: 1.6rem;
+    height: 1px;
+    background: rgba(var(--color-accent), 0.25);
+  }
+
+  .node {
+    position: absolute;
+    z-index: 1;
+    top: var(--node-y);
+    left: var(--spine-x);
+    width: 14px;
+    height: 14px;
+    translate: -50% -50%;
+    scale: 0.8;
+    border-radius: 50%;
+    border: 2px solid rgba(var(--color-accent), 0.45);
+    background: rgb(var(--color-fill));
+    transition:
+      scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease;
+  }
+  .milestone.is-lit .node,
+  .track:not(.is-live) .node {
+    scale: 1;
+    border-color: rgb(var(--color-accent));
+    background: rgb(var(--color-accent));
+    box-shadow: 0 0 0 4px rgba(var(--color-accent), 0.14);
+  }
+
+  .is-current .node {
+    width: 18px;
+    height: 18px;
+  }
+  /* the pulse on "now": one small element, transform and opacity only */
+  .is-current .node::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid rgba(var(--color-accent), 0.6);
+    animation: halo 2.6s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  }
+  @keyframes halo {
+    from {
+      transform: scale(1);
+      opacity: 0.85;
+    }
+    to {
+      transform: scale(2.7);
+      opacity: 0;
+    }
+  }
+
+  /* ---------------------------------------------------------------- cards */
+
+  .card {
+    position: relative;
+    border-radius: var(--radius);
+    padding: 1.2rem 1.35rem 1.35rem;
+    background: rgba(var(--color-card), 0.28);
+    border: 1px solid rgba(var(--color-border), 0.22);
+    transition:
+      opacity 0.7s ease,
+      translate 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.35s ease,
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
+  }
+
+  /* waiting to come into view */
+  .track.is-live .milestone:not(.is-visible) .card {
+    opacity: 0;
+    translate: 0 26px;
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(var(--color-accent), 0.45);
+      box-shadow: 0 18px 40px -24px rgba(var(--color-accent), 0.6);
+    }
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: rgba(var(--color-text-base), 0.75);
+  }
+
+  .kind {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 0.55rem;
+    background: rgba(var(--color-accent), 0.1);
+    color: rgb(var(--color-accent));
+  }
+  .kind svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .now {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgb(var(--color-accent));
+    color: rgb(var(--color-fill));
+  }
+  .now::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .title {
+    margin-top: 0.8rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: rgb(var(--color-accent));
+  }
+  .org {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    color: rgba(var(--color-text-base), 0.85);
+  }
+  .role {
+    margin-top: 0.15rem;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: rgba(var(--color-text-base), 0.72);
+  }
+  .lead {
+    margin-top: 0.8rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid rgba(var(--color-accent), 0.35);
+    font-size: 0.85rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: rgba(var(--color-text-base), 0.88);
+  }
+  .desc {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: rgba(var(--color-text-base), 0.88);
+  }
+
+  .more {
+    margin-top: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgb(var(--color-accent));
+  }
+  .arrow {
+    transition: translate 0.25s ease;
+  }
+  .more:hover .arrow {
+    translate: 4px 0;
+  }
+
+  /* ------------------------------------------------- "now": aurora border */
+
+  .is-current .card {
+    isolation: isolate;
+    overflow: hidden;
+    border-color: transparent;
+    background: none;
+    box-shadow: 0 22px 50px -34px rgba(var(--color-accent), 0.45);
+  }
+  :global(html[data-theme="dark"]) .is-current .card {
+    box-shadow: 0 22px 50px -32px rgba(var(--color-accent), 0.7);
+  }
+  /* A conic gradient far larger than the card, rotating behind it: only a
+     thin ring of it shows, as a highlight sweeping round the border. It is
+     a single element turning, so it stays on the GPU. */
+  .is-current .card::before {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    top: 50%;
+    left: 50%;
+    width: 260%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: conic-gradient(
+      rgba(var(--color-accent), 0.18) 0turn 0.58turn,
+      rgba(var(--color-accent), 0.95) 0.78turn,
+      rgba(var(--color-accent), 0.18) 0.97turn
+    );
+    animation: aurora 7s linear infinite;
+  }
+  .is-current .card::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 1.5px;
+    border-radius: calc(var(--radius) - 1.5px);
+    background:
+      linear-gradient(
+        rgba(var(--color-card), 0.4),
+        rgba(var(--color-card), 0.4)
+      ),
+      rgb(var(--color-fill));
+  }
+  @keyframes aurora {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  /* -------------------------------------------- desktop: alternating sides */
+
+  @media (min-width: 768px) {
+    .journey {
+      --spine-x: 50%;
+    }
+
+    .milestone {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 4.5rem;
+      padding-left: 0;
+      padding-bottom: 2.25rem;
+    }
+    /* Cards alternate sides, so each one can start beside the end of the
+       previous one instead of below it, closing the empty half of every row.
+       The overlap is bounded by the shortest card: with 5rem of overlap and
+       2.25rem of row spacing, a card two rows down still clears the one in
+       its column by (height - 5.5rem), and even a title-only card is about
+       8rem tall. */
+    .milestone + .milestone {
+      margin-top: -5rem;
+    }
+
+    .is-left .card {
+      grid-column: 1;
+    }
+    .is-right .card {
+      grid-column: 2;
+    }
+
+    .milestone::before {
+      width: 2.25rem;
+    }
+    .is-left::before {
+      left: auto;
+      right: 50%;
+    }
+
+    .track.is-live .is-left:not(.is-visible) .card {
+      translate: -32px 0;
+    }
+    .track.is-live .is-right:not(.is-visible) .card {
+      translate: 32px 0;
+    }
+
+    .track::before {
+      width: 34rem;
+      height: 34rem;
+    }
+  }
+
+  /* ----------------------------------------------------- reduced motion */
+
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .node,
+    .arrow {
+      transition: none;
+    }
+    .is-current .card::before,
+    .is-current .node::after {
+      animation: none;
+    }
+    .spine-comet {
+      display: none;
+    }
+  }
+</style>
