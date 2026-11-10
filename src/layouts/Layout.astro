@@ -14,6 +14,12 @@ export interface Props {
   pubDatetime?: Date;
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
+  /**
+   * Client-side navigation. Turn it off for pages that host something which
+   * must start in a fresh document: Astro then falls back to a full page
+   * load when navigating to them, and from them.
+   */
+  clientRouter?: boolean;
 }
 
 const {
@@ -26,6 +32,7 @@ const {
   pubDatetime,
   modDatetime,
   scrollSmooth = false,
+  clientRouter = true,
 } = Astro.props;
 
 const socialImageURL = new URL(
@@ -118,7 +125,7 @@ const structuredData = {
 
     <meta name="theme-color" content="" />
 
-    <ClientRouter />
+    {clientRouter && <ClientRouter />}
 
     <!-- Allow pages to inject extra head tags -->
     <slot name="head" />

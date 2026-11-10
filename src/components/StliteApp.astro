@@ -81,12 +81,16 @@ const STLITE_VERSION = "1.12.1";
 -->
 <script is:inline>
   (function () {
-    // The site navigates with Astro's ClientRouter, which runs an inline
-    // script only the first time it appears in a session. Coming back to this
-    // page swaps in fresh markup but does not run this again, so nothing here
-    // may depend on running per visit: the machinery below is installed once,
-    // and bind() attaches it to each fresh copy of the markup on every
-    // astro:page-load (fired on the first load and after each navigation).
+    // Pages hosting an app render without Astro's ClientRouter (see
+    // SoftwareDetails), so each visit is a full page load and stlite always
+    // starts in a fresh document - relaunching it inside a long-lived one
+    // left its loading toast stuck over the app.
+    //
+    // This still holds up if the component lands on a page that does use the
+    // router. The router runs an inline script only the first time it appears
+    // in a session, so the machinery is installed once, bind() attaches it to
+    // each fresh copy of the markup on every astro:page-load, and teardown()
+    // unmounts running apps when the visitor leaves.
     if (window.__stliteEmbeds) {
       window.__stliteEmbeds.bind();
       return;
