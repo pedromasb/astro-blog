@@ -81,6 +81,20 @@ const STLITE_VERSION = "1.12.1";
 -->
 <script is:inline>
   (function () {
+    // The site navigates with Astro's ClientRouter, which runs an inline
+    // script only the first time it appears in a session. Coming back to this
+    // page swaps in fresh markup but does not run this again, so nothing here
+    // may depend on running per visit: the machinery below is installed once,
+    // and bind() attaches it to each fresh copy of the markup on every
+    // astro:page-load (fired on the first load and after each navigation).
+    if (window.__stliteEmbeds) {
+      window.__stliteEmbeds.bind();
+      return;
+    }
+
+    // Controllers of mounted apps, so they can be torn down on navigation.
+    const running = new Set();
+
     function statusEl(box) {
       return box.querySelector(".stlite-status");
     }
@@ -137,7 +151,10 @@ const STLITE_VERSION = "1.12.1";
         setStatus(box, "Starting the app\u2026");
         root.classList.remove("hidden");
 
-        mod.mount(
+        // The visitor may have navigated away while the runtime downloaded.
+        if (!box.isConnected) return;
+
+        const app = mod.mount(
           {
             entrypoint: manifest.entrypoint,
             requirements: manifest.requirements || [],
@@ -148,6 +165,7 @@ const STLITE_VERSION = "1.12.1";
           },
           root
         );
+        running.add(app);
 
         const el = statusEl(box);
         if (el) el.classList.add("hidden");
@@ -183,25 +201,51 @@ const STLITE_VERSION = "1.12.1";
       window.dispatchEvent(new Event("resize"));
     }
 
-    document.querySelectorAll(".stlite-shell").forEach(function (shell) {
-      const btn = shell.querySelector(".stlite-fullpage-btn");
-      if (btn) {
-        btn.addEventListener("click", function () {
-          setFullPage(shell, !shell.classList.contains("stlite-fullpage"));
-        });
-      }
-    });
+    // Attach to every embed on the page that is not attached yet. Each copy
+    // of the markup is bound exactly once, however often this runs.
+    function bind() {
+      document.querySelectorAll(".stlite-shell").forEach(function (shell) {
+        if (shell.dataset.stliteBound) return;
+        shell.dataset.stliteBound = "true";
+
+        const fsBtn = shell.querySelector(".stlite-fullpage-btn");
+        if (fsBtn) {
+          fsBtn.addEventListener("click", function () {
+            setFullPage(shell, !shell.classList.contains("stlite-fullpage"));
+          });
+        }
+
+        const box = shell.querySelector(".stlite-embed");
+        const launch = box && box.querySelector(".stlite-launch");
+        if (launch) launch.addEventListener("click", function () { boot(box); }, { once: true });
+      });
+    }
+
+    // Leaving the page. A mounted app keeps a whole Python runtime alive in a
+    // worker until it is unmounted, and a page left in full-page mode would
+    // carry its scroll lock over to the next page.
+    function teardown() {
+      running.forEach(function (app) {
+        try {
+          app.unmount();
+        } catch (err) {
+          console.warn("[stlite] unmount failed", err);
+        }
+      });
+      running.clear();
+      document.documentElement.classList.remove("stlite-fullpage-open");
+    }
 
     document.addEventListener("keydown", function (e) {
       if (e.key !== "Escape") return;
       const open = document.querySelector(".stlite-shell.stlite-fullpage");
       if (open) setFullPage(open, false);
     });
+    document.addEventListener("astro:page-load", bind);
+    document.addEventListener("astro:before-swap", teardown);
 
-    document.querySelectorAll(".stlite-embed").forEach(function (box) {
-      const btn = box.querySelector(".stlite-launch");
-      if (btn) btn.addEventListener("click", function () { boot(box); }, { once: true });
-    });
+    window.__stliteEmbeds = { bind: bind };
+    bind();
   })();
 </script>
 
